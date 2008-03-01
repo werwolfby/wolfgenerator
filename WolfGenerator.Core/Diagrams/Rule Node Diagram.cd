@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="WolfGenerator.Core.RuleNode" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>RuleNode.cs</FileName>
+      <HashCode>AAAAAAAQAAAAAAAAAAAIAAAADAAAAQAAAEAAAEBABAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WolfGenerator.Core.ClassRuleNode" Collapsed="true">
+    <Position X="1.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>RuleClassRuleAnalizer.cs</FileName>
+      <HashCode>EAAAAAAQAAAAAAACAAAQAAQAAAAUAQAAAgAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="innerRuleNode" Hidden="true" />
+      <Field Name="name" Hidden="true" />
+      <Field Name="usingList" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="WolfGenerator.Core.ClassRuleNode.UsingData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RuleClassRuleAnalizer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="WolfGenerator.Core.ClassRuleNode.ReferenceData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RuleClassRuleAnalizer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="WolfGenerator.Core.RuleRuleNode" Collapsed="true">
+    <Position X="3.25" Y="2" Width="1.25" />
+    <TypeIdentifier>
+      <FileName>RuleRuleAnalizer.cs</FileName>
+      <HashCode>AAAAAAAQAAAAAACAAAAEAAAAAAAAQQAAAAAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="ruleItemList" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="WolfGenerator.Core.RuleRuleNode.RuleItem" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RuleRuleAnalizer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="WolfGenerator.Core.RuleRuleNode.TextRuleItem" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RuleRuleAnalizer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="WolfGenerator.Core.RuleRuleNode.NodeRuleItem" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RuleRuleAnalizer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="WolfGenerator.Core.RuleRuleNode.ValueRuleItem" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>RuleRuleAnalizer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="WolfGenerator.Core.ApplyRuleNode" Collapsed="true">
+    <Position X="2.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>ApplyRuleAnalizer.cs</FileName>
+      <HashCode>AAAAAAIQAAACAAAAAAAAACAAAAAAAQAAAAACAEAABAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WolfGenerator.Core.CallRuleNode" Collapsed="true">
+    <Position X="4" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>CallRuleAnalizer.cs</FileName>
+      <HashCode>AAAAAAAQAAQAAAAAAAAAAAAAAAAAAQAAAAAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WolfGenerator.Core.CodeRuleNode" Collapsed="true">
+    <Position X="5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>CodeRuleAnalizer.cs</FileName>
+      <HashCode>AAAAAAAQAAAAAAAAAAQAAAAAIAAAAQAAAAAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WolfGenerator.Core.JoinRuleNode" Collapsed="true">
+    <Position X="6" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>JoinRuleAnalizer.cs</FileName>
+      <HashCode>AAAAAAAQAAAAAACAAAAAAgAAAAAAAQABAAQCAFAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WolfGenerator.Core.MethodRuleNode" Collapsed="true">
+    <Position X="7" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>MethodRuleAnalizer.cs</FileName>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAAAAYAIAAAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WolfGenerator.Core.MultiplyRuleNode" Collapsed="true">
+    <Position X="8.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>MultiplyRuleAnalizer.cs</FileName>
+      <HashCode>AAAAAAAQAAAAAAAABAAAAAAAAAAAASAAAAAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+</ClassDiagram>

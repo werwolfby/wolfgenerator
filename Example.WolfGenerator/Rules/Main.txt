@@ -1,0 +1,22 @@
+<%ruleclass MainClass%>
+<%reference Example.WolfGenerator.exe%>
+<%reference WolfGenerator.Core.dll%>
+<%using System%>
+<%using System.Text%>
+<%using Example.WolfGenerator%>
+<%using WolfGenerator.Core%>
+<%using System.Collections.Generic%>
+
+<%rule Main( IEnumerable value )%>
+<%apply Test( item, 10 ) from value%>
+<%end rule%>
+
+<%rule Test( int value, object a )%>
+Int : <%= value.ToString() %>
+<%end rule%>
+
+<%rule Test( string value, object a )%>
+string : <%= value.ToString() %>
+<%end rule%>
+
+<%end class%>

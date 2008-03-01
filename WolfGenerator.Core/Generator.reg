@@ -1,0 +1,11 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\8.0\Generators\{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}\TemplateCodeGenerator]
+@="Template Code Generator"
+"CLSID"="{02F8A379-7EBA-420C-AFAD-9B8E98DA8562}"
+"GeneratesDesignTimeSource"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\9.0\Generators\{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}\TemplateCodeGenerator]
+@="Template Code Generator"
+"CLSID"="{02F8A379-7EBA-420C-AFAD-9B8E98DA8562}"
+"GeneratesDesignTimeSource"=dword:00000001

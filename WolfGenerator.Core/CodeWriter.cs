@@ -78,12 +78,12 @@ namespace WolfGenerator.Core
 		{
 			//if (indentCount == 0) return code + "\n";
 
-			string indent = GetIndent( indentCount );
+			var indent = GetIndent( indentCount );
 
-			StringReader stringReader = new StringReader( code );
-			StringBuilder stringBuilder = new StringBuilder();
+			var stringReader = new StringReader( code );
+			var stringBuilder = new StringBuilder();
 
-			string line = null;
+			string line;
 
 			int count = 0;
 

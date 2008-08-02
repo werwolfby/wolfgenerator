@@ -5,11 +5,11 @@ namespace WolfGenerator.Core
 {
 	public class CodeWriter
 	{
-		private StringBuilder stringBuilder = new StringBuilder();
-		private int indent = 0;
+		private readonly StringBuilder stringBuilder = new StringBuilder();
+		private int indent;
 		private static string indentSymbol = "\t";
 
-		private string indentValue = null;
+		private string indentValue;
 		
 		public int Indent
 		{
@@ -50,7 +50,8 @@ namespace WolfGenerator.Core
 
 		public void Append( string text )
 		{
-			stringBuilder.Append( text );
+			text = SetIndent( indent, text );
+			stringBuilder.Append( text.Substring( 0, text.Length - 2 ) );
 			indentValue = text;
 		}
 
@@ -76,32 +77,30 @@ namespace WolfGenerator.Core
 
 		private string SetIndent( int indentCount, string code )
 		{
-			//if (indentCount == 0) return code + "\n";
-
-			var indent = GetIndent( indentCount );
+			var currentIndent = GetIndent( indentCount );
 
 			var stringReader = new StringReader( code );
-			var stringBuilder = new StringBuilder();
+			var currentStringBuilder = new StringBuilder();
 
 			string line;
 
-			int count = 0;
+			var count = 0;
 
 			while ((line = stringReader.ReadLine()) != null)
 			{
-				if (count++ == 0 && indentValue != null) stringBuilder.AppendLine( line );
-				else stringBuilder.AppendLine( indent + line );
+				if (count++ == 0 && indentValue != null) currentStringBuilder.AppendLine( line );
+				else currentStringBuilder.AppendLine( currentIndent + line );
 			}
 
-			return stringBuilder.ToString();
+			return currentStringBuilder.ToString();
 		}
 
 		private string GetIndent( int indentCount )
 		{
 			if (indentValue != null) return indentValue;
 
-			StringBuilder indentBuilder = new StringBuilder();
-			for (int i = 0; i < indentCount; i++)
+			var indentBuilder = new StringBuilder();
+			for (var i = 0; i < indentCount; i++)
 			{
 				indentBuilder.Append( indentSymbol );
 			}

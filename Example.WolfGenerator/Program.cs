@@ -8,7 +8,7 @@ namespace Example.WolfGenerator
 	{
 		static void Main()
 		{
-			Compiler compiler = new Compiler( @"Rules\Main.txt" );
+			var compiler = new Compiler( @"Rules\Main.txt" );
 
 			compiler.Parse();
 			compiler.Generate();

@@ -51,7 +51,8 @@ namespace WolfGenerator.Core
 		public void Append( string text )
 		{
 			text = SetIndent( indent, text );
-			stringBuilder.Append( text.Substring( 0, text.Length - 2 ) );
+			if (text.EndsWith( "\r\n" )) text = text.Substring( 0, text.Length - 2 );
+			stringBuilder.Append( text );
 			indentValue = text;
 		}
 

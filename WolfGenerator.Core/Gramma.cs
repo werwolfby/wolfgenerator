@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 12:22:37
+// Compiled by vsCoco on 25.01.2009 12:28:59
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -262,10 +262,9 @@ public RuleClassStatement ruleClassStatement;
 
 	void Value(out ValueStatement valueStatement) {
 		Expect(15);
-		int pos = t.pos + 3; 
+		int pos = t.pos + t.val.Length; 
 		while (StartOf(4)) {
 			Get();
-			
 		}
 		while (!(la.kind == 0 || la.kind == 7)) {SynErr(25); Get();}
 		Expect(7);

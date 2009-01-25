@@ -114,9 +114,8 @@ RuleMethodEnd   = SYNC "<%end%>".
 
 Value<out ValueStatement valueStatement>
                 = 
-                  "<%="                                                            (. int pos = t.pos + 3; .)
-                  {ANY                                                             (.  .)
-                  }                                                                
+                  "<%="                                                            (. int pos = t.pos + t.val.Length; .)
+                  {ANY}
                   SYNC "%>"                                                        (. int endPos = t.pos;
                                                                                       string value = scanner.buffer.GetString( pos, endPos );
                                                                                       valueStatement = new ValueStatement( value.Trim() );  .)

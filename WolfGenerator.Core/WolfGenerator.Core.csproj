@@ -99,6 +99,9 @@
     <Compile Include="CodeWriter.cs" />
     <Compile Include="RuleString\TextRuleString.cs" />
     <Compile Include="RuleString\ValueRuleString.cs" />
+    <Compile Include="Writer\CodeWriter.cs" />
+    <Compile Include="Writer\EmptyLine.cs" />
+    <Compile Include="Writer\Line.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagrams\Rule String Diagram.cd" />

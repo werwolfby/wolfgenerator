@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 8:36:27
+// Compiled by vsCoco on 25.01.2009 8:45:44
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -64,7 +64,7 @@ namespace WolfGenerator.Core {
 		public Token la;   // lookahead token
 		int errDist = minErrDist;
 
-public RuleClassStatement ruleclassStatement;
+public RuleClassStatement ruleClassStatement;
 
 
 		public Parser(Scanner scanner) {
@@ -138,7 +138,8 @@ public RuleClassStatement ruleclassStatement;
 		
 	void WolfGenerator() {
 		List<UsingStatement> usingStatementList = null; 
-		RuleClassStart();
+		string name; 
+		RuleClassStart(out name);
 		while (la.kind == 9) {
 			UsingStatement usingStatement; 
 			Using(out usingStatement);
@@ -149,12 +150,13 @@ public RuleClassStatement ruleclassStatement;
 			RuleMethod();
 		}
 		RuleClassEnd();
+		ruleClassStatement = new RuleClassStatement( name, usingStatementList, null ); 
 	}
 
-	void RuleClassStart() {
+	void RuleClassStart(out string name) {
 		Expect(6);
 		Expect(1);
-		System.Console.WriteLine( "Rule class : " + t.val ); 
+		name = t.val; 
 		Expect(7);
 	}
 

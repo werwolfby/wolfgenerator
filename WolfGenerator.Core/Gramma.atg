@@ -4,7 +4,7 @@ using WolfGenerator.Core.AST;
 
 COMPILER WolfGenerator
 
-	public RuleClassStatement ruleclassStatement;
+	public RuleClassStatement ruleClassStatement;
 
 CHARACTERS
 	letter    = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
@@ -31,15 +31,18 @@ IGNORE cr + lf + tab
 
 PRODUCTIONS
 
-WolfGenerator =                                                                    (. List<UsingStatement> usingStatementList = null; .) 
-                RuleClassStart {                                                   (. UsingStatement usingStatement; .)
+WolfGenerator =                                                                    (. List<UsingStatement> usingStatementList = null; 
+                                                                                      string name; .) 
+                RuleClassStart<out name> {                                         (. UsingStatement usingStatement; .)
                  Using<out usingStatement>                                         (. if (usingStatementList == null) usingStatementList = new List<UsingStatement>();
                                                                                       usingStatementList.Add( usingStatement ); .)
                  }
                 {RuleMethod
-                 } RuleClassEnd.
+                 } RuleClassEnd                                                    (. ruleClassStatement = new RuleClassStatement( name, usingStatementList, null ); .)
+                 .
 
-RuleClassStart = "<%ruleclass" ident (. System.Console.WriteLine( "Rule class : " + t.val ); .) "%>".
+RuleClassStart<out string name> = "<%ruleclass" ident                              (. name = t.val; .)
+                                   "%>".
 RuleClassEnd   = "<%end%>".
 
 Using<out UsingStatement usingStatement>                                                            

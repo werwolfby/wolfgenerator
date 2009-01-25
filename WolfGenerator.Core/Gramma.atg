@@ -33,13 +33,17 @@ IGNORE cr + lf + tab
 PRODUCTIONS
 
 WolfGenerator =                                                                    (. List<UsingStatement> usingStatementList = null; 
+                                                                                      List<RuleMethodStatement> ruleMethodStatementList = null; 
                                                                                       string name; .) 
                 RuleClassStart<out name> {                                         (. UsingStatement usingStatement; .)
                  Using<out usingStatement>                                         (. if (usingStatementList == null) usingStatementList = new List<UsingStatement>();
                                                                                       usingStatementList.Add( usingStatement ); .)
                  }
-                {RuleMethod
-                 } RuleClassEnd                                                    (. ruleClassStatement = new RuleClassStatement( name, usingStatementList, null ); .)
+                {                                                                  (. RuleMethodStatement ruleMethod; .)
+                 RuleMethod<out ruleMethod>                                        (. if (ruleMethodStatementList == null) 
+                                                                                          ruleMethodStatementList = new List<RuleMethodStatement>();
+                                                                                      ruleMethodStatementList.Add( ruleMethod ); .)
+                 } RuleClassEnd                                                    (. ruleClassStatement = new RuleClassStatement( name, usingStatementList, ruleMethodStatementList ); .)
                  .
 
 RuleClassStart<out string name> = "<%ruleclass" ident                              (. name = t.val; .)
@@ -55,14 +59,22 @@ Using<out UsingStatement usingStatement>
 	                                                                                       usingStatement = new UsingStatement( namespaceName ); .)
 	"%>".
 
-RuleMethod = RuleMethodStart (. int startPos = t.pos + t.val.Length; .)
-{ANY 
- |                           (. Console.WriteLine( "| '{0}'", scanner.buffer.GetString( startPos, la.pos ) ); .)
- Value                     
- } RuleMethodEnd.
+RuleMethod<out RuleMethodStatement statement>                                           (. string methodName; IList<Variable> variables; .)
+                    = RuleMethodStart<out methodName, out variables>                    (. int startPos = t.pos + t.val.Length; .)
+                     {ANY 
+                      |                                                                 (. Console.WriteLine( "| '{0}'", scanner.buffer.GetString( startPos, la.pos ) ); .)
+                      Value                     
+                      } RuleMethodEnd                                                   (. statement = new RuleMethodStatement( methodName, variables, null ); .)
+                      .
 
-RuleMethodStart = (. Variable var = null; .)
-                  "<%rule" ident (. Console.WriteLine( "rule : " + t.val ); .) "(" [Var<out var> { "," Var<out var> } ] ")" "%>".
+RuleMethodStart <. out string name, out IList<Variable> variables .>                  (. Variable var = null; 
+                                                                                         List<Variable> variableList = null; .)
+                = "<%rule" ident                                                      (. name = t.val; .) 
+                  "(" [ Var<out var>                                                  (. if (variableList == null) variableList = new List<Variable>();
+                                                                                         variableList.Add( var ); .)
+                        { "," Var<out var>                                            (. variableList.Add( var ); .)
+                        } ] ")" "%>"                                                  (. variables = variableList.AsReadOnly(); .)
+                  .
 RuleMethodEnd   = "<%end%>".
 
 Value           = 

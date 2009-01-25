@@ -13,6 +13,7 @@
  *   25.01.2009 08:33 - Add EBNF of ruleclass.
  *   25.01.2009 08:45 - Add Name property.
  *   25.01.2009 08:48 - Override ToString method.
+ *   25.01.2009 10:38 - Extend ToString() method.
  *
  *******************************************************/
 
@@ -59,9 +60,10 @@ namespace WolfGenerator.Core.AST
 			var builder = new StringBuilder();
 
 			builder.AppendLine( "<%ruleclass " + name + "%>" );
-
+            
 			if (usingStatements != null)
 			{
+				builder.AppendLine();
 				foreach (var usingStatement in usingStatements)
 				{
 					builder.AppendLine( usingStatement.ToString() );
@@ -70,11 +72,15 @@ namespace WolfGenerator.Core.AST
 
 			if (ruleMethodStatements != null)
 			{
+				builder.AppendLine();
 				foreach (var ruleMethodStatement in ruleMethodStatements)
 				{
 					builder.AppendLine( ruleMethodStatement.ToString() );
 				}
 			}
+
+			builder.AppendLine();
+			builder.Append( "<%end%>" );
 
 			return builder.ToString();
 		}

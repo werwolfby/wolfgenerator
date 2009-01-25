@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 9:44:20
+// Compiled by vsCoco on 25.01.2009 10:32:24
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -139,6 +139,7 @@ public RuleClassStatement ruleClassStatement;
 		
 	void WolfGenerator() {
 		List<UsingStatement> usingStatementList = null; 
+		List<RuleMethodStatement> ruleMethodStatementList = null; 
 		string name; 
 		RuleClassStart(out name);
 		while (la.kind == 9) {
@@ -148,10 +149,14 @@ public RuleClassStatement ruleClassStatement;
 			usingStatementList.Add( usingStatement ); 
 		}
 		while (la.kind == 11) {
-			RuleMethod();
+			RuleMethodStatement ruleMethod; 
+			RuleMethod(out ruleMethod);
+			if (ruleMethodStatementList == null) 
+			   ruleMethodStatementList = new List<RuleMethodStatement>();
+			ruleMethodStatementList.Add( ruleMethod ); 
 		}
 		RuleClassEnd();
-		ruleClassStatement = new RuleClassStatement( name, usingStatementList, null ); 
+		ruleClassStatement = new RuleClassStatement( name, usingStatementList, ruleMethodStatementList ); 
 	}
 
 	void RuleClassStart(out string name) {
@@ -176,8 +181,9 @@ public RuleClassStatement ruleClassStatement;
 		Expect(7);
 	}
 
-	void RuleMethod() {
-		RuleMethodStart();
+	void RuleMethod(out RuleMethodStatement statement) {
+		string methodName; IList<Variable> variables; 
+		RuleMethodStart(out methodName, out variables);
 		int startPos = t.pos + t.val.Length; 
 		while (StartOf(1)) {
 			if (StartOf(2)) {
@@ -188,27 +194,33 @@ public RuleClassStatement ruleClassStatement;
 			}
 		}
 		RuleMethodEnd();
+		statement = new RuleMethodStatement( methodName, variables, null ); 
 	}
 
 	void RuleClassEnd() {
 		Expect(8);
 	}
 
-	void RuleMethodStart() {
+	void RuleMethodStart(out string name, out IList<Variable> variables ) {
 		Variable var = null; 
+		List<Variable> variableList = null; 
 		Expect(11);
 		Expect(1);
-		Console.WriteLine( "rule : " + t.val ); 
+		name = t.val; 
 		Expect(12);
 		if (la.kind == 1) {
 			Var(out var);
+			if (variableList == null) variableList = new List<Variable>();
+			variableList.Add( var ); 
 			while (la.kind == 13) {
 				Get();
 				Var(out var);
+				variableList.Add( var ); 
 			}
 		}
 		Expect(14);
 		Expect(7);
+		variables = variableList.AsReadOnly(); 
 	}
 
 	void Value() {

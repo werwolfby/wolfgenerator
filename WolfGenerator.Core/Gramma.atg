@@ -108,32 +108,55 @@ RuleMethodStart <. out string name, out IList<Variable> variables .>            
                   "(" [ Var<out var>                                               (. if (variableList == null) variableList = new List<Variable>();
                                                                                       variableList.Add( var ); .)
                         { "," Var<out var>                                         (. variableList.Add( var ); .)
-                        } ] ")" "%>"                                               (. variables = variableList.AsReadOnly(); .)
+                        } ] WEAK ")" SYNC "%>"                                               (. variables = variableList.AsReadOnly(); .)
                   .
-RuleMethodEnd   = "<%end%>".
+RuleMethodEnd   = SYNC "<%end%>".
 
 Value<out ValueStatement valueStatement>
                 = 
                   "<%="                                                            (. int pos = t.pos + 3; .)
                   {ANY                                                             (.  .)
                   }                                                                
-                  "%>"                                                             (. int endPos = t.pos;
+                  SYNC "%>"                                                        (. int endPos = t.pos;
                                                                                       string value = scanner.buffer.GetString( pos, endPos );
                                                                                       valueStatement = new ValueStatement( value.Trim() );  .)
                   .
 
 Join<out JoinStatement joinStatement>                                              (. string @string;
                                                                                       List<RuleStatement> statements = null;
-                                                                                      ValueStatement valueStatement; .)
+                                                                                      ValueStatement valueStatement;
+                                                                                      ApplyStatement applyStatement; .)
                 = 
                   "<%join" string                                                  (. @string = t.val.Substring( 1, t.val.Length - 2 ); .)
                   "%>" 
                   {                    
-					Value<out valueStatement>                                      (. if (statements == null) statements = new List<RuleStatement>();
-					                                                               	  statements.Add( valueStatement ); .)
+                    Value<out valueStatement>                                      (. if (statements == null) statements = new List<RuleStatement>();
+                                                                                   	  statements.Add( valueStatement ); .)
+                    |
+                    Apply<out applyStatement>                                      (. if (statements == null) statements = new List<RuleStatement>();
+                                                                                   	  statements.Add( applyStatement ); .)
                   }
-                  "<%end%>"                                                        (. joinStatement = new JoinStatement( @string, statements ); .)
+                  SYNC "<%end%>"                                                   (. joinStatement = new JoinStatement( @string, statements ); .)
                   .
+                  
+Apply<out ApplyStatement applyStatement>                                           (. string methodName; string parameters = null; string from; .)
+                =
+                  "<%apply" ident                                                  (. methodName = t.val; .)
+                   (                                                               (. int startPos = -1; int endPos = -1; .)
+                     (
+                      "(["                                                         (. startPos = t.pos + t.val.Length; .)
+						{ ANY }                                                    (. endPos = la.pos; .)
+					  "])" 
+					  |
+                      "("                                                          (. startPos = t.pos + t.val.Length; .)
+                        { ANY }                                                    (. endPos = la.pos; .)
+                      ")"
+                     )                                                             (. if (startPos > 0 && endPos > 0)
+                                                                                          parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); .)
+                   )                                                              
+                   SYNC "from" ident                                               (. from = t.val; .)
+                   SYNC "%>"                                                       (. applyStatement = new ApplyStatement( methodName, parameters, from ); .)
+                   .
 
 Type<out WolfGenerator.Core.AST.Type type> =                                       (. StringBuilder name = new StringBuilder(); 
                                                                                       List<WolfGenerator.Core.AST.Type> genericParameters = null; .)

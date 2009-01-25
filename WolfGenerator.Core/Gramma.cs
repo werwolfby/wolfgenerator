@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 11:49:45
+// Compiled by vsCoco on 25.01.2009 12:22:37
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -52,7 +52,7 @@ namespace WolfGenerator.Core {
 	const int _string = 3;
 	const int _badString = 4;
 	const int _char = 5;
-	const int maxT = 19;
+	const int maxT = 23;
 
 		const bool T = true;
 		const bool x = false;
@@ -254,7 +254,8 @@ public RuleClassStatement ruleClassStatement;
 				variableList.Add( var ); 
 			}
 		}
-		Expect(14);
+		ExpectWeak(14, 3);
+		while (!(la.kind == 0 || la.kind == 7)) {SynErr(24); Get();}
 		Expect(7);
 		variables = variableList.AsReadOnly(); 
 	}
@@ -262,10 +263,11 @@ public RuleClassStatement ruleClassStatement;
 	void Value(out ValueStatement valueStatement) {
 		Expect(15);
 		int pos = t.pos + 3; 
-		while (StartOf(3)) {
+		while (StartOf(4)) {
 			Get();
 			
 		}
+		while (!(la.kind == 0 || la.kind == 7)) {SynErr(25); Get();}
 		Expect(7);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
@@ -275,21 +277,30 @@ public RuleClassStatement ruleClassStatement;
 	void Join(out JoinStatement joinStatement) {
 		string @string;
 		List<RuleStatement> statements = null;
-		ValueStatement valueStatement; 
+		ValueStatement valueStatement;
+		ApplyStatement applyStatement; 
 		Expect(16);
 		Expect(3);
 		@string = t.val.Substring( 1, t.val.Length - 2 ); 
 		Expect(7);
-		while (la.kind == 15) {
-			Value(out valueStatement);
-			if (statements == null) statements = new List<RuleStatement>();
-			statements.Add( valueStatement ); 
+		while (la.kind == 15 || la.kind == 17) {
+			if (la.kind == 15) {
+				Value(out valueStatement);
+				if (statements == null) statements = new List<RuleStatement>();
+				statements.Add( valueStatement ); 
+			} else {
+				Apply(out applyStatement);
+				if (statements == null) statements = new List<RuleStatement>();
+				statements.Add( applyStatement ); 
+			}
 		}
+		while (!(la.kind == 0 || la.kind == 8)) {SynErr(26); Get();}
 		Expect(8);
 		joinStatement = new JoinStatement( @string, statements ); 
 	}
 
 	void RuleMethodEnd() {
+		while (!(la.kind == 0 || la.kind == 8)) {SynErr(27); Get();}
 		Expect(8);
 	}
 
@@ -298,6 +309,40 @@ public RuleClassStatement ruleClassStatement;
 		Type(out type);
 		Expect(1);
 		var = new Variable( t.val, type ); 
+	}
+
+	void Apply(out ApplyStatement applyStatement) {
+		string methodName; string parameters = null; string from; 
+		Expect(17);
+		Expect(1);
+		methodName = t.val; 
+		int startPos = -1; int endPos = -1; 
+		if (la.kind == 18) {
+			Get();
+			startPos = t.pos + t.val.Length; 
+			while (StartOf(5)) {
+				Get();
+			}
+			endPos = la.pos; 
+			Expect(19);
+		} else if (la.kind == 12) {
+			Get();
+			startPos = t.pos + t.val.Length; 
+			while (StartOf(6)) {
+				Get();
+			}
+			endPos = la.pos; 
+			Expect(14);
+		} else SynErr(28);
+		if (startPos > 0 && endPos > 0)
+		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
+		while (!(la.kind == 0 || la.kind == 20)) {SynErr(29); Get();}
+		Expect(20);
+		Expect(1);
+		from = t.val; 
+		while (!(la.kind == 0 || la.kind == 7)) {SynErr(30); Get();}
+		Expect(7);
+		applyStatement = new ApplyStatement( methodName, parameters, from ); 
 	}
 
 	void Type(out WolfGenerator.Core.AST.Type type) {
@@ -310,7 +355,7 @@ public RuleClassStatement ruleClassStatement;
 			Expect(1);
 			name.Append( '.' ); name.Append( t.val ); 
 		}
-		if (la.kind == 17) {
+		if (la.kind == 21) {
 			genericParameters = new List<WolfGenerator.Core.AST.Type>();
 			WolfGenerator.Core.AST.Type generic; 
 			Get();
@@ -321,7 +366,7 @@ public RuleClassStatement ruleClassStatement;
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
-			Expect(18);
+			Expect(22);
 		}
 		type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); 
 	}
@@ -337,10 +382,13 @@ public RuleClassStatement ruleClassStatement;
 		}
 		
 		bool[,] set = {
-		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,x, x,T,T,T, x},
-		{x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, x}
+		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x},
+		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x},
+		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, x},
+		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x},
+		{x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, x}
 
 		};
 	} // end Parser
@@ -376,9 +424,20 @@ public RuleClassStatement ruleClassStatement;
 			case 14: s = "\")\" expected"; break;
 			case 15: s = "\"<%=\" expected"; break;
 			case 16: s = "\"<%join\" expected"; break;
-			case 17: s = "\"<\" expected"; break;
-			case 18: s = "\">\" expected"; break;
-			case 19: s = "??? expected"; break;
+			case 17: s = "\"<%apply\" expected"; break;
+			case 18: s = "\"([\" expected"; break;
+			case 19: s = "\"])\" expected"; break;
+			case 20: s = "\"from\" expected"; break;
+			case 21: s = "\"<\" expected"; break;
+			case 22: s = "\">\" expected"; break;
+			case 23: s = "??? expected"; break;
+			case 24: s = "this symbol not expected in RuleMethodStart"; break;
+			case 25: s = "this symbol not expected in Value"; break;
+			case 26: s = "this symbol not expected in Join"; break;
+			case 27: s = "this symbol not expected in RuleMethodEnd"; break;
+			case 28: s = "invalid Apply"; break;
+			case 29: s = "this symbol not expected in Apply"; break;
+			case 30: s = "this symbol not expected in Apply"; break;
 
 				default: s = "error " + n; break;
 			}
@@ -522,15 +581,15 @@ namespace WolfGenerator.Core {
 		const char EOL = '\n';
 		const int eofSym = 0; /* pdt */
 	const int charSetSize = 256;
-	const int maxT = 19;
-	const int noSym = 19;
+	const int maxT = 23;
+	const int noSym = 23;
 	short[] start = {
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0, 10,  0,  0, 17,  0,  5, 30, 32,  0,  0, 31,  0, 29,  0,
-	  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0, 39,  0, 38,  0,
+	  0,  0, 10,  0,  0, 17,  0,  5, 47, 31,  0,  0, 30,  0, 29,  0,
+	  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0, 46,  0, 45,  0,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,
+	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0, 43,  0,  0,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
 	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -629,6 +688,7 @@ namespace WolfGenerator.Core {
 
 		void CheckLiteral() {
 		switch (t.val) {
+			case "from": t.kind = 20; break;
 			default: break;
 		}
 		}
@@ -646,7 +706,7 @@ namespace WolfGenerator.Core {
 				case 0: { t.kind = noSym; break; }   // NextCh already done
 			case 1:
 				if ((ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z')) {AddCh(); goto case 1;}
-				else {t.kind = 1; break;}
+				else {t.kind = 1; t.val = new String(tval, 0, tlen); CheckLiteral(); return t;}
 			case 2:
 				if ((ch >= '0' && ch <= '9')) {AddCh(); goto case 2;}
 				else {t.kind = 2; break;}
@@ -729,46 +789,69 @@ namespace WolfGenerator.Core {
 			case 29:
 				{t.kind = 10; break;}
 			case 30:
-				{t.kind = 12; break;}
-			case 31:
 				{t.kind = 13; break;}
-			case 32:
+			case 31:
 				{t.kind = 14; break;}
-			case 33:
+			case 32:
 				{t.kind = 15; break;}
+			case 33:
+				if (ch == 'o') {AddCh(); goto case 34;}
+				else {t.kind = noSym; break;}
 			case 34:
-				if (ch == 'o') {AddCh(); goto case 35;}
+				if (ch == 'i') {AddCh(); goto case 35;}
 				else {t.kind = noSym; break;}
 			case 35:
-				if (ch == 'i') {AddCh(); goto case 36;}
+				if (ch == 'n') {AddCh(); goto case 36;}
 				else {t.kind = noSym; break;}
 			case 36:
-				if (ch == 'n') {AddCh(); goto case 37;}
-				else {t.kind = noSym; break;}
-			case 37:
 				{t.kind = 16; break;}
+			case 37:
+				if (ch == 'p') {AddCh(); goto case 38;}
+				else {t.kind = noSym; break;}
 			case 38:
-				{t.kind = 18; break;}
+				if (ch == 'p') {AddCh(); goto case 39;}
+				else {t.kind = noSym; break;}
 			case 39:
-				if (ch == '%') {AddCh(); goto case 40;}
-				else {t.kind = 17; break;}
+				if (ch == 'l') {AddCh(); goto case 40;}
+				else {t.kind = noSym; break;}
 			case 40:
-				if (ch == 'r') {AddCh(); goto case 41;}
-				else if (ch == 'e') {AddCh(); goto case 19;}
-				else if (ch == 'u') {AddCh(); goto case 24;}
-				else if (ch == '=') {AddCh(); goto case 33;}
-				else if (ch == 'j') {AddCh(); goto case 34;}
+				if (ch == 'y') {AddCh(); goto case 41;}
 				else {t.kind = noSym; break;}
 			case 41:
-				if (ch == 'u') {AddCh(); goto case 42;}
-				else {t.kind = noSym; break;}
+				{t.kind = 17; break;}
 			case 42:
-				if (ch == 'l') {AddCh(); goto case 43;}
-				else {t.kind = noSym; break;}
+				{t.kind = 18; break;}
 			case 43:
-				if (ch == 'e') {AddCh(); goto case 44;}
+				if (ch == ')') {AddCh(); goto case 44;}
 				else {t.kind = noSym; break;}
 			case 44:
+				{t.kind = 19; break;}
+			case 45:
+				{t.kind = 22; break;}
+			case 46:
+				if (ch == '%') {AddCh(); goto case 48;}
+				else {t.kind = 21; break;}
+			case 47:
+				if (ch == '[') {AddCh(); goto case 42;}
+				else {t.kind = 12; break;}
+			case 48:
+				if (ch == 'r') {AddCh(); goto case 49;}
+				else if (ch == 'e') {AddCh(); goto case 19;}
+				else if (ch == 'u') {AddCh(); goto case 24;}
+				else if (ch == '=') {AddCh(); goto case 32;}
+				else if (ch == 'j') {AddCh(); goto case 33;}
+				else if (ch == 'a') {AddCh(); goto case 37;}
+				else {t.kind = noSym; break;}
+			case 49:
+				if (ch == 'u') {AddCh(); goto case 50;}
+				else {t.kind = noSym; break;}
+			case 50:
+				if (ch == 'l') {AddCh(); goto case 51;}
+				else {t.kind = noSym; break;}
+			case 51:
+				if (ch == 'e') {AddCh(); goto case 52;}
+				else {t.kind = noSym; break;}
+			case 52:
 				if (ch == 'c') {AddCh(); goto case 12;}
 				else {t.kind = 11; break;}
 

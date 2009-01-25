@@ -9,6 +9,7 @@
 <%join "\r\n"%>
 	<%= "Test" %>
 	<%= "Test 2" %>
+	<%apply Test([ item, Method() ]) from value%>
 <%end%>
 <%end%>
 

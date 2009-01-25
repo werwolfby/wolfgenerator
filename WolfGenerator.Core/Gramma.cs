@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 9:15:03
+// Compiled by vsCoco on 25.01.2009 9:44:20
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -195,15 +195,16 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 	void RuleMethodStart() {
+		Variable var = null; 
 		Expect(11);
 		Expect(1);
 		Console.WriteLine( "rule : " + t.val ); 
 		Expect(12);
 		if (la.kind == 1) {
-			Var();
+			Var(out var);
 			while (la.kind == 13) {
 				Get();
-				Var();
+				Var(out var);
 			}
 		}
 		Expect(14);
@@ -227,10 +228,11 @@ public RuleClassStatement ruleClassStatement;
 		Expect(8);
 	}
 
-	void Var() {
+	void Var(out Variable var) {
 		WolfGenerator.Core.AST.Type type; 
 		Type(out type);
 		Expect(1);
+		var = new Variable( t.val, type ); 
 	}
 
 	void Type(out WolfGenerator.Core.AST.Type type) {

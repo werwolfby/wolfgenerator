@@ -61,7 +61,8 @@ RuleMethod = RuleMethodStart (. int startPos = t.pos + t.val.Length; .)
  Value                     
  } RuleMethodEnd.
 
-RuleMethodStart = "<%rule" ident (. Console.WriteLine( "rule : " + t.val ); .) "(" [Var { "," Var } ] ")" "%>".
+RuleMethodStart = (. Variable var = null; .)
+                  "<%rule" ident (. Console.WriteLine( "rule : " + t.val ); .) "(" [Var<out var> { "," Var<out var> } ] ")" "%>".
 RuleMethodEnd   = "<%end%>".
 
 Value           = 
@@ -85,7 +86,8 @@ Type<out WolfGenerator.Core.AST.Type type> =                                    
         } ">" ]                                                                       (. type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); .)
         .
 
-Var =                                                                                 (. WolfGenerator.Core.AST.Type type; .)
-      Type<out type> ident.
+Var<out Variable var> =                                                               (. WolfGenerator.Core.AST.Type type; .)
+      Type<out type> ident                                                            (. var = new Variable( t.val, type ); .)
+      .
 
 END WolfGenerator.

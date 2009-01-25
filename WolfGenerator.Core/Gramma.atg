@@ -1,0 +1,76 @@
+﻿using System;
+using System.Collections.Generic;
+using WolfGenerator.Core.AST;
+
+COMPILER WolfGenerator
+
+	public RuleClassStatement ruleclassStatement;
+
+CHARACTERS
+	letter    = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
+	digit     = "0123456789".
+	cr        = '\r'.
+	lf        = '\n'.
+	tab       = '\t'.
+	stringCh  = ANY - '"' - '\\' - cr - lf.
+	charCh    = ANY - '\'' - '\\' - cr - lf.
+	printable = '\u0020' .. '\u007e'.
+	hex       = "0123456789abcdef".
+
+TOKENS
+
+	ident     = letter { letter | digit }.
+
+	number    = digit { digit }.
+	string    = '"' { stringCh | '\\' printable } '"'.
+	badString = '"' { stringCh | '\\' printable } (cr | lf).
+	char      = '\'' ( charCh | '\\' printable { hex } ) '\''.
+
+IGNORE cr + lf + tab
+
+
+PRODUCTIONS
+
+WolfGenerator =                                                                    (. List<UsingStatement> usingStatementList = null; .) 
+                RuleClassStart {                                                   (. UsingStatement usingStatement; .)
+                 Using<out usingStatement>                                         (. if (usingStatementList == null) usingStatementList = new List<UsingStatement>();
+                                                                                      usingStatementList.Add( usingStatement ); .)
+                 }
+                {RuleMethod
+                 } RuleClassEnd.
+
+RuleClassStart = "<%ruleclass" ident (. System.Console.WriteLine( "Rule class : " + t.val ); .) "%>".
+RuleClassEnd   = "<%end%>".
+
+Using<out UsingStatement usingStatement>                                                            
+(. List<string> namespaceList = new List<string>(); .) 
+=
+	"<%using" ident                                                                     (. namespaceList.Add( t.val ); .)
+	{ "."  ident                                                                        (. namespaceList.Add( t.val ); .)
+	}                                                                                   (. string namespaceName = string.Join( ".", namespaceList.ToArray() );
+	                                                                                       usingStatement = new UsingStatement( namespaceName ); .)
+	"%>".
+
+RuleMethod = RuleMethodStart (. int startPos = t.pos + t.val.Length; .)
+{ANY 
+ |                           (. Console.WriteLine( "| '{0}'", scanner.buffer.GetString( startPos, la.pos ) ); .)
+ Value                     
+ } RuleMethodEnd.
+
+RuleMethodStart = "<%rule" ident (. Console.WriteLine( "rule : " + t.val ); .) "(" [Var { "," Var } ] ")" "%>".
+RuleMethodEnd   = "<%end%>".
+
+Value           = 
+                  "<%="                                                               (. int pos = t.pos + 3; .)
+                  {ANY                                                                (.  .)
+                  }                                                                   
+                  "%>"                                                                (. int endPos = t.pos;
+                                                                                         string value = scanner.buffer.GetString( pos, endPos );
+                                                                                         Console.WriteLine( "value: " + value );  .)
+                  .
+
+Type = ident [ "<" Type { "," Type } ">" ].
+
+Var = Type ident.
+
+END WolfGenerator.

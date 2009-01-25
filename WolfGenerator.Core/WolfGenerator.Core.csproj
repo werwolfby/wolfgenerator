@@ -56,7 +56,18 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AST\RuleClassStatement.cs" />
+    <Compile Include="AST\RuleMethodStatement.cs" />
+    <Compile Include="AST\RuleStatement.cs" />
+    <Compile Include="AST\TextStatement.cs" />
+    <Compile Include="AST\UsingStatement.cs" />
+    <Compile Include="AST\ValueStatement.cs" />
     <Compile Include="CustomToolGenerator.cs" />
+    <Compile Include="Gramma.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Gramma.atg</DependentUpon>
+    </Compile>
     <Compile Include="RuleAnalizers\ApplyRuleAnalizer.cs" />
     <Compile Include="RuleAnalizers\CallRuleAnalizer.cs" />
     <Compile Include="CodeGenerator.cs" />
@@ -89,6 +100,10 @@
     <None Include="Diagrams\Rule String Diagram.cd" />
     <None Include="Diagrams\Rule Node Diagram.cd" />
     <None Include="Generator.reg" />
+    <None Include="Gramma.atg">
+      <Generator>Coco</Generator>
+      <LastGenOutput>Gramma.cs</LastGenOutput>
+    </None>
     <None Include="test.snk" />
   </ItemGroup>
   <ItemGroup>

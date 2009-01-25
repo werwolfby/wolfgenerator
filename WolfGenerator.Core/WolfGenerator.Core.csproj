@@ -60,8 +60,10 @@
     <Compile Include="AST\RuleMethodStatement.cs" />
     <Compile Include="AST\RuleStatement.cs" />
     <Compile Include="AST\TextStatement.cs" />
+    <Compile Include="AST\Type.cs" />
     <Compile Include="AST\UsingStatement.cs" />
     <Compile Include="AST\ValueStatement.cs" />
+    <Compile Include="AST\Variable.cs" />
     <Compile Include="CustomToolGenerator.cs" />
     <Compile Include="Gramma.cs">
       <AutoGen>True</AutoGen>

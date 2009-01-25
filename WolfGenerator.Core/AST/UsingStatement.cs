@@ -16,7 +16,7 @@
 namespace WolfGenerator.Core.AST
 {
 	/// <summary>
-	/// EBNF: Using = <%using ident { .  ident } %>.
+	/// EBNF: Using = &lt;%using ident { .  ident } %&gt;.
 	/// </summary>
 	public class UsingStatement
 	{

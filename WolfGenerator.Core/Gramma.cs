@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 8:45:44
+// Compiled by vsCoco on 25.01.2009 8:58:18
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -233,6 +233,10 @@ public RuleClassStatement ruleClassStatement;
 
 	void Type() {
 		Expect(1);
+		while (la.kind == 10) {
+			Get();
+			Expect(1);
+		}
 		if (la.kind == 16) {
 			Get();
 			Type();

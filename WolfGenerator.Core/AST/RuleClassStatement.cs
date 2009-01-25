@@ -23,8 +23,8 @@ namespace WolfGenerator.Core.AST
 {
 	/// <summary>
 	/// EBNF: RuleClass = RuleClassStart {Using} {RuleMethod} RuleClassEnd.
-	///       RuleClassStart = <%ruleclass ident %>.
-	///       RuleClassEnd = <%end%>.
+	///       RuleClassStart = lt;%ruleclass ident %&gt;.
+	///       RuleClassEnd = &lt;%end%&gt;.
 	/// </summary>
 	public class RuleClassStatement
 	{

@@ -72,7 +72,7 @@ Value           =
                                                                                          Console.WriteLine( "value: " + value );  .)
                   .
 
-Type = ident [ "<" Type { "," Type } ">" ].
+Type = ident { "." ident } [ "<" Type { "," Type } ">" ].
 
 Var = Type ident.
 

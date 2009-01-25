@@ -1,6 +1,7 @@
 using System;
 using WolfGenerator.Core;
 using CodeWriter=WolfGenerator.Core.Writer.CodeWriter;
+using Generator=WolfGenerator.Core.Writer.Generator;
 
 namespace Example.WolfGenerator
 {
@@ -13,41 +14,7 @@ namespace Example.WolfGenerator
 
 			parser.Parse();
 
-			//Console.WriteLine( parser.ruleClassStatement.ToString() );
-
-			var writer = new CodeWriter();
-
-			writer.AppendLine( "using WolfGenerator.Core" );
-			writer.AppendLine( "using System.Collection" );
-
-			writer.AppendLine();
-			
-			writer.AppendLine( "namespace Example" );
-			writer.AppendLine( "{" );
-			writer.Indent++;
-			writer.AppendLine();
-
-			writer.Append( "class " );
-			writer.AppendLine( "Test" );
-			writer.AppendLine( "{" );
-			writer.Indent++;
-
-			writer.AppendLine( "static void Main()" );
-			writer.AppendLine( "{" );
-			writer.Indent++;
-
-			writer.AppendLine( "System.Console.WriteLine( \"Test string\" );" );
-
-			writer.Indent--;
-			writer.AppendLine( "}" );
-
-			writer.Indent--;
-			writer.AppendLine( "}" );
-
-			writer.Indent--;
-			writer.AppendLine( "}" );
-
-			Console.WriteLine( writer.ToString() );
+			Console.WriteLine( Generator.Generate( parser.ruleClassStatement ).ToString() );
 		}
 	}
 }

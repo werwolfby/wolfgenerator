@@ -12,6 +12,8 @@
  *   25.01.2009 23:11 - Add split text on lines & support check for crop last line.
  *   25.01.2009 23:20 - Fix: if crop last line don't add this empty line to lines.
  *   25.01.2009 23:29 - Fix: counting indent.
+ *   26.01.2009 00:37 - Implement Generate method.
+ *   26.01.2009 00:48 - Some fixes int Generate method.
  *
  *******************************************************/
 
@@ -57,6 +59,20 @@ namespace WolfGenerator.Core.AST
 		public bool CropLastLine
 		{
 			get { return this.cropLastLine; }
+		}
+
+		public override void Generate( Writer.CodeWriter writer, string innerWriter )
+		{
+			for (var i = 0; i < this.lines.Count; i++)
+			{
+				var line = this.lines[i];
+
+				writer.Append( innerWriter );
+				if (i == this.lines.Count - 1 && cropLastLine) writer.Append( ".Append( \"" );
+				else writer.Append( ".AppendLine( \"" );
+				writer.Append( line.GetText().Replace( "\"", "\\\"" ) );
+				writer.AppendLine( "\" );" );
+			}
 		}
 
 		public override string ToString()

@@ -10,6 +10,7 @@
  *   25.01.2009 11:30 - Create Wireframe
  *   25.01.2009 11:33 - Add String property.
  *   25.01.2009 11:51 - Add Statements property & extend ToString method.
+ *   26.01.2009 00:38 - Add Generate method without implementation.
  *
  *******************************************************/
 
@@ -37,6 +38,11 @@ namespace WolfGenerator.Core.AST
 		public IList<RuleStatement> Statements
 		{
 			get { return this.statements; }
+		}
+
+		public override void Generate( Writer.CodeWriter writer, string innerWriter )
+		{
+			//throw new System.NotImplementedException();
 		}
 
 		public override string ToString()

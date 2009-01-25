@@ -9,6 +9,8 @@
  * History:
  *   25.01.2009 21:55 - Create Wireframe
  *   25.01.2009 22:18 - Add EmptyLine support.
+ *   26.01.2009 00:40 - When AppendLine() if lastLine exist just complete it line,
+ *                      else add EmptyLine.
  *
  *******************************************************/
 
@@ -36,7 +38,8 @@ namespace WolfGenerator.Core.Writer
 
 		public void AppendLine()
 		{
-			this.lines.Add( EmptyLine.Instance );
+			if (this.lastLine != null) this.lastLine = null;
+			else this.lines.Add( EmptyLine.Instance );
 		}
 
 		public void AppendLine( string text )

@@ -8,6 +8,7 @@
  * 
  * History:
  *   25.01.2009 12:08 - Create Wireframe
+ *   26.01.2009 00:38 - Add Generate method without implementation.
  *
  *******************************************************/
 
@@ -41,6 +42,11 @@ namespace WolfGenerator.Core.AST
 		public string From
 		{
 			get { return this.from; }
+		}
+
+		public override void Generate( Writer.CodeWriter writer, string innerWriter )
+		{
+			//throw new System.NotImplementedException();
 		}
 
 		public override string ToString()

@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 12:28:59
+// Compiled by vsCoco on 25.01.2009 23:13:32
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -82,7 +82,7 @@ public RuleClassStatement ruleClassStatement;
 			if (ifEnd)
 			{
 				if (text.EndsWith( "\r\n" )) endIndex = 2;
-				if (text.EndsWith( "\n" )) endIndex = 1;
+				else if (text.EndsWith( "\n" )) endIndex = 1;
 			}
 			if (text.Length - endIndex - startIndex > 0)
 			{

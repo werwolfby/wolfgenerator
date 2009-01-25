@@ -9,6 +9,7 @@
  * History:
  *   25.01.2009 08:59 - Create Wireframe
  *   25.01.2009 09:02 - Override ToStringMethod.
+ *   25.01.2009 09:06 - Fix: ToString - return <Type> <Name>
  *
  *******************************************************/
 
@@ -40,7 +41,7 @@ namespace WolfGenerator.Core.AST
 
 		public override string ToString()
 		{
-			return name + " " + type;
+			return type + " " + name;
 		}
 	}
 }

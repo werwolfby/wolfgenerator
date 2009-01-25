@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using WolfGenerator.Core.AST;
 
@@ -72,8 +73,19 @@ Value           =
                                                                                          Console.WriteLine( "value: " + value );  .)
                   .
 
-Type = ident { "." ident } [ "<" Type { "," Type } ">" ].
+Type<out WolfGenerator.Core.AST.Type type> =                                          (. StringBuilder name = new StringBuilder(); 
+                                                                                         List<WolfGenerator.Core.AST.Type> genericParameters = null; .)
+       ident                                                                          (. name.Append( t.val ); .)
+        { "." 
+        ident                                                                         (. name.Append( '.' ); name.Append( t.val ); .)
+        } [                                                                           (. genericParameters = new List<WolfGenerator.Core.AST.Type>();
+                                                                                         WolfGenerator.Core.AST.Type generic; .)
+        "<" Type<out generic>                                                         (. genericParameters.Add( generic ); .)
+        { "," Type<out generic>                                                       (. genericParameters.Add( generic ); .)
+        } ">" ]                                                                       (. type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); .)
+        .
 
-Var = Type ident.
+Var =                                                                                 (. WolfGenerator.Core.AST.Type type; .)
+      Type<out type> ident.
 
 END WolfGenerator.

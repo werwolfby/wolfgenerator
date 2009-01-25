@@ -9,7 +9,9 @@
 <%end%>
 
 <%rule Test( int value, object a )%>
+Extend value
 Int : <%= value.ToString() %>
+New line
 <%end%>
 
 <%rule Test( string value, object a )%>

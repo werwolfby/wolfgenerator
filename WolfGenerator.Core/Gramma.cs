@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 10:32:24
+// Compiled by vsCoco on 25.01.2009 11:21:48
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -66,6 +66,32 @@ namespace WolfGenerator.Core {
 		int errDist = minErrDist;
 
 public RuleClassStatement ruleClassStatement;
+	
+	int AddStatement( bool isStart, int startPos, List<RuleStatement> statements, bool ifEnd )
+	{
+		string text = scanner.buffer.GetString( startPos, la.pos );
+		if (!string.IsNullOrEmpty( text ))
+		{
+			int startIndex = 0;
+			int endIndex = 0;
+			if (isStart)
+			{
+				if (text.StartsWith( "\r\n" )) startIndex = 2;
+				else if (text.StartsWith( "\n" )) startIndex = 1;
+			}
+			if (ifEnd)
+			{
+				if (text.EndsWith( "\r\n" )) endIndex = 2;
+				if (text.EndsWith( "\n" )) endIndex = 1;
+			}
+			if (text.Length - endIndex - startIndex > 0)
+			{
+				if (startIndex > 0 || endIndex > 0) text = text.Substring( startIndex, text.Length - endIndex - startIndex );
+				statements.Add( new TextStatement( text ) );
+			}
+		}
+		return la.pos;
+	}
 
 
 		public Parser(Scanner scanner) {
@@ -182,19 +208,24 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 	void RuleMethod(out RuleMethodStatement statement) {
-		string methodName; IList<Variable> variables; 
+		string methodName; IList<Variable> variables;
+		List<RuleStatement> statements = new List<RuleStatement>();
+		bool isStart = true;
+		ValueStatement valueStatement; 
 		RuleMethodStart(out methodName, out variables);
 		int startPos = t.pos + t.val.Length; 
 		while (StartOf(1)) {
 			if (StartOf(2)) {
 				Get();
 			} else {
-				Console.WriteLine( "| '{0}'", scanner.buffer.GetString( startPos, la.pos ) ); 
-				Value();
+				AddStatement( isStart, startPos, statements, false ); 
+				Value(out valueStatement);
+				statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; 
 			}
 		}
+		AddStatement( isStart, startPos, statements, true ); 
 		RuleMethodEnd();
-		statement = new RuleMethodStatement( methodName, variables, null ); 
+		statement = new RuleMethodStatement( methodName, variables, statements ); 
 	}
 
 	void RuleClassEnd() {
@@ -223,7 +254,7 @@ public RuleClassStatement ruleClassStatement;
 		variables = variableList.AsReadOnly(); 
 	}
 
-	void Value() {
+	void Value(out ValueStatement valueStatement) {
 		Expect(15);
 		int pos = t.pos + 3; 
 		while (StartOf(3)) {
@@ -233,7 +264,7 @@ public RuleClassStatement ruleClassStatement;
 		Expect(7);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
-		Console.WriteLine( "value: " + value );  
+		valueStatement = new ValueStatement( value.Trim() );  
 	}
 
 	void RuleMethodEnd() {

@@ -8,6 +8,7 @@
  * 
  * History:
  *   25.01.2009 08:28 - Create Wireframe
+ *   25.01.2009 10:55 - Override ToString method.
  *
  *******************************************************/
 
@@ -25,6 +26,11 @@ namespace WolfGenerator.Core.AST
 		public string Value
 		{
 			get { return this.value; }
+		}
+
+		public override string ToString()
+		{
+			return "<%= " + value + " %>";
 		}
 	}
 }

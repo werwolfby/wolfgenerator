@@ -14,6 +14,8 @@
  *   25.01.2009 08:45 - Add Name property.
  *   25.01.2009 08:48 - Override ToString method.
  *   25.01.2009 10:38 - Extend ToString() method.
+ *   25.01.2009 10:57 - Exted ToString method (check if contains any using 
+ *                      statements and rule method statements).
  *
  *******************************************************/
 
@@ -61,7 +63,7 @@ namespace WolfGenerator.Core.AST
 
 			builder.AppendLine( "<%ruleclass " + name + "%>" );
             
-			if (usingStatements != null)
+			if (usingStatements != null && usingStatements.Count > 0)
 			{
 				builder.AppendLine();
 				foreach (var usingStatement in usingStatements)
@@ -70,7 +72,7 @@ namespace WolfGenerator.Core.AST
 				}
 			}
 
-			if (ruleMethodStatements != null)
+			if (ruleMethodStatements != null && ruleMethodStatements.Count > 0)
 			{
 				builder.AppendLine();
 				foreach (var ruleMethodStatement in ruleMethodStatements)

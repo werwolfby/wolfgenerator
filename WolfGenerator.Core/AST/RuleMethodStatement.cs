@@ -12,6 +12,7 @@
  *   25.01.2009 08:52 - Add EBNF.
  *   25.01.2009 10:14 - Add Name, Variable properties.
  *   25.01.2009 10:39 - Override ToString() method.
+ *   25.01.2009 10:57 - Exted ToString method (check if contains any statement).
  *
  *******************************************************/
 
@@ -78,7 +79,7 @@ namespace WolfGenerator.Core.AST
 
 			builder.AppendLine( "%>" );
 
-			if (statements != null)
+			if (statements != null && statements.Count > 0)
 			{
 				foreach (var statement in statements)
 					builder.Append( statement );

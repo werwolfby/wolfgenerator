@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 11:42:08
+// Compiled by vsCoco on 25.01.2009 11:49:45
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -273,13 +273,20 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 	void Join(out JoinStatement joinStatement) {
-		string @string; 
+		string @string;
+		List<RuleStatement> statements = null;
+		ValueStatement valueStatement; 
 		Expect(16);
 		Expect(3);
 		@string = t.val.Substring( 1, t.val.Length - 2 ); 
 		Expect(7);
+		while (la.kind == 15) {
+			Value(out valueStatement);
+			if (statements == null) statements = new List<RuleStatement>();
+			statements.Add( valueStatement ); 
+		}
 		Expect(8);
-		joinStatement = new JoinStatement( @string ); 
+		joinStatement = new JoinStatement( @string, statements ); 
 	}
 
 	void RuleMethodEnd() {

@@ -6,7 +6,10 @@
 <%using System.Collections.Generic%>
 
 <%rule Main( IEnumerable value )%>
-<%join "\r\n"%><%end%>
+<%join "\r\n"%>
+	<%= "Test" %>
+	<%= "Test 2" %>
+<%end%>
 <%end%>
 
 <%rule Test( int value, object a )%>

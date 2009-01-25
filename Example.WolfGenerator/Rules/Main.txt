@@ -6,16 +6,17 @@
 <%using System.Collections.Generic%>
 
 <%rule Main( IEnumerable value )%>
-<%join "\r\n"%>
-	<%= "Test" %>
-	<%= "Test 2" %>
-	<%apply Test([ item, Method() ]) from value%>
-<%end%>
+	<%join "\r\n"%>
+		<%= "Test" %>
+		<%= "Test 2" %>
+		<%apply Test([ item, "s" ]) from value%>
+	<%end%>
 <%end%>
 
 <%rule Test( int value, object a )%>
 Extend value
-Int : <%= value.ToString() %>
+Int : 
+<%= value.ToString() %>
 New line
 <%end%>
 

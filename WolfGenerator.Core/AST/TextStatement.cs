@@ -10,6 +10,8 @@
  *   25.01.2009 08:27 - Create Wireframe
  *   25.01.2009 10:51 - Override ToString method.
  *   25.01.2009 23:11 - Add split text on lines & support check for crop last line.
+ *   25.01.2009 23:20 - Fix: if crop last line don't add this empty line to lines.
+ *   25.01.2009 23:29 - Fix: counting indent.
  *
  *******************************************************/
 
@@ -27,21 +29,22 @@ namespace WolfGenerator.Core.AST
 		public TextStatement( string text )
 		{
 			this.text = text;
-			this.Lines = lines.AsReadOnly();
+			this.Lines = this.lines.AsReadOnly();
 
 			var tmpLines = text.Replace( "\r\n", "\n" ).Split( '\n' );
-			for (var i = 0; i < tmpLines.Length; i++)
+			if (tmpLines[tmpLines.Length - 1] == "") this.cropLastLine = true;
+
+			for (var i = 0; i < (this.cropLastLine ? tmpLines.Length - 1 : tmpLines.Length); i++)
 			{
-				if (tmpLines[i] == "") lines.Add( EmptyLine.Instance );
+				if (tmpLines[i] == "") this.lines.Add( EmptyLine.Instance );
 				else
 				{
 					var indent = 0;
-					while (tmpLines[i][indent] == '\t')
+					while (indent < tmpLines[i].Length && tmpLines[i][indent] == '\t')
 						indent++;
-					lines.Add( new Line( indent, tmpLines[i].Substring( indent ) ) );
+					this.lines.Add( new Line( indent, tmpLines[i].Substring( indent ) ) );
 				}
 			}
-			if (tmpLines[tmpLines.Length - 1] == "") cropLastLine = true;
 		}
 
 		public string Text
@@ -58,7 +61,7 @@ namespace WolfGenerator.Core.AST
 
 		public override string ToString()
 		{
-			return text;
+			return this.text;
 		}
 	}
 }

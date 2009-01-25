@@ -88,12 +88,15 @@ Using<out UsingStatement usingStatement>
 RuleMethod<out RuleMethodStatement statement>                                      (. string methodName; IList<Variable> variables;
                                                                                       List<RuleStatement> statements = new List<RuleStatement>();
                                                                                       bool isStart = true;
-                                                                                      ValueStatement valueStatement; .)
+                                                                                      ValueStatement valueStatement;
+                                                                                      JoinStatement joinStatement; .)
                     = RuleMethodStart<out methodName, out variables>               (. int startPos = t.pos + t.val.Length; .)
                      { 
                       ANY 
                       |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
                       Value<out valueStatement>                                    (. statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                      |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
+                      Join<out joinStatement>                                      (. statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       } 
                                                                                    (. AddStatement( isStart, startPos, statements, true ); .)
                       RuleMethodEnd                                                (. statement = new RuleMethodStatement( methodName, variables, statements ); .)
@@ -117,6 +120,13 @@ Value<out ValueStatement valueStatement>
                   "%>"                                                             (. int endPos = t.pos;
                                                                                       string value = scanner.buffer.GetString( pos, endPos );
                                                                                       valueStatement = new ValueStatement( value.Trim() );  .)
+                  .
+
+Join<out JoinStatement joinStatement>                                              (. string @string; .)
+                = 
+                  "<%join" string                                                  (. @string = t.val.Substring( 1, t.val.Length - 2 ); .)
+                  "%>" 
+                  "<%end%>"                                                        (. joinStatement = new JoinStatement( @string ); .)
                   .
 
 Type<out WolfGenerator.Core.AST.Type type> =                                       (. StringBuilder name = new StringBuilder(); 

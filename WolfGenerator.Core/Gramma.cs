@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 11:21:48
+// Compiled by vsCoco on 25.01.2009 11:42:08
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -52,7 +52,7 @@ namespace WolfGenerator.Core {
 	const int _string = 3;
 	const int _badString = 4;
 	const int _char = 5;
-	const int maxT = 18;
+	const int maxT = 19;
 
 		const bool T = true;
 		const bool x = false;
@@ -211,16 +211,21 @@ public RuleClassStatement ruleClassStatement;
 		string methodName; IList<Variable> variables;
 		List<RuleStatement> statements = new List<RuleStatement>();
 		bool isStart = true;
-		ValueStatement valueStatement; 
+		ValueStatement valueStatement;
+		JoinStatement joinStatement; 
 		RuleMethodStart(out methodName, out variables);
 		int startPos = t.pos + t.val.Length; 
 		while (StartOf(1)) {
 			if (StartOf(2)) {
 				Get();
-			} else {
+			} else if (la.kind == 15) {
 				AddStatement( isStart, startPos, statements, false ); 
 				Value(out valueStatement);
 				statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; 
+			} else {
+				AddStatement( isStart, startPos, statements, false ); 
+				Join(out joinStatement);
+				statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; 
 			}
 		}
 		AddStatement( isStart, startPos, statements, true ); 
@@ -267,6 +272,16 @@ public RuleClassStatement ruleClassStatement;
 		valueStatement = new ValueStatement( value.Trim() );  
 	}
 
+	void Join(out JoinStatement joinStatement) {
+		string @string; 
+		Expect(16);
+		Expect(3);
+		@string = t.val.Substring( 1, t.val.Length - 2 ); 
+		Expect(7);
+		Expect(8);
+		joinStatement = new JoinStatement( @string ); 
+	}
+
 	void RuleMethodEnd() {
 		Expect(8);
 	}
@@ -288,7 +303,7 @@ public RuleClassStatement ruleClassStatement;
 			Expect(1);
 			name.Append( '.' ); name.Append( t.val ); 
 		}
-		if (la.kind == 16) {
+		if (la.kind == 17) {
 			genericParameters = new List<WolfGenerator.Core.AST.Type>();
 			WolfGenerator.Core.AST.Type generic; 
 			Get();
@@ -299,7 +314,7 @@ public RuleClassStatement ruleClassStatement;
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
-			Expect(17);
+			Expect(18);
 		}
 		type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); 
 	}
@@ -315,10 +330,10 @@ public RuleClassStatement ruleClassStatement;
 		}
 		
 		bool[,] set = {
-		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,x, T,T,T,x},
-		{x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,x}
+		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, x},
+		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,x, x,T,T,T, x},
+		{x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, x}
 
 		};
 	} // end Parser
@@ -353,9 +368,10 @@ public RuleClassStatement ruleClassStatement;
 			case 13: s = "\",\" expected"; break;
 			case 14: s = "\")\" expected"; break;
 			case 15: s = "\"<%=\" expected"; break;
-			case 16: s = "\"<\" expected"; break;
-			case 17: s = "\">\" expected"; break;
-			case 18: s = "??? expected"; break;
+			case 16: s = "\"<%join\" expected"; break;
+			case 17: s = "\"<\" expected"; break;
+			case 18: s = "\">\" expected"; break;
+			case 19: s = "??? expected"; break;
 
 				default: s = "error " + n; break;
 			}
@@ -499,13 +515,13 @@ namespace WolfGenerator.Core {
 		const char EOL = '\n';
 		const int eofSym = 0; /* pdt */
 	const int charSetSize = 256;
-	const int maxT = 18;
-	const int noSym = 18;
+	const int maxT = 19;
+	const int noSym = 19;
 	short[] start = {
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0, 10,  0,  0, 17,  0,  5, 30, 32,  0,  0, 31,  0, 29,  0,
-	  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0, 35,  0, 34,  0,
+	  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0, 39,  0, 38,  0,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
 	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
@@ -714,26 +730,38 @@ namespace WolfGenerator.Core {
 			case 33:
 				{t.kind = 15; break;}
 			case 34:
-				{t.kind = 17; break;}
+				if (ch == 'o') {AddCh(); goto case 35;}
+				else {t.kind = noSym; break;}
 			case 35:
-				if (ch == '%') {AddCh(); goto case 36;}
-				else {t.kind = 16; break;}
+				if (ch == 'i') {AddCh(); goto case 36;}
+				else {t.kind = noSym; break;}
 			case 36:
-				if (ch == 'r') {AddCh(); goto case 37;}
+				if (ch == 'n') {AddCh(); goto case 37;}
+				else {t.kind = noSym; break;}
+			case 37:
+				{t.kind = 16; break;}
+			case 38:
+				{t.kind = 18; break;}
+			case 39:
+				if (ch == '%') {AddCh(); goto case 40;}
+				else {t.kind = 17; break;}
+			case 40:
+				if (ch == 'r') {AddCh(); goto case 41;}
 				else if (ch == 'e') {AddCh(); goto case 19;}
 				else if (ch == 'u') {AddCh(); goto case 24;}
 				else if (ch == '=') {AddCh(); goto case 33;}
+				else if (ch == 'j') {AddCh(); goto case 34;}
 				else {t.kind = noSym; break;}
-			case 37:
-				if (ch == 'u') {AddCh(); goto case 38;}
+			case 41:
+				if (ch == 'u') {AddCh(); goto case 42;}
 				else {t.kind = noSym; break;}
-			case 38:
-				if (ch == 'l') {AddCh(); goto case 39;}
+			case 42:
+				if (ch == 'l') {AddCh(); goto case 43;}
 				else {t.kind = noSym; break;}
-			case 39:
-				if (ch == 'e') {AddCh(); goto case 40;}
+			case 43:
+				if (ch == 'e') {AddCh(); goto case 44;}
 				else {t.kind = noSym; break;}
-			case 40:
+			case 44:
 				if (ch == 'c') {AddCh(); goto case 12;}
 				else {t.kind = 11; break;}
 

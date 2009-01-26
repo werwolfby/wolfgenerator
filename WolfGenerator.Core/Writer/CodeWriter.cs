@@ -14,6 +14,7 @@
  *   26.01.2009 10:39 - Add method AppendText.
  *   26.01.2009 11:02 - Fix: AppendText.
  *   26.01.2009 11:07 - Add method AppendLines. Fix: Append( CodeWriter ) use AppendLines.
+ *   27.01.2009 00:03 - BugFix: AppendLines - check if appending text contains any line.
  *
  *******************************************************/
 
@@ -54,7 +55,7 @@ namespace WolfGenerator.Core.Writer
 
 			if (this.lastLine != null)
 			{
-				this.lastLine.Append( textLines[0].GetText() );
+				if (textLines.Count > 0) this.lastLine.Append( textLines[0].GetText() );
 				startIndex = 1;
 			}
 

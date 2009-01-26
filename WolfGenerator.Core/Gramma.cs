@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.01.2009 23:13:32
+// Compiled by vsCoco on 26.01.2009 23:14:49
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -507,6 +507,19 @@ namespace WolfGenerator.Core {
 		Stream stream;      // input stream (seekable)
 		bool isUserStream;  // was the stream opened by the user?
 		
+	
+		protected Buffer(Buffer b) { // called in UTF8Buffer constructor
+			buf = b.buf;
+			bufStart = b.bufStart;
+			bufLen = b.bufLen;
+			fileLen = b.fileLen;
+			pos = b.pos;
+			stream = b.stream;
+			// keep destructor from closing the stream
+			b.stream = null;
+			isUserStream = b.isUserStream;
+		}
+		
 		public Buffer (Stream s, bool isUserStream) {
 			stream = s; this.isUserStream = isUserStream;
 			fileLen = bufLen = (int) s.Length;
@@ -526,7 +539,7 @@ namespace WolfGenerator.Core {
 			}
 		}
 		
-		public int Read () {
+		public virtual int Read () {
 			if (pos < bufLen) {
 				return buf[pos++];
 			} else if (Pos < fileLen) {
@@ -575,6 +588,44 @@ namespace WolfGenerator.Core {
 			}
 		}
 	}
+
+//-----------------------------------------------------------------------------------
+// UTF8Buffer
+//-----------------------------------------------------------------------------------
+public class UTF8Buffer: Buffer {
+	public UTF8Buffer(Buffer b): base(b) {}
+
+	public override int Read() {
+		int ch;
+		do {
+			ch = base.Read();
+			// until we find a uft8 start (0xxxxxxx or 11xxxxxx)
+		} while ((ch >= 128) && ((ch & 0xC0) != 0xC0) && (ch != EOF));
+		if (ch < 128 || ch == EOF) {
+			// nothing to do, first 127 chars are the same in ascii and utf8
+			// 0xxxxxxx or end of file character
+		} else if ((ch & 0xF0) == 0xF0) {
+			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+			int c1 = ch & 0x07; ch = base.Read();
+			int c2 = ch & 0x3F; ch = base.Read();
+			int c3 = ch & 0x3F; ch = base.Read();
+			int c4 = ch & 0x3F;
+			ch = (((((c1 << 6) | c2) << 6) | c3) << 6) | c4;
+		} else if ((ch & 0xE0) == 0xE0) {
+			// 1110xxxx 10xxxxxx 10xxxxxx
+			int c1 = ch & 0x0F; ch = base.Read();
+			int c2 = ch & 0x3F; ch = base.Read();
+			int c3 = ch & 0x3F;
+			ch = (((c1 << 6) | c2) << 6) | c3;
+		} else if ((ch & 0xC0) == 0xC0) {
+			// 110xxxxx 10xxxxxx
+			int c1 = ch & 0x1F; ch = base.Read();
+			int c2 = ch & 0x3F;
+			ch = (c1 << 6) | c2;
+		}
+		return ch;
+	}
+}
 
 	public class Scanner {
 		const char EOL = '\n';
@@ -654,6 +705,15 @@ namespace WolfGenerator.Core {
 			pos = -1; line = 1; lineStart = 0;
 			oldEols = 0;
 			NextCh();
+			if (ch == 0xEF) { // check optional byte order mark for UTF-8
+				NextCh(); int ch1 = ch;
+				NextCh(); int ch2 = ch;
+				if (ch1 != 0xBB || ch2 != 0xBF) {
+					throw new Exception(String.Format("illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2));
+				}
+				buffer = new UTF8Buffer(buffer);
+				NextCh();
+			}
 			ignore = new BitArray(charSetSize+1);
 			ignore[' '] = true;  // blanks are always white space
 		ignore[9] = true; ignore[10] = true; ignore[13] = true; 

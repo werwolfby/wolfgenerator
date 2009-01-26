@@ -80,11 +80,11 @@ namespace CustomToolGenerator
 		/// <summary>
 		/// method to get a service by its Type
 		/// </summary>
-		/// <param name="serviceType">Type of service to retrieve</param>
+ 		/// <typeparam name="T">Type of service to retrieve</typeparam>
 		/// <returns>an object that implements the requested service</returns>
-		protected object GetService( Type serviceType )
+		protected T GetService<T>()
 		{
-			return this.SiteServiceProvider.GetService( serviceType );
+			return (T)this.SiteServiceProvider.GetService( typeof(T) );
 		}
 
 		/// <summary>
@@ -168,20 +168,20 @@ namespace CustomToolGenerator
 		{
 			if (referenceDLL.Length == 0) return;
 
-			var serviceObject = this.GetService( typeof(ProjectItem) );
-			Debug.Assert( serviceObject != null, "Unable to get Project Item." );
+			var serviceObject = this.GetService<ProjectItem>();
 			if (serviceObject == null)
 			{
+				Debug.WriteLine( "Unable to get Project Item." );
 				var errorMessage = String.Format( "Unable to add DLL to project references: {0}.  Please Add them manually.",
 				                                  GetDLLNames( referenceDLL ) );
 				this.GeneratorErrorCallback( false, 1, errorMessage, 0, 0 );
 				return;
 			}
 
-			var containingProject = ((ProjectItem)serviceObject).ContainingProject;
-			Debug.Assert( containingProject != null, "GetService(typeof(Project)) return null." );
+			var containingProject = serviceObject.ContainingProject;
 			if (containingProject == null)
 			{
+				Debug.WriteLine( "GetService(typeof(Project)) return null." );
 				var errorMessage = String.Format( "Unable to add DLL to project references: {0}.  Please Add them manually.",
 				                                  GetDLLNames( referenceDLL ) );
 				this.GeneratorErrorCallback( false, 1, errorMessage, 0, 0 );
@@ -189,9 +189,9 @@ namespace CustomToolGenerator
 			}
 
 			var vsProj = containingProject.Object as VSProject;
-			Debug.Assert( vsProj != null, "Unable to ADD DLL to current project.  Project.Object does not implement VSProject." );
 			if (vsProj == null)
 			{
+				Debug.WriteLine( "Unable to ADD DLL to current project.  Project.Object does not implement VSProject." );
 				var errorMessage = String.Format( "Unable to add DLL to project references: {0}.  Please Add them manually.",
 				                                  GetDLLNames( referenceDLL ) );
 				this.GeneratorErrorCallback( false, 1, errorMessage, 0, 0 );
@@ -204,7 +204,7 @@ namespace CustomToolGenerator
 			}
 			catch (Exception e)
 			{
-				Debug.Fail( "**** ERROR: vsProj.References.Add() throws exception: " + e.ToString() );
+				Debug.Fail( "**** ERROR: vsProj.References.Add() throws exception: " + e );
 
 				var errorMessage = String.Format( "Unable to add DLL to project references: {0}.  Please Add them manually.",
 				                                  GetDLLNames( referenceDLL ) );

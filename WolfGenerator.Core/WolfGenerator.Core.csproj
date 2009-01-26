@@ -76,13 +76,12 @@
     <Compile Include="AST\UsingStatement.cs" />
     <Compile Include="AST\ValueStatement.cs" />
     <Compile Include="AST\Variable.cs" />
+    <Compile Include="GeneratorScanner.cs" />
     <Compile Include="WolfGeneratorCustomToolGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGeneratorWithSite.cs" />
     <Compile Include="CustomToolGenerator\IObjectWithSite.cs" />
     <Compile Include="CustomToolGenerator\IOleServiceProvider.cs" />
-    <Compile Include="CustomToolGenerator\IVsGeneratorProgress.cs" />
-    <Compile Include="CustomToolGenerator\IVsSingleFileGenerator.cs" />
     <Compile Include="CustomToolGenerator\ServiceProvider.cs" />
     <Compile Include="Gramma.cs">
       <AutoGen>True</AutoGen>
@@ -101,6 +100,8 @@
       <Generator>Coco</Generator>
       <LastGenOutput>Gramma.cs</LastGenOutput>
     </None>
+    <None Include="Parser.frame" />
+    <None Include="Scanner.frame" />
     <None Include="test.snk" />
   </ItemGroup>
   <ItemGroup>

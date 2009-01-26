@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace CustomToolGenerator
 {
@@ -63,10 +64,10 @@ namespace CustomToolGenerator
 		/// <param name="message">text displayed to the user</param>
 		/// <param name="line">line number of error/warning</param>
 		/// <param name="column">column number of error/warning</param>
-		protected virtual void GeneratorErrorCallback( bool warning, int level, string message, int line, int column )
+		public virtual void GeneratorErrorCallback( bool warning, uint level, string message, uint line, uint column )
 		{
 			var progress = this.CodeGeneratorProgress;
-			if (progress != null) progress.GeneratorError( warning, level, message, line, column );
+			if (progress != null) progress.GeneratorError( warning ? 1 : 0, level, message, line, column );
 		}
 
 		/// <summary>
@@ -78,12 +79,9 @@ namespace CustomToolGenerator
 		/// <param name="rgbOutputFileContents">byte-array of output file contents</param>
 		/// <param name="pcbOutput">count of bytes in the output byte-array</param>
 		/// <param name="pGenerateProgress">interface to send progress updates to the shell</param>
-		public void Generate( string wszInputFilePath,
-		                      string bstrInputFileContents,
-		                      string wszDefaultNamespace,
-		                      out IntPtr rgbOutputFileContents,
-		                      out int pcbOutput,
-		                      IVsGeneratorProgress pGenerateProgress )
+		public int Generate( string wszInputFilePath, string bstrInputFileContents, string wszDefaultNamespace,
+		                     IntPtr[] rgbOutputFileContents, out uint pcbOutput,
+		                     Microsoft.VisualStudio.Shell.Interop.IVsGeneratorProgress pGenerateProgress )
 		{
 			if (bstrInputFileContents == null) throw new ArgumentNullException( bstrInputFileContents );
 
@@ -95,15 +93,17 @@ namespace CustomToolGenerator
 
 			if (bytes == null)
 			{
-				rgbOutputFileContents = IntPtr.Zero;
+				rgbOutputFileContents[0] = IntPtr.Zero;
 				pcbOutput = 0;
 			}
 			else
 			{
-				pcbOutput = bytes.Length;
-				rgbOutputFileContents = Marshal.AllocCoTaskMem( pcbOutput );
-				Marshal.Copy( bytes, 0, rgbOutputFileContents, pcbOutput );
+				pcbOutput = (uint)bytes.Length;
+				rgbOutputFileContents[0] = Marshal.AllocCoTaskMem( bytes.Length );
+				Marshal.Copy( bytes, 0, rgbOutputFileContents[0], bytes.Length );
 			}
+
+			return 0;
 		}
 
 		/// <summary>
@@ -123,5 +123,7 @@ namespace CustomToolGenerator
 
 			return bytes;
 		}
+
+		public abstract int DefaultExtension( out string pbstrDefaultExtension );
 	}
 }

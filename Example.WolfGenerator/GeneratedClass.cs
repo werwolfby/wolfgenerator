@@ -1,53 +1,72 @@
-/*****************************************************
- *
- * Created by: WerWolf
- * Created: 12.05.2007 2:44:08
- *
- * File: GeneratedClass.cs
- * Remarks:
- *
- *****************************************************/
-
+using System;
+using System.Reflection;
+using System.Text;
+using System.Collections;
+using Example.WolfGenerator;
+using WolfGenerator.Core.Writer;
 using System.Collections.Generic;
 
-namespace Example.WolfGenerator
+public partial class MainClass
 {
-	public class GeneratedClass
+	public CodeWriter Main( IEnumerable value)
 	{
-		private string name;
-		private List<string> attributeList = new List<string>();
-		private List<string> entityList = new List<string>();
+		var writer = new CodeWriter();
 
-		public GeneratedClass( string name, IEnumerable<string> attributeEnum, IEnumerable<string> entityEnum )
+		writer.Indent = 1;
 		{
-			this.name = name;
+			var list = new List<CodeWriter>();
+			CodeWriter temp;
 
-			this.attributeList = new List<string>( attributeEnum );
-			this.entityList = new List<string>( entityEnum );
-		}
+			temp = new CodeWriter();
+			temp.Append( "Test" );
 
-		public string Name
-		{
-			get
+			list.Add( temp );
+
+			temp = new CodeWriter();
+			temp.Append( "Test" );
+
+			list.Add( temp );
+
+			foreach (var item in value)
 			{
-				return this.name;
+				temp = (CodeWriter)this.GetType().InvokeMember( "Test",
+				                                                BindingFlags.Instance | BindingFlags.InvokeMethod |
+				                                                BindingFlags.Public,
+				                                                Type.DefaultBinder, this, new object[] { item, 1 } );
+				list.Add( temp );
+			}
+
+			foreach (var codeWriter in list)
+			{
+				writer.Append( codeWriter );
+				writer.AppendText( "\r\n" );
 			}
 		}
 
-		public List<string> AttributeList
-		{
-			get
-			{
-				return this.attributeList;
-			}
-		}
+		return writer;
+	}
+	public CodeWriter Test( int value, object a)
+	{
+		var writer = new CodeWriter();
 
-		public List<string> EntityList
-		{
-			get
-			{
-				return this.entityList;
-			}
-		}
+		writer.Indent = 0;
+		writer.AppendLine( "Extend value" );
+		writer.AppendLine( "Int : " );
+		writer.Append( value.ToString() );
+		writer.Indent = 0;
+		writer.AppendLine();
+		writer.Append( "New line" );
+
+		return writer;
+	}
+	public CodeWriter Test( string value, object a)
+	{
+		var writer = new CodeWriter();
+
+		writer.Indent = 0;
+		writer.Append( "string : " );
+		writer.Append( value.ToString() );
+
+		return writer;
 	}
 }

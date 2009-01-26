@@ -1,6 +1,7 @@
 <%ruleclass MainClass%>
 <%using System%>
 <%using System.Text%>
+<%using System.Collections%>
 <%using Example.WolfGenerator%>
 <%using WolfGenerator.Core%>
 <%using System.Collections.Generic%>

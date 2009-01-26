@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using WolfGenerator.Core;
 using CodeWriter=WolfGenerator.Core.Writer.CodeWriter;
 using Generator=WolfGenerator.Core.Writer.Generator;
@@ -14,7 +15,12 @@ namespace Example.WolfGenerator
 
 			parser.Parse();
 
-			Console.WriteLine( Generator.Generate( parser.ruleClassStatement ).ToString() );
+			var code = Generator.Generate( parser.ruleClassStatement ).ToString();
+
+			using (var stream = new StreamWriter( "Generate.cs" ))
+			{
+				stream.WriteLine( code );
+			}
 		}
 	}
 }

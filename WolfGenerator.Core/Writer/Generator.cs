@@ -50,7 +50,7 @@ namespace WolfGenerator.Core.Writer
 				}
 
 				writer.AppendLine();
-				writer.AppendLine( "return writer" );
+				writer.AppendLine( "return writer;" );
 
 				writer.Indent--;
 				writer.AppendLine( "}" );

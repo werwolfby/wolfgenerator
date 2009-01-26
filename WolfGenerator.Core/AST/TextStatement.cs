@@ -13,7 +13,8 @@
  *   25.01.2009 23:20 - Fix: if crop last line don't add this empty line to lines.
  *   25.01.2009 23:29 - Fix: counting indent.
  *   26.01.2009 00:37 - Implement Generate method.
- *   26.01.2009 00:48 - Some fixes int Generate method.
+ *   26.01.2009 00:48 - Some fixes in Generate method.
+ *   26.01.2009 10:11 - Some changes in Generate method.
  *
  *******************************************************/
 
@@ -63,15 +64,51 @@ namespace WolfGenerator.Core.AST
 
 		public override void Generate( Writer.CodeWriter writer, string innerWriter )
 		{
+			if (this.lines.Count == 0) return;
+
+			var oldIndent = this.lines[0].Indent;
+			writer.Append( innerWriter );
+			writer.Append( ".Indent = " );
+			writer.Append( oldIndent.ToString() );
+			writer.AppendLine( ";" );
+
 			for (var i = 0; i < this.lines.Count; i++)
 			{
 				var line = this.lines[i];
 
-				writer.Append( innerWriter );
-				if (i == this.lines.Count - 1 && cropLastLine) writer.Append( ".Append( \"" );
-				else writer.Append( ".AppendLine( \"" );
-				writer.Append( line.GetText().Replace( "\"", "\\\"" ) );
-				writer.AppendLine( "\" );" );
+				if (oldIndent != line.Indent)
+				{
+					writer.Append( innerWriter );
+					writer.Append( ".Indent = " );
+					writer.Append( line.Indent.ToString() );
+					writer.AppendLine( ";" );
+
+					oldIndent = line.Indent;
+				}
+
+				var generatedText = line.GetText().Replace( "\"", "\\\"" );
+
+				if (i == this.lines.Count - 1 && !cropLastLine)
+				{
+					if (generatedText == "") continue;
+					writer.Append( innerWriter );
+					writer.Append( ".Append" );
+				}
+				else
+				{
+					writer.Append( innerWriter );
+					writer.Append( ".AppendLine" );
+				}
+				if (generatedText == "")
+				{
+					writer.AppendLine( "();" );
+				}
+				else
+				{
+					writer.Append( "( \"" );
+					writer.Append( generatedText );
+					writer.AppendLine( "\" );" );
+				}
 			}
 		}
 

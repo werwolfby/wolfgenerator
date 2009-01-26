@@ -21,6 +21,10 @@ namespace Example.WolfGenerator
 			{
 				stream.WriteLine( code );
 			}
+
+			var mainClass = new MainClass();
+
+			Console.WriteLine( mainClass.Main( new object[] { 1, "String" } ) );
 		}
 	}
 }

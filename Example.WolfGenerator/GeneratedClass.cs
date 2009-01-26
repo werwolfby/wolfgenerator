@@ -36,10 +36,12 @@ public partial class MainClass
 				list.Add( temp );
 			}
 
-			foreach (var codeWriter in list)
+			for (var listI = 0; listI < list.Count; listI++)
 			{
+				var codeWriter = list[listI];
 				writer.Append( codeWriter );
-				writer.AppendText( "\r\n" );
+				if (listI < list.Count - 1)
+					writer.AppendText( "\r\n" );
 			}
 		}
 

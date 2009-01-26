@@ -11,11 +11,13 @@
  *   25.01.2009 22:18 - Add EmptyLine support.
  *   26.01.2009 00:40 - When AppendLine() if lastLine exist just complete it line,
  *                      else add EmptyLine.
+ *   26.01.2009 10:39 - Add method AppendText.
  *
  *******************************************************/
 
 using System.Collections.Generic;
 using System.Text;
+using WolfGenerator.Core.AST;
 
 namespace WolfGenerator.Core.Writer
 {
@@ -35,6 +37,39 @@ namespace WolfGenerator.Core.Writer
 		public string IndentString { get; set; }
 
 		public IList<Line> Lines { get; private set; }
+
+		public void AppendText( string text )
+		{
+			bool cropLastLine;
+            var textLines = TextStatement.ExtractLines( text, out cropLastLine );
+
+			var startIndex = 0;
+
+			if (this.lastLine != null)
+			{
+				this.lastLine.Append( textLines[0].GetText() );
+				this.lastLine = null;
+			}
+
+			var oldInden = Indent;
+
+			for (var i = startIndex; i < textLines.Count; i++)
+			{
+				this.Indent = oldInden + textLines[i].Indent;
+				if (textLines[i] == EmptyLine.Instance)
+				{
+					if (i == textLines.Count - 1 && cropLastLine) continue;
+					this.AppendLine();
+				}
+				else
+				{
+					if (i == textLines.Count - 1 && cropLastLine) this.AppendLine( textLines[i].GetText() );
+					else this.Append( textLines[i].GetText() );
+				}
+			}
+
+			Indent = oldInden;
+		}
 
 		public void AppendLine()
 		{

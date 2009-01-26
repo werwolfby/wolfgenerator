@@ -15,6 +15,7 @@
  *   26.01.2009 00:37 - Implement Generate method.
  *   26.01.2009 00:48 - Some fixes in Generate method.
  *   26.01.2009 10:11 - Some changes in Generate method.
+ *   26.01.2009 10:30 - Extract method ExtractLines.
  *
  *******************************************************/
 
@@ -26,28 +27,14 @@ namespace WolfGenerator.Core.AST
 	public class TextStatement : RuleStatement
 	{
 		private readonly string text;
-		private readonly List<Line> lines = new List<Line>();
+		private readonly List<Line> lines;
 		private readonly bool cropLastLine;
 
 		public TextStatement( string text )
 		{
 			this.text = text;
+			this.lines = ExtractLines( text, out this.cropLastLine );
 			this.Lines = this.lines.AsReadOnly();
-
-			var tmpLines = text.Replace( "\r\n", "\n" ).Split( '\n' );
-			if (tmpLines[tmpLines.Length - 1] == "") this.cropLastLine = true;
-
-			for (var i = 0; i < (this.cropLastLine ? tmpLines.Length - 1 : tmpLines.Length); i++)
-			{
-				if (tmpLines[i] == "") this.lines.Add( EmptyLine.Instance );
-				else
-				{
-					var indent = 0;
-					while (indent < tmpLines[i].Length && tmpLines[i][indent] == '\t')
-						indent++;
-					this.lines.Add( new Line( indent, tmpLines[i].Substring( indent ) ) );
-				}
-			}
 		}
 
 		public string Text
@@ -112,9 +99,38 @@ namespace WolfGenerator.Core.AST
 			}
 		}
 
+		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
+		{
+			throw new System.NotSupportedException();
+		}
+
 		public override string ToString()
 		{
 			return this.text;
+		}
+
+		public static List<Line> ExtractLines( string text, out bool cropLastLine )
+		{
+			cropLastLine = false;
+
+			var lines = new List<Line>();
+
+			var tmpLines = text.Replace( "\r\n", "\n" ).Split( '\n' );
+			if (tmpLines[tmpLines.Length - 1] == "") cropLastLine = true;
+
+			for (var i = 0; i < (cropLastLine ? tmpLines.Length - 1 : tmpLines.Length); i++)
+			{
+				if (tmpLines[i] == "") lines.Add( EmptyLine.Instance );
+				else
+				{
+					var indent = 0;
+					while (indent < tmpLines[i].Length && tmpLines[i][indent] == '\t')
+						indent++;
+					lines.Add( new Line( indent, tmpLines[i].Substring( indent ) ) );
+				}
+			}
+
+			return lines;
 		}
 	}
 }

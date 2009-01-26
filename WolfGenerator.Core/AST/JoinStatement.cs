@@ -42,7 +42,40 @@ namespace WolfGenerator.Core.AST
 
 		public override void Generate( Writer.CodeWriter writer, string innerWriter )
 		{
-			//throw new System.NotImplementedException();
+			writer.AppendLine("{");
+			writer.Indent++;
+
+			writer.AppendLine( "var list = new List<CodeWriter>();" );
+			writer.AppendLine( "CodeWriter temp;" );
+			writer.AppendLine();
+
+			foreach (var statement in statements)
+			{
+				statement.GenerateJoin( writer, innerWriter );
+				writer.AppendLine();
+			}
+
+			writer.AppendLine( "for (var listI = 0; listI < list.Count; listI++)" );
+			writer.AppendLine( "{" );
+			writer.Indent++;
+
+			writer.AppendLine( "var codeWriter = list[listI];" );
+			writer.AppendLine( "writer.Append( codeWriter );" );
+			writer.AppendLine( "if (listI < list.Count - 1)" );
+			writer.Indent++;
+			writer.AppendLine( "writer.AppendText( \"" + this.String + "\" );" );
+			writer.Indent--;
+
+			writer.Indent--;
+			writer.AppendLine( "}" );
+
+			writer.Indent--;
+			writer.AppendLine("}");
+		}
+
+		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
+		{
+			throw new System.NotSupportedException();
 		}
 
 		public override string ToString()

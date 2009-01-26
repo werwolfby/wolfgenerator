@@ -15,10 +15,7 @@
 <%end%>
 
 <%rule Test( int value, object a )%>
-Extend value
-Int : 
-<%= value.ToString() %>
-New line
+Int : <%= value.ToString() %>
 <%end%>
 
 <%rule Test( string value, object a )%>

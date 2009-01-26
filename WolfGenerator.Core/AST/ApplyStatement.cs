@@ -9,6 +9,8 @@
  * History:
  *   25.01.2009 12:08 - Create Wireframe
  *   26.01.2009 00:38 - Add Generate method without implementation.
+ *   26.01.2009 10:46 - Implement GenerateJoin method.
+ *   26.01.2009 10:56 - Work on GeneateJoin method.
  *
  *******************************************************/
 
@@ -47,6 +49,26 @@ namespace WolfGenerator.Core.AST
 		public override void Generate( Writer.CodeWriter writer, string innerWriter )
 		{
 			//throw new System.NotImplementedException();
+		}
+
+		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
+		{
+			writer.AppendLine( "foreach (var item in " + from + ")" );
+			writer.AppendLine("{");
+
+			writer.Indent++;
+
+			writer.AppendLine( "temp = (CodeWriter)this.GetType().InvokeMember( \"" + applyMethod + "\"," );
+			writer.Indent++;
+			writer.AppendLine( "BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public" );
+			writer.AppendLine( "Type.DefaultBinder, this, new object[] { " + parameters + " } );" );
+			writer.Indent--;
+
+			writer.AppendLine( "list.Add( temp );" );
+
+			writer.Indent--;
+
+			writer.AppendLine("}");
 		}
 
 		public override string ToString()

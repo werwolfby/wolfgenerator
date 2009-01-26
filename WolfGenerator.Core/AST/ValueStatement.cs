@@ -11,6 +11,7 @@
  *   25.01.2009 10:55 - Override ToString method.
  *   26.01.2009 00:39 - Implement Generate method.
  *   26.01.2009 10:48 - Implement GenerateJoin method. Use AppendText in Generate method instead of Append.
+ *   26.01.2009 11:03 - Fix: GenerateJoin.
  *
  *******************************************************/
 
@@ -49,6 +50,8 @@ namespace WolfGenerator.Core.AST
 			writer.Append( "temp.AppendText( " );
 			writer.Append( value );
 			writer.AppendLine( " );" );
+
+			writer.AppendLine( "list.Add( temp );" );
 		}
 	}
 }

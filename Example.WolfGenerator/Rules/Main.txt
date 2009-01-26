@@ -1,17 +1,18 @@
 <%ruleclass MainClass%>
 <%using System%>
+<%using System.Reflection%>
 <%using System.Text%>
 <%using System.Collections%>
 <%using Example.WolfGenerator%>
-<%using WolfGenerator.Core%>
+<%using WolfGenerator.Core.Writer%>
 <%using System.Collections.Generic%>
 
 <%rule Main( IEnumerable value )%>
-	<%join "\r\n"%>
+	(<%join "\r\n"%>
 		<%= "Test" %>
 		<%= "Test 2" %>
 		<%apply Test([ item, "s" ]) from value%>
-	<%end%>
+	<%end%>)
 <%end%>
 
 <%rule Test( int value, object a )%>

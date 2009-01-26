@@ -12,6 +12,8 @@
  *   26.01.2009 00:40 - When AppendLine() if lastLine exist just complete it line,
  *                      else add EmptyLine.
  *   26.01.2009 10:39 - Add method AppendText.
+ *   26.01.2009 11:02 - Fix: AppendText.
+ *   26.01.2009 11:07 - Add method AppendLines. Fix: Append( CodeWriter ) use AppendLines.
  *
  *******************************************************/
 
@@ -43,15 +45,20 @@ namespace WolfGenerator.Core.Writer
 			bool cropLastLine;
             var textLines = TextStatement.ExtractLines( text, out cropLastLine );
 
+			this.AppendLines( textLines, cropLastLine );
+		}
+
+		private void AppendLines( IList<Line> textLines, bool cropLastLine ) 
+		{
 			var startIndex = 0;
 
 			if (this.lastLine != null)
 			{
 				this.lastLine.Append( textLines[0].GetText() );
-				this.lastLine = null;
+				startIndex = 1;
 			}
 
-			var oldInden = Indent;
+			var oldInden = this.Indent;
 
 			for (var i = startIndex; i < textLines.Count; i++)
 			{
@@ -68,7 +75,9 @@ namespace WolfGenerator.Core.Writer
 				}
 			}
 
-			Indent = oldInden;
+			if (cropLastLine) this.lastLine = null;
+
+			this.Indent = oldInden;
 		}
 
 		public void AppendLine()
@@ -99,8 +108,7 @@ namespace WolfGenerator.Core.Writer
 
 		public void Append( CodeWriter codeWriter )
 		{
-			foreach (var line in codeWriter.Lines)
-				this.lines.Add( new Line( this.Indent + line.Indent, line.GetText() ) );
+			AppendLines( codeWriter.Lines, false );
 		}
 
 		public override string ToString()

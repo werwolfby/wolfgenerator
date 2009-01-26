@@ -8,31 +8,29 @@ using System.Collections.Generic;
 
 public partial class MainClass
 {
-	public CodeWriter Main( IEnumerable value)
+	public CodeWriter Main( IEnumerable value )
 	{
 		var writer = new CodeWriter();
 
 		writer.Indent = 1;
+		writer.Append( "(" );
 		{
 			var list = new List<CodeWriter>();
 			CodeWriter temp;
 
 			temp = new CodeWriter();
-			temp.Append( "Test" );
-
+			temp.AppendText( "Test" );
 			list.Add( temp );
 
 			temp = new CodeWriter();
-			temp.Append( "Test" );
-
+			temp.AppendText( "Test 2" );
 			list.Add( temp );
 
 			foreach (var item in value)
 			{
 				temp = (CodeWriter)this.GetType().InvokeMember( "Test",
-				                                                BindingFlags.Instance | BindingFlags.InvokeMethod |
-				                                                BindingFlags.Public,
-				                                                Type.DefaultBinder, this, new object[] { item, 1 } );
+					BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
+					Type.DefaultBinder, this, new object[] { item, "s" } );
 				list.Add( temp );
 			}
 
@@ -44,30 +42,28 @@ public partial class MainClass
 					writer.AppendText( "\r\n" );
 			}
 		}
+		writer.Indent = 0;
+		writer.Append( ")" );
 
 		return writer;
 	}
-	public CodeWriter Test( int value, object a)
+	public CodeWriter Test( int value, object a )
 	{
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
-		writer.AppendLine( "Extend value" );
-		writer.AppendLine( "Int : " );
-		writer.Append( value.ToString() );
-		writer.Indent = 0;
-		writer.AppendLine();
-		writer.Append( "New line" );
+		writer.Append( "Int : " );
+		writer.AppendText( value.ToString() );
 
 		return writer;
 	}
-	public CodeWriter Test( string value, object a)
+	public CodeWriter Test( string value, object a )
 	{
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
 		writer.Append( "string : " );
-		writer.Append( value.ToString() );
+		writer.AppendText( value.ToString() );
 
 		return writer;
 	}

@@ -60,7 +60,7 @@ namespace WolfGenerator.Core.AST
 
 			writer.AppendLine( "temp = (CodeWriter)this.GetType().InvokeMember( \"" + applyMethod + "\"," );
 			writer.Indent++;
-			writer.AppendLine( "BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public" );
+			writer.AppendLine( "BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public," );
 			writer.AppendLine( "Type.DefaultBinder, this, new object[] { " + parameters + " } );" );
 			writer.Indent--;
 

@@ -12,6 +12,7 @@ public partial class MainClass
 	{
 		var writer = new CodeWriter();
 
+		var val = "Test 123";
 		writer.Indent = 1;
 		writer.Append( "(" );
 		{
@@ -19,7 +20,7 @@ public partial class MainClass
 			CodeWriter temp;
 
 			temp = new CodeWriter();
-			temp.AppendText( "Test" );
+			temp.AppendText( val );
 			list.Add( temp );
 
 			temp = new CodeWriter();

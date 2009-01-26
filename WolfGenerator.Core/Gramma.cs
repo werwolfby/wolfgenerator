@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 26.01.2009 23:28:59
+// Compiled by vsCoco on 26.01.2009 23:44:53
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -52,7 +52,7 @@ namespace WolfGenerator.Core {
 	const int _string = 3;
 	const int _badString = 4;
 	const int _char = 5;
-	const int maxT = 25;
+	const int maxT = 26;
 
 		const bool T = true;
 		const bool x = false;
@@ -229,8 +229,9 @@ public RuleClassStatement ruleClassStatement;
 				statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; 
 			} else {
 				AddStatement( isStart, startPos, statements, false ); 
-				Code(out codeStatement);
-				statements.Add( codeStatement ); isStart = false; startPos = t.pos + t.val.Length; 
+				isStart = false; 
+				Code(out codeStatement, ref isStart);
+				statements.Add( codeStatement ); startPos = t.pos + t.val.Length; 
 			}
 		}
 		AddStatement( isStart, startPos, statements, true ); 
@@ -260,7 +261,7 @@ public RuleClassStatement ruleClassStatement;
 			}
 		}
 		ExpectWeak(14, 3);
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(26); Get();}
+		while (!(la.kind == 0 || la.kind == 7)) {SynErr(27); Get();}
 		Expect(7);
 		variables = variableList.AsReadOnly(); 
 	}
@@ -271,7 +272,7 @@ public RuleClassStatement ruleClassStatement;
 		while (StartOf(4)) {
 			Get();
 		}
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(27); Get();}
+		while (!(la.kind == 0 || la.kind == 7)) {SynErr(28); Get();}
 		Expect(7);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
@@ -298,24 +299,29 @@ public RuleClassStatement ruleClassStatement;
 				statements.Add( applyStatement ); 
 			}
 		}
-		while (!(la.kind == 0 || la.kind == 8)) {SynErr(28); Get();}
+		while (!(la.kind == 0 || la.kind == 8)) {SynErr(29); Get();}
 		Expect(8);
 		joinStatement = new JoinStatement( @string, statements ); 
 	}
 
-	void Code(out CodeStatement codeStatement) {
-		int startPos = t.pos; 
+	void Code(out CodeStatement codeStatement, ref bool isStart) {
 		Expect(21);
+		int startPos = t.pos + t.val.Length; 
 		while (StartOf(5)) {
 			Get();
 		}
-		Expect(22);
-		string value = scanner.buffer.GetString( startPos, t.pos ); 
-		codeStatement = new CodeStatement( value ); 
+		string value = scanner.buffer.GetString( startPos, la.pos ); 
+		if (la.kind == 22) {
+			Get();
+		} else if (la.kind == 23) {
+			Get();
+			isStart = true; 
+		} else SynErr(30);
+		codeStatement = new CodeStatement( value.Trim() ); 
 	}
 
 	void RuleMethodEnd() {
-		while (!(la.kind == 0 || la.kind == 8)) {SynErr(29); Get();}
+		while (!(la.kind == 0 || la.kind == 8)) {SynErr(31); Get();}
 		Expect(8);
 	}
 
@@ -348,14 +354,14 @@ public RuleClassStatement ruleClassStatement;
 			}
 			endPos = la.pos; 
 			Expect(14);
-		} else SynErr(30);
+		} else SynErr(32);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 20)) {SynErr(31); Get();}
+		while (!(la.kind == 0 || la.kind == 20)) {SynErr(33); Get();}
 		Expect(20);
 		Expect(1);
 		from = t.val; 
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(32); Get();}
+		while (!(la.kind == 0 || la.kind == 7)) {SynErr(34); Get();}
 		Expect(7);
 		applyStatement = new ApplyStatement( methodName, parameters, from ); 
 	}
@@ -370,7 +376,7 @@ public RuleClassStatement ruleClassStatement;
 			Expect(1);
 			name.Append( '.' ); name.Append( t.val ); 
 		}
-		if (la.kind == 23) {
+		if (la.kind == 24) {
 			genericParameters = new List<WolfGenerator.Core.AST.Type>();
 			WolfGenerator.Core.AST.Type generic; 
 			Get();
@@ -381,7 +387,7 @@ public RuleClassStatement ruleClassStatement;
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
-			Expect(24);
+			Expect(25);
 		}
 		type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); 
 	}
@@ -397,14 +403,14 @@ public RuleClassStatement ruleClassStatement;
 		}
 		
 		bool[,] set = {
-		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,x, x,T,T,T, T,x,T,T, T,T,x},
-		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x},
-		{x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x,T, T,T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,x}
+		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x},
+		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
+		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,x, x,T,T,T, T,x,T,T, T,T,T,x},
+		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x},
+		{x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,x}
 
 		};
 	} // end Parser
@@ -446,16 +452,18 @@ public RuleClassStatement ruleClassStatement;
 			case 20: s = "\"from\" expected"; break;
 			case 21: s = "\"<%$\" expected"; break;
 			case 22: s = "\"$%>\" expected"; break;
-			case 23: s = "\"<\" expected"; break;
-			case 24: s = "\">\" expected"; break;
-			case 25: s = "??? expected"; break;
-			case 26: s = "this symbol not expected in RuleMethodStart"; break;
-			case 27: s = "this symbol not expected in Value"; break;
-			case 28: s = "this symbol not expected in Join"; break;
-			case 29: s = "this symbol not expected in RuleMethodEnd"; break;
-			case 30: s = "invalid Apply"; break;
-			case 31: s = "this symbol not expected in Apply"; break;
-			case 32: s = "this symbol not expected in Apply"; break;
+			case 23: s = "\"$-%>\" expected"; break;
+			case 24: s = "\"<\" expected"; break;
+			case 25: s = "\">\" expected"; break;
+			case 26: s = "??? expected"; break;
+			case 27: s = "this symbol not expected in RuleMethodStart"; break;
+			case 28: s = "this symbol not expected in Value"; break;
+			case 29: s = "this symbol not expected in Join"; break;
+			case 30: s = "invalid Code"; break;
+			case 31: s = "this symbol not expected in RuleMethodEnd"; break;
+			case 32: s = "invalid Apply"; break;
+			case 33: s = "this symbol not expected in Apply"; break;
+			case 34: s = "this symbol not expected in Apply"; break;
 
 				default: s = "error " + n; break;
 			}
@@ -650,13 +658,13 @@ public class UTF8Buffer: Buffer {
 		const char EOL = '\n';
 		const int eofSym = 0; /* pdt */
 	const int charSetSize = 256;
-	const int maxT = 25;
-	const int noSym = 25;
+	const int maxT = 26;
+	const int noSym = 26;
 	short[] start = {
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0, 10,  0, 46, 17,  0,  5, 51, 31,  0,  0, 30,  0, 29,  0,
-	  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0, 50,  0, 49,  0,
+	  0,  0, 10,  0, 54, 17,  0,  5, 53, 31,  0,  0, 30,  0, 29,  0,
+	  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0, 52,  0, 51,  0,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
 	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0, 43,  0,  0,
 	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
@@ -907,23 +915,32 @@ public class UTF8Buffer: Buffer {
 			case 45:
 				{t.kind = 21; break;}
 			case 46:
-				if (ch == '%') {AddCh(); goto case 47;}
+				if (ch == '>') {AddCh(); goto case 47;}
 				else {t.kind = noSym; break;}
 			case 47:
-				if (ch == '>') {AddCh(); goto case 48;}
-				else {t.kind = noSym; break;}
-			case 48:
 				{t.kind = 22; break;}
+			case 48:
+				if (ch == '%') {AddCh(); goto case 49;}
+				else {t.kind = noSym; break;}
 			case 49:
-				{t.kind = 24; break;}
+				if (ch == '>') {AddCh(); goto case 50;}
+				else {t.kind = noSym; break;}
 			case 50:
-				if (ch == '%') {AddCh(); goto case 52;}
-				else {t.kind = 23; break;}
+				{t.kind = 23; break;}
 			case 51:
+				{t.kind = 25; break;}
+			case 52:
+				if (ch == '%') {AddCh(); goto case 55;}
+				else {t.kind = 24; break;}
+			case 53:
 				if (ch == '[') {AddCh(); goto case 42;}
 				else {t.kind = 12; break;}
-			case 52:
-				if (ch == 'r') {AddCh(); goto case 53;}
+			case 54:
+				if (ch == '%') {AddCh(); goto case 46;}
+				else if (ch == '-') {AddCh(); goto case 48;}
+				else {t.kind = noSym; break;}
+			case 55:
+				if (ch == 'r') {AddCh(); goto case 56;}
 				else if (ch == 'e') {AddCh(); goto case 19;}
 				else if (ch == 'u') {AddCh(); goto case 24;}
 				else if (ch == '=') {AddCh(); goto case 32;}
@@ -931,16 +948,16 @@ public class UTF8Buffer: Buffer {
 				else if (ch == 'a') {AddCh(); goto case 37;}
 				else if (ch == '$') {AddCh(); goto case 45;}
 				else {t.kind = noSym; break;}
-			case 53:
-				if (ch == 'u') {AddCh(); goto case 54;}
-				else {t.kind = noSym; break;}
-			case 54:
-				if (ch == 'l') {AddCh(); goto case 55;}
-				else {t.kind = noSym; break;}
-			case 55:
-				if (ch == 'e') {AddCh(); goto case 56;}
-				else {t.kind = noSym; break;}
 			case 56:
+				if (ch == 'u') {AddCh(); goto case 57;}
+				else {t.kind = noSym; break;}
+			case 57:
+				if (ch == 'l') {AddCh(); goto case 58;}
+				else {t.kind = noSym; break;}
+			case 58:
+				if (ch == 'e') {AddCh(); goto case 59;}
+				else {t.kind = noSym; break;}
+			case 59:
 				if (ch == 'c') {AddCh(); goto case 12;}
 				else {t.kind = 11; break;}
 

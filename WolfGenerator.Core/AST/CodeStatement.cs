@@ -26,7 +26,7 @@ namespace WolfGenerator.Core.AST
 
 		public override void Generate( CodeWriter writer, string innerWriter )
 		{
-			writer.AppendText( value );
+			writer.AppendText( value + "\r\n" );
 		}
 
 		public override void GenerateJoin( CodeWriter writer, string innerWriter )

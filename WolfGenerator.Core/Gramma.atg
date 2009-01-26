@@ -99,7 +99,8 @@ RuleMethod<out RuleMethodStatement statement>                                   
                       |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
                       Join<out joinStatement>                                      (. statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
-                      Code<out codeStatement>                                      (. statements.Add( codeStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                                                                                   (. isStart = false; .)
+                      Code<out codeStatement, ref isStart>                         (. statements.Add( codeStatement ); startPos = t.pos + t.val.Length; .)
                       } 
                                                                                    (. AddStatement( isStart, startPos, statements, true ); .)
                       RuleMethodEnd                                                (. statement = new RuleMethodStatement( methodName, variables, statements ); .)
@@ -159,12 +160,14 @@ Apply<out ApplyStatement applyStatement>                                        
                    SYNC "from" ident                                               (. from = t.val; .)
                    SYNC "%>"                                                       (. applyStatement = new ApplyStatement( methodName, parameters, from ); .)
                    .
-Code<out CodeStatement codeStatement>                                              (. int startPos = t.pos; .)
+Code<out CodeStatement codeStatement, ref bool isStart>
                 =
-                  "<%$"
-                   {ANY} 
-                  "$%>"                                                            (. string value = scanner.buffer.GetString( startPos, t.pos ); 
-                                                                                      codeStatement = new CodeStatement( value ); .)
+                  "<%$"                                                            (. int startPos = t.pos + t.val.Length; .)
+                   {ANY}                                                           (. string value = scanner.buffer.GetString( startPos, la.pos ); .) 
+                  ("$%>"
+                   | "$-%>"                                                        (. isStart = true; .)
+                  )
+                                                                                   (. codeStatement = new CodeStatement( value.Trim() ); .)
                   .
 
 Type<out WolfGenerator.Core.AST.Type type> =                                       (. StringBuilder name = new StringBuilder(); 

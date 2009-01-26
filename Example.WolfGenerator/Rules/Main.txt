@@ -8,8 +8,9 @@
 <%using System.Collections.Generic%>
 
 <%rule Main( IEnumerable value )%>
+<%$ var val = "Test";$-%>
 	(<%join ", "%>
-		<%= "Test" %>
+		<%= val %>
 		<%= "Test 2" %>
 		<%apply Test([ item, "s" ]) from value%>
 	<%end%>)

@@ -16,6 +16,7 @@
  *   26.01.2009 00:48 - Some fixes in Generate method.
  *   26.01.2009 10:11 - Some changes in Generate method.
  *   26.01.2009 10:30 - Extract method ExtractLines.
+ *   27.01.2009 00:07 - ExtractLines: BugFix: now support empty line.
  *
  *******************************************************/
 
@@ -116,7 +117,7 @@ namespace WolfGenerator.Core.AST
 			var lines = new List<Line>();
 
 			var tmpLines = text.Replace( "\r\n", "\n" ).Split( '\n' );
-			if (tmpLines[tmpLines.Length - 1] == "") cropLastLine = true;
+			if (tmpLines.Length > 1 && tmpLines[tmpLines.Length - 1] == "") cropLastLine = true;
 
 			for (var i = 0; i < (cropLastLine ? tmpLines.Length - 1 : tmpLines.Length); i++)
 			{

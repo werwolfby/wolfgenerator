@@ -22,7 +22,7 @@ $-%>
 			<%= "Test 2" %>
 			<%apply Test([ item, "s" ]) from value%>
 		<%end%>)
-	(<%join ", "%>
+	(<%join ""%>
 		<%= "Test" %>
 		<%= "Test 2" %>
 		<%apply Test([ item, "s" ]) from value%>

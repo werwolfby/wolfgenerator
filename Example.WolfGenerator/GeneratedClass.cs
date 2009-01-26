@@ -12,7 +12,8 @@ public partial class MainClass
 	{
 		var writer = new CodeWriter();
 
-		var val = "Test 123";
+		var val = "Test";
+		var val2 = "Test 2";
 		writer.Indent = 1;
 		writer.Append( "(" );
 		{
@@ -24,7 +25,7 @@ public partial class MainClass
 			list.Add( temp );
 
 			temp = new CodeWriter();
-			temp.AppendText( "Test 2" );
+			temp.AppendText( val2 );
 			list.Add( temp );
 
 			foreach (var item in value)
@@ -104,7 +105,7 @@ public partial class MainClass
 				var codeWriter = list[listI];
 				writer.Append( codeWriter );
 				if (listI < list.Count - 1)
-					writer.AppendText( ", " );
+					writer.AppendText( "" );
 			}
 		}
 		writer.Indent = 0;

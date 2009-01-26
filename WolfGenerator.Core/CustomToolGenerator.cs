@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.VisualStudio.Shell.Interop;
+using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core
 {
@@ -24,13 +25,19 @@ namespace WolfGenerator.Core
         	string programCode;
 			try
 			{
-				FileInfo fileInfo = new FileInfo( wszInputFilePath );
-				Compiler compiler = new Compiler( bstrInputFileContents, fileInfo.Name );
+				var scanner = new Scanner( wszInputFilePath );
+				var parser = new Parser( scanner );
 
-				compiler.Parse();
-				compiler.Generate();
+				parser.Parse();
 
-				programCode = compiler.ProgramCode;
+				if (parser.errors.count == 0)
+				{
+					programCode = Generator.Generate( parser.ruleClassStatement ).ToString();
+				}
+				else
+				{
+					programCode = "parser errors: " + parser.errors.count;
+				}
 			}
 			catch(Exception e)
 			{

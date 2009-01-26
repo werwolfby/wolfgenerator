@@ -13,7 +13,7 @@
 		<%= "Test 2" %>
 		<%apply Test([ item, "s" ]) from value%>
 	<%end%>)
-		(<%join ", "%>
+		(<%join "\r\n"%>
 			<%= "Test" %>
 			<%= "Test 2" %>
 			<%apply Test([ item, "s" ]) from value%>
@@ -29,8 +29,6 @@
 Int : <%= value.ToString() %>
 <%end%>
 
-<%rule Test( string value, object a )%>
-string : <%= value.ToString() %>
-<%end%>
+<%rule Test( string value, object a )%>string : <%= value.ToString() %><%end%>
 
 <%end%>

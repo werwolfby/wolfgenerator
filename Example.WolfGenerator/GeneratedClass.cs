@@ -71,7 +71,7 @@ public partial class MainClass
 				var codeWriter = list[listI];
 				writer.Append( codeWriter );
 				if (listI < list.Count - 1)
-					writer.AppendText( ", " );
+					writer.AppendText( "\r\n" );
 			}
 		}
 		writer.Indent = 0;

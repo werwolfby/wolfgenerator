@@ -15,16 +15,16 @@ namespace Example.WolfGenerator
 
 			parser.Parse();
 
-			var code = Generator.Generate( parser.ruleClassStatement ).ToString();
-
-			using (var stream = new StreamWriter( "Generate.cs" ))
-			{
-				stream.WriteLine( code );
-			}
-
 			var mainClass = new MainClass();
 
 			Console.WriteLine( mainClass.Main( new object[] { 1, "String" } ) );
+
+			var code = Generator.Generate( parser.ruleClassStatement ).ToString();
+
+			using (var stream = new StreamWriter( "../../GeneratedClass.cs" ))
+			{
+				stream.WriteLine( code );
+			}
 		}
 	}
 }

@@ -8,31 +8,29 @@
 <%using System.Collections.Generic%>
 
 <%rule Main( IEnumerable value )%>
-<%$
-var val = "Test";
-var val2 = "Test 2";
-$-%>
-	(<%join ", "%>
-		<%= val %>
-		<%= val2 %>
-		<%apply Test([ item, "s" ]) from value%>
-	<%end%>)
-		(<%join "\r\n"%>
-			<%= "Test" %>
-			<%= "Test 2" %>
-			<%apply Test([ item, "s" ]) from value%>
-		<%end%>)
-	(<%join ""%>
-		<%= "Test" %>
-		<%= "Test 2" %>
-		<%apply Test([ item, "s" ]) from value%>
-	<%end%>)
+<%join "\r\nGO\r\n\r\n"%>
+	<%apply Test( item, "s" ) from value%>
+<%end%>
 <%end%>
 
 <%rule Test( int value, object a )%>
-Int : <%= value.ToString() %>
+CREATE TABLE [Table_<%= value.ToString() %>]
+(
+	[Id] INT NOT NULL IDENTITY(1, 1),
+	[Name] varchar(30) NOT NULL
+)
+ON
+[PRIMARY]
 <%end%>
 
-<%rule Test( string value, object a )%>string : <%= value.ToString() %><%end%>
+<%rule Test( string value, object a )%>
+CREATE TABLE [<%= value %>]
+(
+	[Id] INT NOT NULL IDENTITY(1, 1),
+	[Name] varchar(30) NOT NULL
+)
+ON
+[PRIMARY]
+<%end%>
 
 <%end%>

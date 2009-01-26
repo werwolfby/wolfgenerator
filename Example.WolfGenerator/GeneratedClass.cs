@@ -12,21 +12,9 @@ public partial class MainClass
 	{
 		var writer = new CodeWriter();
 
-		var val = "Test";
-		var val2 = "Test 2";
-		writer.Indent = 1;
-		writer.Append( "(" );
 		{
 			var list = new List<CodeWriter>();
 			CodeWriter temp;
-
-			temp = new CodeWriter();
-			temp.AppendText( val );
-			list.Add( temp );
-
-			temp = new CodeWriter();
-			temp.AppendText( val2 );
-			list.Add( temp );
 
 			foreach (var item in value)
 			{
@@ -41,75 +29,9 @@ public partial class MainClass
 				var codeWriter = list[listI];
 				writer.Append( codeWriter );
 				if (listI < list.Count - 1)
-					writer.AppendText( ", " );
+					writer.AppendText( "\r\nGO\r\n\r\n" );
 			}
 		}
-		writer.Indent = 0;
-		writer.AppendLine( ")" );
-		writer.Indent = 2;
-		writer.Append( "(" );
-		{
-			var list = new List<CodeWriter>();
-			CodeWriter temp;
-
-			temp = new CodeWriter();
-			temp.AppendText( "Test" );
-			list.Add( temp );
-
-			temp = new CodeWriter();
-			temp.AppendText( "Test 2" );
-			list.Add( temp );
-
-			foreach (var item in value)
-			{
-				temp = (CodeWriter)this.GetType().InvokeMember( "Test",
-					BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
-					Type.DefaultBinder, this, new object[] { item, "s" } );
-				list.Add( temp );
-			}
-
-			for (var listI = 0; listI < list.Count; listI++)
-			{
-				var codeWriter = list[listI];
-				writer.Append( codeWriter );
-				if (listI < list.Count - 1)
-					writer.AppendText( "\r\n" );
-			}
-		}
-		writer.Indent = 0;
-		writer.AppendLine( ")" );
-		writer.Indent = 1;
-		writer.Append( "(" );
-		{
-			var list = new List<CodeWriter>();
-			CodeWriter temp;
-
-			temp = new CodeWriter();
-			temp.AppendText( "Test" );
-			list.Add( temp );
-
-			temp = new CodeWriter();
-			temp.AppendText( "Test 2" );
-			list.Add( temp );
-
-			foreach (var item in value)
-			{
-				temp = (CodeWriter)this.GetType().InvokeMember( "Test",
-					BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
-					Type.DefaultBinder, this, new object[] { item, "s" } );
-				list.Add( temp );
-			}
-
-			for (var listI = 0; listI < list.Count; listI++)
-			{
-				var codeWriter = list[listI];
-				writer.Append( codeWriter );
-				if (listI < list.Count - 1)
-					writer.AppendText( "" );
-			}
-		}
-		writer.Indent = 0;
-		writer.Append( ")" );
 
 		return writer;
 	}
@@ -118,8 +40,18 @@ public partial class MainClass
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
-		writer.Append( "Int : " );
+		writer.Append( "CREATE TABLE [Table_" );
 		writer.AppendText( value.ToString() );
+		writer.Indent = 0;
+		writer.AppendLine( "]" );
+		writer.AppendLine( "(" );
+		writer.Indent = 1;
+		writer.AppendLine( "[Id] INT NOT NULL IDENTITY(1, 1)," );
+		writer.AppendLine( "[Name] varchar(30) NOT NULL" );
+		writer.Indent = 0;
+		writer.AppendLine( ")" );
+		writer.AppendLine( "ON" );
+		writer.Append( "[PRIMARY]" );
 
 		return writer;
 	}
@@ -128,8 +60,18 @@ public partial class MainClass
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
-		writer.Append( "string : " );
-		writer.AppendText( value.ToString() );
+		writer.Append( "CREATE TABLE [" );
+		writer.AppendText( value );
+		writer.Indent = 0;
+		writer.AppendLine( "]" );
+		writer.AppendLine( "(" );
+		writer.Indent = 1;
+		writer.AppendLine( "[Id] INT NOT NULL IDENTITY(1, 1)," );
+		writer.AppendLine( "[Name] varchar(30) NOT NULL" );
+		writer.Indent = 0;
+		writer.AppendLine( ")" );
+		writer.AppendLine( "ON" );
+		writer.Append( "[PRIMARY]" );
 
 		return writer;
 	}

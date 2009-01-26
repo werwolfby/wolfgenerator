@@ -8,7 +8,17 @@
 <%using System.Collections.Generic%>
 
 <%rule Main( IEnumerable value )%>
-	(<%join "\r\n"%>
+	(<%join ", "%>
+		<%= "Test" %>
+		<%= "Test 2" %>
+		<%apply Test([ item, "s" ]) from value%>
+	<%end%>)
+		(<%join ", "%>
+			<%= "Test" %>
+			<%= "Test 2" %>
+			<%apply Test([ item, "s" ]) from value%>
+		<%end%>)
+	(<%join ", "%>
 		<%= "Test" %>
 		<%= "Test 2" %>
 		<%apply Test([ item, "s" ]) from value%>

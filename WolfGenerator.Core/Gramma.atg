@@ -89,7 +89,8 @@ RuleMethod<out RuleMethodStatement statement>                                   
                                                                                       List<RuleStatement> statements = new List<RuleStatement>();
                                                                                       bool isStart = true;
                                                                                       ValueStatement valueStatement;
-                                                                                      JoinStatement joinStatement; .)
+                                                                                      JoinStatement joinStatement;
+                                                                                      CodeStatement codeStatement; .)
                     = RuleMethodStart<out methodName, out variables>               (. int startPos = t.pos + t.val.Length; .)
                      { 
                       ANY 
@@ -97,6 +98,8 @@ RuleMethod<out RuleMethodStatement statement>                                   
                       Value<out valueStatement>                                    (. statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
                       Join<out joinStatement>                                      (. statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                      |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
+                      Code<out codeStatement>                                      (. statements.Add( codeStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       } 
                                                                                    (. AddStatement( isStart, startPos, statements, true ); .)
                       RuleMethodEnd                                                (. statement = new RuleMethodStatement( methodName, variables, statements ); .)
@@ -156,6 +159,13 @@ Apply<out ApplyStatement applyStatement>                                        
                    SYNC "from" ident                                               (. from = t.val; .)
                    SYNC "%>"                                                       (. applyStatement = new ApplyStatement( methodName, parameters, from ); .)
                    .
+Code<out CodeStatement codeStatement>                                              (. int startPos = t.pos; .)
+                =
+                  "<%$"
+                   {ANY} 
+                  "$%>"                                                            (. string value = scanner.buffer.GetString( startPos, t.pos ); 
+                                                                                      codeStatement = new CodeStatement( value ); .)
+                  .
 
 Type<out WolfGenerator.Core.AST.Type type> =                                       (. StringBuilder name = new StringBuilder(); 
                                                                                       List<WolfGenerator.Core.AST.Type> genericParameters = null; .)

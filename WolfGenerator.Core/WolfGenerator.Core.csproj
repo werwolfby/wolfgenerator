@@ -76,7 +76,7 @@
     <Compile Include="AST\UsingStatement.cs" />
     <Compile Include="AST\ValueStatement.cs" />
     <Compile Include="AST\Variable.cs" />
-    <Compile Include="CustomToolGenerator.cs" />
+    <Compile Include="WolfGeneratorCustomToolGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGeneratorWithSite.cs" />
     <Compile Include="CustomToolGenerator\IObjectWithSite.cs" />

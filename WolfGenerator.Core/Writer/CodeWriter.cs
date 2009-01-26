@@ -70,8 +70,8 @@ namespace WolfGenerator.Core.Writer
 				}
 				else
 				{
-					if (i == textLines.Count - 1 && cropLastLine) this.AppendLine( textLines[i].GetText() );
-					else this.Append( textLines[i].GetText() );
+					if (i == textLines.Count - 1 && !cropLastLine) this.Append( textLines[i].GetText() );
+					else this.AppendLine( textLines[i].GetText() );
 				}
 			}
 

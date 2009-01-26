@@ -16,6 +16,14 @@ public partial class MainClass
 			var list = new List<CodeWriter>();
 			CodeWriter temp;
 
+			list.Add( (CodeWriter)this.GetType().InvokeMember( "Test",
+				BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
+				Type.DefaultBinder, this, new object[] { 12, "s" } ) );
+
+			list.Add( (CodeWriter)this.GetType().InvokeMember( "Test",
+				BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
+				Type.DefaultBinder, this, new object[] { "Test", "s" } ) );
+
 			foreach (var item in value)
 			{
 				temp = (CodeWriter)this.GetType().InvokeMember( "Test",
@@ -29,7 +37,7 @@ public partial class MainClass
 				var codeWriter = list[listI];
 				writer.Append( codeWriter );
 				if (listI < list.Count - 1)
-					writer.AppendText( "\r\nGO\r\n\r\n" );
+					writer.AppendText( "\r\nGO\r\n" );
 			}
 		}
 

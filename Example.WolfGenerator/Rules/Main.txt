@@ -8,7 +8,9 @@
 <%using System.Collections.Generic%>
 
 <%rule Main( IEnumerable value )%>
-<%join "\r\nGO\r\n\r\n"%>
+<%join "\r\nGO\r\n"%>
+	<%call Test( 12, "s" )%>
+	<%call Test( "Test", "s" )%>
 	<%apply Test( item, "s" ) from value%>
 <%end%>
 <%end%>

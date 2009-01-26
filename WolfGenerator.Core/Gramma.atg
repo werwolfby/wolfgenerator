@@ -90,17 +90,23 @@ RuleMethod<out RuleMethodStatement statement>                                   
                                                                                       bool isStart = true;
                                                                                       ValueStatement valueStatement;
                                                                                       JoinStatement joinStatement;
-                                                                                      CodeStatement codeStatement; .)
+                                                                                      CodeStatement codeStatement;
+                                                                                      CallStatement callStatement; .)
                     = RuleMethodStart<out methodName, out variables>               (. int startPos = t.pos + t.val.Length; .)
                      { 
                       ANY 
                       |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
                       Value<out valueStatement>                                    (. statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                      
                       |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
                       Join<out joinStatement>                                      (. statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                      
                       |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
                                                                                    (. isStart = false; .)
                       Code<out codeStatement, ref isStart>                         (. statements.Add( codeStatement ); startPos = t.pos + t.val.Length; .)
+                      
+                      |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
+                      Call<out callStatement>                                      (. statements.Add( callStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       } 
                                                                                    (. AddStatement( isStart, startPos, statements, true ); .)
                       RuleMethodEnd                                                (. statement = new RuleMethodStatement( methodName, variables, statements ); .)
@@ -128,7 +134,8 @@ Value<out ValueStatement valueStatement>
 Join<out JoinStatement joinStatement>                                              (. string @string;
                                                                                       List<RuleStatement> statements = null;
                                                                                       ValueStatement valueStatement;
-                                                                                      ApplyStatement applyStatement; .)
+                                                                                      ApplyStatement applyStatement;
+                                                                                      CallStatement callStatement; .)
                 = 
                   "<%join" string                                                  (. @string = t.val.Substring( 1, t.val.Length - 2 ); .)
                   "%>" 
@@ -138,6 +145,9 @@ Join<out JoinStatement joinStatement>                                           
                     |
                     Apply<out applyStatement>                                      (. if (statements == null) statements = new List<RuleStatement>();
                                                                                    	  statements.Add( applyStatement ); .)
+                    |
+                    Call<out callStatement>                                        (. if (statements == null) statements = new List<RuleStatement>();
+                                                                                   	  statements.Add( callStatement ); .)
                   }
                   SYNC "<%end%>"                                                   (. joinStatement = new JoinStatement( @string, statements ); .)
                   .
@@ -169,6 +179,25 @@ Code<out CodeStatement codeStatement, ref bool isStart>
                   )
                                                                                    (. codeStatement = new CodeStatement( value.Trim() ); .)
                   .
+                  
+Call<out CallStatement callStatement>                                              (. string methodName; string parameters = null; .)
+                =
+                  "<%call" ident                                                   (. methodName = t.val; .)
+                   (                                                               (. int startPos = -1; int endPos = -1; .)
+                     (
+                      "(["                                                         (. startPos = t.pos + t.val.Length; .)
+						{ ANY }                                                    (. endPos = la.pos; .)
+					  "])" 
+					  |
+                      "("                                                          (. startPos = t.pos + t.val.Length; .)
+                        { ANY }                                                    (. endPos = la.pos; .)
+                      ")"
+                     )                                                             (. if (startPos > 0 && endPos > 0)
+                                                                                          parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); .)
+                   )                                                              
+                   SYNC "%>"                                                       (. callStatement = new CallStatement( methodName, parameters ); .)
+                   .
+
 
 Type<out WolfGenerator.Core.AST.Type type> =                                       (. StringBuilder name = new StringBuilder(); 
                                                                                       List<WolfGenerator.Core.AST.Type> genericParameters = null; .)

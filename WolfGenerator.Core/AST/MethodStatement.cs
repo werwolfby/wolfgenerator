@@ -66,11 +66,11 @@ namespace WolfGenerator.Core.AST
 			writer.AppendLine( " )" );
 
 			writer.AppendLine( "{" );
-			writer.Indent++;
+			//writer.Indent++;
 
 			writer.AppendText( code );
 
-			writer.Indent--;
+			//writer.Indent--;
 			writer.AppendLine( "}" );
 		}
 	}

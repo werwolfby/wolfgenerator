@@ -10,8 +10,7 @@ public partial class MainClass
 {
 	public int Test2( int a, int b )
 	{
-
-			return 15;
+		return 15;
 	}
 	public CodeWriter Main( IEnumerable value )
 	{

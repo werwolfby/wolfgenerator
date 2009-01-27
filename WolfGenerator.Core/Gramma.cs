@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 27.01.2009 2:13:43
+// Compiled by vsCoco on 27.01.2009 2:22:58
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -67,9 +67,9 @@ namespace WolfGenerator.Core {
 
 public RuleClassStatement ruleClassStatement;
 	
-	int AddStatement( bool isStart, int startPos, List<RuleStatement> statements, bool ifEnd )
+	string ExtractString( bool isStart, bool ifEnd, int startPos, int endPos )
 	{
-		string text = scanner.buffer.GetString( startPos, la.pos );
+		string text = scanner.buffer.GetString( startPos, endPos );
 		if (!string.IsNullOrEmpty( text ))
 		{
 			int startIndex = 0;
@@ -86,10 +86,16 @@ public RuleClassStatement ruleClassStatement;
 			}
 			if (text.Length - endIndex - startIndex > 0)
 			{
-				if (startIndex > 0 || endIndex > 0) text = text.Substring( startIndex, text.Length - endIndex - startIndex );
-				statements.Add( new TextStatement( text ) );
+				if (startIndex > 0 || endIndex > 0) return text.Substring( startIndex, text.Length - endIndex - startIndex );				
 			}
 		}
+		return "";
+	}
+	
+	int AddStatement( bool isStart, int startPos, List<RuleStatement> statements, bool ifEnd )
+	{
+		string text = ExtractString( isStart, ifEnd, startPos, la.pos );
+		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
 		return la.pos;
 	}
 
@@ -279,7 +285,7 @@ public RuleClassStatement ruleClassStatement;
 			Get();
 		}
 		Expect(8);
-		methodStatement = new MethodStatement( returnType, name, variables, scanner.buffer.GetString( startPos, t.pos ) ); 
+		methodStatement = new MethodStatement( returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); 
 	}
 
 	void RuleClassEnd() {

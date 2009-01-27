@@ -27,6 +27,7 @@ COMPILER WolfGenerator
 			if (text.Length - endIndex - startIndex > 0)
 			{
 				if (startIndex > 0 || endIndex > 0) return text.Substring( startIndex, text.Length - endIndex - startIndex );				
+				else return text;
 			}
 		}
 		return "";

@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 27.01.2009 2:22:58
+// Compiled by vsCoco on 27.01.2009 2:37:15
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -87,6 +87,7 @@ public RuleClassStatement ruleClassStatement;
 			if (text.Length - endIndex - startIndex > 0)
 			{
 				if (startIndex > 0 || endIndex > 0) return text.Substring( startIndex, text.Length - endIndex - startIndex );				
+				else return text;
 			}
 		}
 		return "";

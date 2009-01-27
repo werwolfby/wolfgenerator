@@ -9,6 +9,7 @@
  * History:
  *   27.01.2009 01:50 - Create Wireframe
  *   27.01.2009 01:59 - Inhirit from RuleClassMethodStatement and implement method Generate.
+ *   27.01.2009 02:15 - Fix: Generate - add space between return type and name.
  *
  *******************************************************/
 
@@ -58,6 +59,7 @@ namespace WolfGenerator.Core.AST
 		{
 			writer.Append( "public " );
 			writer.Append( returnType.ToString() );
+			writer.Append( " " );
 			writer.Append( this.name );
 			writer.Append( "( " );
 			writer.Append( string.Join( ", ", Array.ConvertAll( this.Variables.ToArray(), input => input.ToString() ) ) );

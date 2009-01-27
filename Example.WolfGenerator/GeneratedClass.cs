@@ -12,6 +12,19 @@ public partial class MainClass
 	{
 		return 15;
 	}
+	public CodeWriter SetField( string field )
+	{
+		var writer = new CodeWriter();
+
+		writer.Indent = 0;
+		writer.Append( "[" );
+		writer.AppendText( field );
+		writer.Indent = 0;
+		writer.Append( "] = @" );
+		writer.AppendText( field );
+
+		return writer;
+	}
 	public CodeWriter Main( IEnumerable value )
 	{
 		var writer = new CodeWriter();
@@ -20,28 +33,20 @@ public partial class MainClass
 			var list = new List<CodeWriter>();
 			CodeWriter temp;
 
-			list.Add( (CodeWriter)this.GetType().InvokeMember( "Test",
+			list.Add( (CodeWriter)this.GetType().InvokeMember( "SetField",
 				BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
-				Type.DefaultBinder, this, new object[] { 12, "s" } ) );
+				Type.DefaultBinder, this, new object[] { "Id" } ) );
 
-			list.Add( (CodeWriter)this.GetType().InvokeMember( "Test",
+			list.Add( (CodeWriter)this.GetType().InvokeMember( "SetField",
 				BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
-				Type.DefaultBinder, this, new object[] { "Test", "s" } ) );
-
-			foreach (var item in value)
-			{
-				temp = (CodeWriter)this.GetType().InvokeMember( "Test",
-					BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
-					Type.DefaultBinder, this, new object[] { item, "s" } );
-				list.Add( temp );
-			}
+				Type.DefaultBinder, this, new object[] { "Name" } ) );
 
 			for (var listI = 0; listI < list.Count; listI++)
 			{
 				var codeWriter = list[listI];
 				writer.Append( codeWriter );
 				if (listI < list.Count - 1)
-					writer.AppendText( "\r\nGO\r\n" );
+					writer.AppendText( ", " );
 			}
 		}
 

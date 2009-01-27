@@ -11,11 +11,14 @@
 	return 15;
 <%end%>
 
+<%rule SetField( string field )%>
+[<%= field %>] = @<%= field %>
+<%end%>
+
 <%rule Main( IEnumerable value )%>
-<%join "\r\nGO\r\n"%>
-	<%call Test( 12, "s" )%>
-	<%call Test( "Test", "s" )%>
-	<%apply Test( item, "s" ) from value%>
+<%join ", "%>
+	<%call SetField( "Id" )%>
+	<%call SetField( "Name" )%>
 <%end%>
 <%end%>
 

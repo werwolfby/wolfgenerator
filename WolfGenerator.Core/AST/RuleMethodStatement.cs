@@ -13,11 +13,15 @@
  *   25.01.2009 10:14 - Add Name, Variable properties.
  *   25.01.2009 10:39 - Override ToString() method.
  *   25.01.2009 10:57 - Exted ToString method (check if contains any statement).
+ *   27.01.2009 01:54 - Add Generate method.
  *
  *******************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
@@ -26,7 +30,7 @@ namespace WolfGenerator.Core.AST
 	///       RuleMethodStart = <%rule ident ( [ Var { , Var } ] ) %>.
 	///       RuleMethodEnd   = <%end%>.
 	/// </summary>
-	public class RuleMethodStatement
+	public class RuleMethodStatement : RuleClassMethodStatement
 	{
 		private readonly string name;
 		private readonly IList<Variable> variables;
@@ -52,6 +56,30 @@ namespace WolfGenerator.Core.AST
 		public IList<RuleStatement> Statements
 		{
 			get { return this.statements; }
+		}
+
+		public override void Generate( CodeWriter writer )
+		{
+			writer.AppendLine( "public CodeWriter " + this.Name +
+			                   "( " +
+			                   string.Join( ", ", Array.ConvertAll( this.Variables.ToArray(), input => input.ToString() ) ) +
+			                   " )" );
+			writer.AppendLine( "{" );
+			writer.Indent++;
+
+			writer.AppendLine( "var writer = new CodeWriter();" );
+			writer.AppendLine();
+
+			foreach (var statement in Statements)
+			{
+				statement.Generate( writer, "writer" );
+			}
+
+			writer.AppendLine();
+			writer.AppendLine( "return writer;" );
+
+			writer.Indent--;
+			writer.AppendLine( "}" );
 		}
 
 		public override string ToString()

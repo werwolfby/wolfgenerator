@@ -37,23 +37,7 @@ namespace WolfGenerator.Core.Writer
 
 			foreach (var ruleMethodStatement in ruleClassStatement.RuleMethodStatements)
 			{
-				writer.AppendLine( "public CodeWriter " + ruleMethodStatement.Name + "( " + string.Join( ", ", Array.ConvertAll( ruleMethodStatement.Variables.ToArray(), input => input.ToString() ) ) + " )" );
-				writer.AppendLine( "{" );
-                writer.Indent++;
-
-				writer.AppendLine( "var writer = new CodeWriter();" );
-				writer.AppendLine();
-
-				foreach (var statement in ruleMethodStatement.Statements)
-				{
-					statement.Generate( writer, "writer" );
-				}
-
-				writer.AppendLine();
-				writer.AppendLine( "return writer;" );
-
-				writer.Indent--;
-				writer.AppendLine( "}" );
+				ruleMethodStatement.Generate( writer );
 			}
 
 			writer.Indent--;

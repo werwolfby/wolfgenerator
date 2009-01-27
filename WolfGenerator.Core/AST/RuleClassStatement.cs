@@ -16,6 +16,7 @@
  *   25.01.2009 10:38 - Extend ToString() method.
  *   25.01.2009 10:57 - Exted ToString method (check if contains any using 
  *                      statements and rule method statements).
+ *   27.01.2009 02:00 - change collection type from RuleMethodStatements to RuleClassMethodStatement
  *
  *******************************************************/
 
@@ -33,9 +34,9 @@ namespace WolfGenerator.Core.AST
 	{
 		private readonly string name;
 		private readonly IList<UsingStatement> usingStatements;
-		private readonly IList<RuleMethodStatement> ruleMethodStatements;
+		private readonly IList<RuleClassMethodStatement> ruleMethodStatements;
 
-		public RuleClassStatement( string name, IList<UsingStatement> usingStatements, IList<RuleMethodStatement> ruleMethodStatements )
+		public RuleClassStatement( string name, IList<UsingStatement> usingStatements, IList<RuleClassMethodStatement> ruleMethodStatements )
 		{
 			this.name = name;
 			this.usingStatements = usingStatements;
@@ -52,7 +53,7 @@ namespace WolfGenerator.Core.AST
 			get { return this.usingStatements; }
 		}
 
-		public IList<RuleMethodStatement> RuleMethodStatements
+		public IList<RuleClassMethodStatement> RuleMethodStatements
 		{
 			get { return this.ruleMethodStatements; }
 		}

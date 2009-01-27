@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 27.01.2009 1:39:41
+// Compiled by vsCoco on 27.01.2009 2:01:39
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -165,7 +165,7 @@ public RuleClassStatement ruleClassStatement;
 		
 	void WolfGenerator() {
 		List<UsingStatement> usingStatementList = null; 
-		List<RuleMethodStatement> ruleMethodStatementList = null; 
+		List<RuleClassMethodStatement> ruleMethodStatementList = null; 
 		string name; 
 		RuleClassStart(out name);
 		while (la.kind == 9) {
@@ -178,7 +178,7 @@ public RuleClassStatement ruleClassStatement;
 			RuleMethodStatement ruleMethod; 
 			RuleMethod(out ruleMethod);
 			if (ruleMethodStatementList == null) 
-			   ruleMethodStatementList = new List<RuleMethodStatement>();
+			   ruleMethodStatementList = new List<RuleClassMethodStatement>();
 			ruleMethodStatementList.Add( ruleMethod ); 
 		}
 		RuleClassEnd();

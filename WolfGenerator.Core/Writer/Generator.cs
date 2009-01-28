@@ -8,12 +8,11 @@
  * 
  * History:
  *   26.01.2009 00:17 - Create Wireframe
+ *   28.01.2009 16:35 - Check if ruleClassStatement.RuleMethodStatements contains any element.
  *
  *******************************************************/
 
-using System;
 using WolfGenerator.Core.AST;
-using System.Linq;
 
 namespace WolfGenerator.Core.Writer
 {
@@ -35,9 +34,12 @@ namespace WolfGenerator.Core.Writer
 			writer.AppendLine( "{" );
 			writer.Indent++;
 
-			foreach (var ruleMethodStatement in ruleClassStatement.RuleMethodStatements)
+			if (ruleClassStatement.RuleMethodStatements != null && ruleClassStatement.RuleMethodStatements.Count > 0)
 			{
-				ruleMethodStatement.Generate( writer );
+				foreach (var ruleMethodStatement in ruleClassStatement.RuleMethodStatements)
+				{
+					ruleMethodStatement.Generate( writer );
+				}
 			}
 
 			writer.Indent--;

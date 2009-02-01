@@ -27,20 +27,26 @@ namespace WolfGenerator.Core.Writer
 {
 	public class CodeWriter
 	{
+		#region Fields
 		private readonly List<Line> lines = new List<Line>();
 		private Line lastLine;
+		#endregion
 
+		#region Constructors
 		public CodeWriter()
 		{
 			this.Lines = this.lines.AsReadOnly();
 			this.IndentString = "\t";
 		}
+		#endregion
 
+		#region Properties
 		public int Indent { get; set; }
 
 		public string IndentString { get; set; }
 
 		public IList<Line> Lines { get; private set; }
+		#endregion
 
 		public void AppendText( string text )
 		{
@@ -56,7 +62,9 @@ namespace WolfGenerator.Core.Writer
 
 			if (this.lastLine != null)
 			{
+				// Add text for last line only if any line is specify
 				if (textLines.Count > 0) this.lastLine.Append( textLines[0].GetText() );
+				// Finish last line if more than one lines will append.
 				if (textLines.Count > 1) this.lastLine = null;
 				startIndex = 1;
 			}

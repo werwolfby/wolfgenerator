@@ -12,6 +12,15 @@ public partial class MainClass
 	{
 		return 15;
 	}
+	public CodeWriter TempRule()
+	{
+		var writer = new CodeWriter();
+
+		writer.Indent = 0;
+		writer.Append( "Test text" );
+
+		return writer;
+	}
 	public CodeWriter SetField( string field )
 	{
 		var writer = new CodeWriter();

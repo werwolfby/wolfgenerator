@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 02.02.2009 1:35:39
+// Compiled by vsCoco on 02.02.2009 1:42:53
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -313,7 +313,7 @@ public RuleClassStatement ruleClassStatement;
 		ExpectWeak(14, 3);
 		while (!(la.kind == 0 || la.kind == 7)) {SynErr(29); Get();}
 		Expect(7);
-		variables = variableList.AsReadOnly(); 
+		variables = variableList == null ? null : variableList.AsReadOnly(); 
 	}
 
 	void Value(out ValueStatement valueStatement) {

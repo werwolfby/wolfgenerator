@@ -11,6 +11,10 @@
 	return 15;
 <%end%>
 
+<%rule TempRule()%>
+Test text
+<%end%>
+
 <%rule SetField( string field )%>
 [<%= field %>] = @<%= field %>
 <%end%>

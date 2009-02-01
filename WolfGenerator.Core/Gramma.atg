@@ -131,7 +131,7 @@ RuleMethodStart <. out string name, out IList<Variable> variables .>            
                   "(" [ Var<out var>                                               (. if (variableList == null) variableList = new List<Variable>();
                                                                                       variableList.Add( var ); .)
                         { "," Var<out var>                                         (. variableList.Add( var ); .)
-                        } ] WEAK ")" SYNC "%>"                                     (. variables = variableList.AsReadOnly(); .)
+                        } ] WEAK ")" SYNC "%>"                                     (. variables = variableList == null ? null : variableList.AsReadOnly(); .)
                   .
 RuleMethodEnd   = SYNC "<%end%>".
 

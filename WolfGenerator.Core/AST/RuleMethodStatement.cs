@@ -14,6 +14,7 @@
  *   25.01.2009 10:39 - Override ToString() method.
  *   25.01.2009 10:57 - Exted ToString method (check if contains any statement).
  *   27.01.2009 01:54 - Add Generate method.
+ *   02.02.2009 01:37 - BugFix: If Variables is null or haven't any variable generate parameterless method.
  *
  *******************************************************/
 
@@ -60,10 +61,18 @@ namespace WolfGenerator.Core.AST
 
 		public override void Generate( CodeWriter writer )
 		{
-			writer.AppendLine( "public CodeWriter " + this.Name +
-			                   "( " +
-			                   string.Join( ", ", Array.ConvertAll( this.Variables.ToArray(), input => input.ToString() ) ) +
-			                   " )" );
+			writer.Append( "public CodeWriter " );
+			writer.Append( this.Name );
+			if (this.variables == null || this.variables.Count == 0)
+			{
+				writer.AppendLine( "()" );
+			}
+			else
+			{
+				writer.Append( "( " );
+				writer.Append( string.Join( ", ", Array.ConvertAll( this.Variables.ToArray(), input => input.ToString() ) ) );
+				writer.AppendLine( " )" );
+			}
 			writer.AppendLine( "{" );
 			writer.Indent++;
 

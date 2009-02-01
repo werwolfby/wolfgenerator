@@ -8,6 +8,7 @@
  * 
  * History:
  *   27.01.2009 01:30 - Create Wireframe
+ *   30.01.2009 20:19 - Add EBNF Comment.
  *
  *******************************************************/
 
@@ -15,6 +16,9 @@ using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
+	/// <summary>
+	/// EBNF: Call = "&lt;&call" ident ( ("([" {ANY} "])") | ("(" {ANY} ")") ) "%&gt;".
+	/// </summary>
 	public class CallStatement : RuleStatement
 	{
 		private readonly string name;

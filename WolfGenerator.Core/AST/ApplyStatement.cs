@@ -18,6 +18,9 @@ using System.Text;
 
 namespace WolfGenerator.Core.AST
 {
+	/// <summary>
+	/// EBNF: Apply = "&lt;%apply" ident (("(["{ ANY }"])"|"("{ ANY }")"))"from" ident "%&gt;".
+	/// </summary>
 	public class ApplyStatement : RuleStatement
 	{
 		private readonly string applyMethod;

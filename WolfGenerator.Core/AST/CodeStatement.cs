@@ -8,6 +8,7 @@
  * 
  * History:
  *   26.01.2009 23:25 - Create Wireframe
+ *   30.01.2009 20:17 - Add EBNF comment.
  *
  *******************************************************/
 
@@ -15,6 +16,9 @@ using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
+	/// <summary>
+	/// EBNF: Code = "&lt;%$" {ANY} ("$%&gt;" | "$-%&gt;").
+	/// </summary>
 	public class CodeStatement : RuleStatement
 	{
 		private readonly string value;

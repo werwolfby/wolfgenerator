@@ -17,6 +17,7 @@
  *   25.01.2009 10:57 - Exted ToString method (check if contains any using 
  *                      statements and rule method statements).
  *   27.01.2009 02:00 - change collection type from RuleMethodStatements to RuleClassMethodStatement
+ *   25.01.2009 08:33 - Update EBNF.
  *
  *******************************************************/
 
@@ -26,7 +27,7 @@ using System.Text;
 namespace WolfGenerator.Core.AST
 {
 	/// <summary>
-	/// EBNF: RuleClass = RuleClassStart {Using} {RuleMethod} RuleClassEnd.
+	/// EBNF: RuleClass = RuleClassStart {Using} {RuleMethod | Method} RuleClassEnd.
 	///       RuleClassStart = lt;%ruleclass ident %&gt;.
 	///       RuleClassEnd = &lt;%end%&gt;.
 	/// </summary>

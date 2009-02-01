@@ -11,6 +11,7 @@
  *   25.01.2009 11:33 - Add String property.
  *   25.01.2009 11:51 - Add Statements property & extend ToString method.
  *   26.01.2009 00:38 - Add Generate method without implementation.
+ *   30.01.2009 20:15 - Add EBNF Comment.
  *
  *******************************************************/
 
@@ -19,6 +20,9 @@ using System.Text;
 
 namespace WolfGenerator.Core.AST
 {
+	/// <summary>
+	/// EBNF: Join = "&lt;%join" string "%&lt;" { Value | Apply | Call } "&lt;end&gt;".
+	/// </summary>
 	public class JoinStatement : RuleStatement
 	{
 		private readonly string @string;

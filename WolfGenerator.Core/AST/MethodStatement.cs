@@ -10,6 +10,7 @@
  *   27.01.2009 01:50 - Create Wireframe
  *   27.01.2009 01:59 - Inhirit from RuleClassMethodStatement and implement method Generate.
  *   27.01.2009 02:15 - Fix: Generate - add space between return type and name.
+ *   30.01.2009 20:14 - Add EBNF comment.
  *
  *******************************************************/
 
@@ -20,6 +21,9 @@ using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
+	/// <summary>
+	/// EBNF: Method = "&lt;%method" Type ident "(" [Var {"," Var}] ")" "%&gt;" {ANY} "&lt;end&gt;".
+	/// </summary>
 	public class MethodStatement : RuleClassMethodStatement
 	{
 		private readonly Type returnType;

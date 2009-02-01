@@ -12,11 +12,15 @@
  *   26.01.2009 00:39 - Implement Generate method.
  *   26.01.2009 10:48 - Implement GenerateJoin method. Use AppendText in Generate method instead of Append.
  *   26.01.2009 11:03 - Fix: GenerateJoin.
+ *   30.01.2009 20:10 - Add EBNF comment.
  *
  *******************************************************/
 
 namespace WolfGenerator.Core.AST
 {
+	/// <summary>
+	/// EBNF: Var = Type ident.
+	/// </summary>
 	public class ValueStatement : RuleStatement
 	{
 		private readonly string value;

@@ -17,6 +17,7 @@ Test text
 
 <%rule Main( IEnumerable value )%>
 <%join ", "%>
+	<%= "Temp" %>
 	<%call SetField( "Id" )%>
 	<%call SetField( "Name" )%>
 <%end%>

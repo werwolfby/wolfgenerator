@@ -10,6 +10,8 @@
  *   26.01.2009 00:17 - Create Wireframe
  *   28.01.2009 16:35 - Check if ruleClassStatement.RuleMethodStatements contains any element.
  *   04.02.2009 01:01 - Add default namespaces.
+ *   04.02.2009 01:13 - Add default namespace `WolfGenerator.Core`.
+ *   04.02.2009 01:15 - Remove default namespace `System.Reflection`.
  *
  *******************************************************/
 
@@ -24,8 +26,8 @@ namespace WolfGenerator.Core.Writer
 		                                                     {
 		                                                     	"System",
 		                                                     	"System.Collections.Generic",
-		                                                     	"System.Reflection",
-		                                                     	"WolfGenerator.Core.Writer"
+		                                                     	"WolfGenerator.Core.Writer",
+		                                                     	"WolfGenerator.Core",
 		                                                     };
 
 		public static CodeWriter Generate( RuleClassStatement ruleClassStatement )
@@ -51,7 +53,9 @@ namespace WolfGenerator.Core.Writer
 			writer.AppendLine();
 
 			writer.Append( "public partial class " );
-			writer.AppendLine( ruleClassStatement.Name );
+			writer.Append( ruleClassStatement.Name );
+			writer.Append( " : " );
+			writer.AppendLine( typeof(GeneratorBase).Name );
 			writer.AppendLine( "{" );
 			writer.Indent++;
 

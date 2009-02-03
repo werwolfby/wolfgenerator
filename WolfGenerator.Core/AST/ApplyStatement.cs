@@ -11,6 +11,7 @@
  *   26.01.2009 00:38 - Add Generate method without implementation.
  *   26.01.2009 10:46 - Implement GenerateJoin method.
  *   26.01.2009 10:56 - Work on GeneateJoin method.
+ *   04.02.2009 01:13 - Use `Invoke` method of `GeneratorBase` base class.
  *
  *******************************************************/
 
@@ -51,7 +52,7 @@ namespace WolfGenerator.Core.AST
 
 		public override void Generate( Writer.CodeWriter writer, string innerWriter )
 		{
-			//throw new System.NotImplementedException();
+			throw new System.NotSupportedException();
 		}
 
 		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
@@ -61,12 +62,7 @@ namespace WolfGenerator.Core.AST
 
 			writer.Indent++;
 
-			writer.AppendLine( "temp = (CodeWriter)this.GetType().InvokeMember( \"" + applyMethod + "\"," );
-			writer.Indent++;
-			writer.AppendLine( "BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public," );
-			writer.AppendLine( "Type.DefaultBinder, this, new object[] { " + parameters + " } );" );
-			writer.Indent--;
-
+			writer.AppendLine( "temp = this.Invoke( \"" + applyMethod + "\", " + parameters + " );" );
 			writer.AppendLine( "list.Add( temp );" );
 
 			writer.Indent--;

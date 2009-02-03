@@ -80,6 +80,7 @@
     <Compile Include="AST\UsingStatement.cs" />
     <Compile Include="AST\ValueStatement.cs" />
     <Compile Include="AST\Variable.cs" />
+    <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
     <Compile Include="Scanner.cs" />
     <Compile Include="WolfGeneratorCustomToolGenerator.cs" />

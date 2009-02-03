@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using WolfGenerator.Core.Writer;
+using WolfGenerator.Core;
 using System.Text;
 using System.Collections;
 using Example.WolfGenerator;
 
-public partial class MainClass
+public partial class MainClass : GeneratorBase
 {
 	public int Test2( int a, int b )
 	{
@@ -42,13 +42,13 @@ public partial class MainClass
 			var list = new List<CodeWriter>();
 			CodeWriter temp;
 
-			list.Add( (CodeWriter)this.GetType().InvokeMember( "SetField",
-				BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
-				Type.DefaultBinder, this, new object[] { "Id" } ) );
+			temp = new CodeWriter();
+			temp.AppendText( "Temp" );
+			list.Add( temp );
 
-			list.Add( (CodeWriter)this.GetType().InvokeMember( "SetField",
-				BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public,
-				Type.DefaultBinder, this, new object[] { "Name" } ) );
+			list.Add( this.Invoke( "SetField", "Id" ) );
+
+			list.Add( this.Invoke( "SetField", "Name" ) );
 
 			for (var listI = 0; listI < list.Count; listI++)
 			{

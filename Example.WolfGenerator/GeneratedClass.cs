@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using WolfGenerator.Core.Writer;
 using System.Text;
 using System.Collections;
 using Example.WolfGenerator;
-using WolfGenerator.Core.Writer;
-using System.Collections.Generic;
 
 public partial class MainClass
 {

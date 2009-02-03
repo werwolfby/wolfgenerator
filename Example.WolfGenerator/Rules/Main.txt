@@ -1,11 +1,7 @@
 <%ruleclass MainClass%>
-<%using System%>
-<%using System.Reflection%>
 <%using System.Text%>
 <%using System.Collections%>
 <%using Example.WolfGenerator%>
-<%using WolfGenerator.Core.Writer%>
-<%using System.Collections.Generic%>
 
 <%method int Test2( int a, int b )%>
 	return 15;

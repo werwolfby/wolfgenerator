@@ -16,7 +16,7 @@ Test text
 <%end%>
 
 <%rule SetField( string field )%>
-[<%= field %>] = @<%= field %>
+'[<%= field %>]' = @<%= field %>
 <%end%>
 
 <%rule Main( IEnumerable value )%>

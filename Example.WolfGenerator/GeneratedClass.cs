@@ -26,10 +26,10 @@ public partial class MainClass
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
-		writer.Append( "[" );
+		writer.Append( "'[" );
 		writer.AppendText( field );
 		writer.Indent = 0;
-		writer.Append( "] = @" );
+		writer.Append( "]' = @" );
 		writer.AppendText( field );
 
 		return writer;

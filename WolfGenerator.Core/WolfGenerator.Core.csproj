@@ -81,6 +81,7 @@
     <Compile Include="AST\ValueStatement.cs" />
     <Compile Include="AST\Variable.cs" />
     <Compile Include="GeneratorScanner.cs" />
+    <Compile Include="Scanner.cs" />
     <Compile Include="WolfGeneratorCustomToolGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGeneratorWithSite.cs" />
@@ -105,7 +106,6 @@
       <LastGenOutput>Gramma.cs</LastGenOutput>
     </None>
     <None Include="Parser.frame" />
-    <None Include="Scanner.frame" />
     <None Include="test.snk" />
   </ItemGroup>
   <ItemGroup>

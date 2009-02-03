@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 02.02.2009 1:42:53
+// Compiled by vsCoco on 04.02.2009 0:43:11
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -48,11 +48,34 @@ namespace WolfGenerator.Core {
 	public class Parser {
 	const int _EOF = 0;
 	const int _ident = 1;
-	const int _number = 2;
-	const int _string = 3;
-	const int _badString = 4;
-	const int _char = 5;
-	const int maxT = 28;
+	const int _ruleClass = 2;
+	const int _rule = 3;
+	const int _join = 4;
+	const int _apply = 5;
+	const int _call = 6;
+	const int _method = 7;
+	const int _uses = 8;
+	const int _endStatement = 9;
+	const int _end = 10;
+	const int _value = 11;
+	const int _code = 12;
+	const int _codeEnd1 = 13;
+	const int _codeEnd2 = 14;
+	const int _from = 15;
+	const int _dot = 16;
+	const int _comma = 17;
+	const int _openB = 18;
+	const int _closB = 19;
+	const int _openB1 = 20;
+	const int _closB1 = 21;
+	const int _openG = 22;
+	const int _closG = 23;
+	const int _number = 24;
+	const int _string = 25;
+	const int _badString = 26;
+	const int _char = 27;
+	const int _text = 28;
+	const int maxT = 29;
 
 		const bool T = true;
 		const bool x = false;
@@ -70,6 +93,11 @@ public RuleClassStatement ruleClassStatement;
 	string ExtractString( bool isStart, bool ifEnd, int startPos, int endPos )
 	{
 		string text = scanner.buffer.GetString( startPos, endPos );
+		return ExtractString( isStart, ifEnd, text );
+	}
+	
+	string ExtractString( bool isStart, bool ifEnd, string text )
+	{
 		if (!string.IsNullOrEmpty( text ))
 		{
 			int startIndex = 0;
@@ -96,6 +124,13 @@ public RuleClassStatement ruleClassStatement;
 	int AddStatement( bool isStart, int startPos, List<RuleStatement> statements, bool ifEnd )
 	{
 		string text = ExtractString( isStart, ifEnd, startPos, la.pos );
+		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
+		return la.pos;
+	}
+	
+	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, string text )
+	{
+		text = ExtractString( isStart, ifEnd, text );
 		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
 		return la.pos;
 	}
@@ -175,14 +210,14 @@ public RuleClassStatement ruleClassStatement;
 		List<RuleClassMethodStatement> ruleMethodStatementList = null; 
 		string name; 
 		RuleClassStart(out name);
-		while (la.kind == 9) {
+		while (la.kind == 8) {
 			UsingStatement usingStatement; 
 			Using(out usingStatement);
 			if (usingStatementList == null) usingStatementList = new List<UsingStatement>();
 			usingStatementList.Add( usingStatement ); 
 		}
-		while (la.kind == 11 || la.kind == 15) {
-			if (la.kind == 11) {
+		while (la.kind == 3 || la.kind == 7) {
+			if (la.kind == 3) {
 				RuleMethodStatement ruleMethod; 
 				RuleMethod(out ruleMethod);
 				if (ruleMethodStatementList == null) 
@@ -201,25 +236,25 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 	void RuleClassStart(out string name) {
-		Expect(6);
+		Expect(2);
 		Expect(1);
 		name = t.val; 
-		Expect(7);
+		Expect(9);
 	}
 
 	void Using(out UsingStatement usingStatement) {
 		List<string> namespaceList = new List<string>(); 
-		Expect(9);
+		Expect(8);
 		Expect(1);
 		namespaceList.Add( t.val ); 
-		while (la.kind == 10) {
+		while (la.kind == 16) {
 			Get();
 			Expect(1);
 			namespaceList.Add( t.val ); 
 		}
 		string namespaceName = string.Join( ".", namespaceList.ToArray() );
 		usingStatement = new UsingStatement( namespaceName ); 
-		Expect(7);
+		Expect(9);
 	}
 
 	void RuleMethod(out RuleMethodStatement statement) {
@@ -233,28 +268,24 @@ public RuleClassStatement ruleClassStatement;
 		RuleMethodStart(out methodName, out variables);
 		int startPos = t.pos + t.val.Length; 
 		while (StartOf(1)) {
-			if (StartOf(2)) {
+			if (la.kind == 28) {
 				Get();
-			} else if (la.kind == 16) {
-				AddStatement( isStart, startPos, statements, false ); 
+				AddStatement( isStart, statements, la.kind == _end, t.val ); 
+			} else if (la.kind == 11) {
 				Value(out valueStatement);
 				statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; 
-			} else if (la.kind == 17) {
-				AddStatement( isStart, startPos, statements, false ); 
+			} else if (la.kind == 4) {
 				Join(out joinStatement);
 				statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; 
-			} else if (la.kind == 22) {
-				AddStatement( isStart, startPos, statements, false ); 
+			} else if (la.kind == 12) {
 				isStart = false; 
 				Code(out codeStatement, ref isStart);
 				statements.Add( codeStatement ); startPos = t.pos + t.val.Length; 
 			} else {
-				AddStatement( isStart, startPos, statements, false ); 
 				Call(out callStatement);
 				statements.Add( callStatement ); isStart = false; startPos = t.pos + t.val.Length; 
 			}
 		}
-		AddStatement( isStart, startPos, statements, true ); 
 		RuleMethodEnd();
 		statement = new RuleMethodStatement( methodName, variables, statements ); 
 	}
@@ -263,67 +294,67 @@ public RuleClassStatement ruleClassStatement;
 		WolfGenerator.Core.AST.Type returnType;
 		List<Variable> variables = null;
 		int startPos = -1; string name; 
-		Expect(15);
+		Expect(7);
 		Type(out returnType);
 		Expect(1);
 		name = t.val; 
-		Expect(12);
+		Expect(18);
 		Variable currentVariable; 
 		if (la.kind == 1) {
 			Var(out currentVariable);
 			if (variables == null) variables = new List<Variable>();
 			   variables.Add( currentVariable ); 
-			while (la.kind == 13) {
+			while (la.kind == 17) {
 				Get();
 				Var(out currentVariable);
 				variables.Add( currentVariable ); 
 			}
 		}
-		Expect(14);
-		Expect(7);
+		Expect(19);
+		Expect(9);
 		startPos = t.pos + t.val.Length; 
-		while (StartOf(1)) {
+		while (StartOf(2)) {
 			Get();
 		}
-		Expect(8);
+		Expect(10);
 		methodStatement = new MethodStatement( returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); 
 	}
 
 	void RuleClassEnd() {
-		Expect(8);
+		Expect(10);
 	}
 
 	void RuleMethodStart(out string name, out IList<Variable> variables ) {
 		Variable var = null; 
 		List<Variable> variableList = null; 
-		Expect(11);
+		Expect(3);
 		Expect(1);
 		name = t.val; 
-		Expect(12);
+		Expect(18);
 		if (la.kind == 1) {
 			Var(out var);
 			if (variableList == null) variableList = new List<Variable>();
 			variableList.Add( var ); 
-			while (la.kind == 13) {
+			while (la.kind == 17) {
 				Get();
 				Var(out var);
 				variableList.Add( var ); 
 			}
 		}
-		ExpectWeak(14, 3);
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(29); Get();}
-		Expect(7);
+		ExpectWeak(19, 3);
+		while (!(la.kind == 0 || la.kind == 9)) {SynErr(30); Get();}
+		Expect(9);
 		variables = variableList == null ? null : variableList.AsReadOnly(); 
 	}
 
 	void Value(out ValueStatement valueStatement) {
-		Expect(16);
+		Expect(11);
 		int pos = t.pos + t.val.Length; 
 		while (StartOf(4)) {
 			Get();
 		}
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(30); Get();}
-		Expect(7);
+		while (!(la.kind == 0 || la.kind == 9)) {SynErr(31); Get();}
+		Expect(9);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
 		valueStatement = new ValueStatement( value.Trim() );  
@@ -335,16 +366,16 @@ public RuleClassStatement ruleClassStatement;
 		ValueStatement valueStatement;
 		ApplyStatement applyStatement;
 		CallStatement callStatement; 
-		Expect(17);
-		Expect(3);
+		Expect(4);
+		Expect(25);
 		@string = t.val.Substring( 1, t.val.Length - 2 ); 
-		Expect(7);
-		while (la.kind == 16 || la.kind == 18 || la.kind == 25) {
-			if (la.kind == 16) {
+		Expect(9);
+		while (la.kind == 5 || la.kind == 6 || la.kind == 11) {
+			if (la.kind == 11) {
 				Value(out valueStatement);
 				if (statements == null) statements = new List<RuleStatement>();
 				statements.Add( valueStatement ); 
-			} else if (la.kind == 18) {
+			} else if (la.kind == 5) {
 				Apply(out applyStatement);
 				if (statements == null) statements = new List<RuleStatement>();
 				statements.Add( applyStatement ); 
@@ -354,60 +385,60 @@ public RuleClassStatement ruleClassStatement;
 				statements.Add( callStatement ); 
 			}
 		}
-		while (!(la.kind == 0 || la.kind == 8)) {SynErr(31); Get();}
-		Expect(8);
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(32); Get();}
+		Expect(10);
 		joinStatement = new JoinStatement( @string, statements ); 
 	}
 
 	void Code(out CodeStatement codeStatement, ref bool isStart) {
-		Expect(22);
+		Expect(12);
 		int startPos = t.pos + t.val.Length; 
 		while (StartOf(5)) {
 			Get();
 		}
 		string value = scanner.buffer.GetString( startPos, la.pos ); 
-		if (la.kind == 23) {
+		if (la.kind == 13) {
 			Get();
-		} else if (la.kind == 24) {
+		} else if (la.kind == 14) {
 			Get();
 			isStart = true; 
-		} else SynErr(32);
+		} else SynErr(33);
 		codeStatement = new CodeStatement( value.Trim() ); 
 	}
 
 	void Call(out CallStatement callStatement) {
 		string methodName; string parameters = null; 
-		Expect(25);
+		Expect(6);
 		Expect(1);
 		methodName = t.val; 
 		int startPos = -1; int endPos = -1; 
-		if (la.kind == 19) {
+		if (la.kind == 20) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(6)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(20);
-		} else if (la.kind == 12) {
+			Expect(21);
+		} else if (la.kind == 18) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(7)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(14);
-		} else SynErr(33);
+			Expect(19);
+		} else SynErr(34);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(34); Get();}
-		Expect(7);
+		while (!(la.kind == 0 || la.kind == 9)) {SynErr(35); Get();}
+		Expect(9);
 		callStatement = new CallStatement( methodName, parameters ); 
 	}
 
 	void RuleMethodEnd() {
-		while (!(la.kind == 0 || la.kind == 8)) {SynErr(35); Get();}
-		Expect(8);
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(36); Get();}
+		Expect(10);
 	}
 
 	void Var(out Variable var) {
@@ -422,58 +453,58 @@ public RuleClassStatement ruleClassStatement;
 		List<WolfGenerator.Core.AST.Type> genericParameters = null; 
 		Expect(1);
 		name.Append( t.val ); 
-		while (la.kind == 10) {
+		while (la.kind == 16) {
 			Get();
 			Expect(1);
 			name.Append( '.' ); name.Append( t.val ); 
 		}
-		if (la.kind == 26) {
+		if (la.kind == 22) {
 			genericParameters = new List<WolfGenerator.Core.AST.Type>();
 			WolfGenerator.Core.AST.Type generic; 
 			Get();
 			Type(out generic);
 			genericParameters.Add( generic ); 
-			while (la.kind == 13) {
+			while (la.kind == 17) {
 				Get();
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
-			Expect(27);
+			Expect(23);
 		}
 		type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); 
 	}
 
 	void Apply(out ApplyStatement applyStatement) {
 		string methodName; string parameters = null; string from; 
-		Expect(18);
+		Expect(5);
 		Expect(1);
 		methodName = t.val; 
 		int startPos = -1; int endPos = -1; 
-		if (la.kind == 19) {
+		if (la.kind == 20) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(6)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(20);
-		} else if (la.kind == 12) {
+			Expect(21);
+		} else if (la.kind == 18) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(7)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(14);
-		} else SynErr(36);
+			Expect(19);
+		} else SynErr(37);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 21)) {SynErr(37); Get();}
-		Expect(21);
+		while (!(la.kind == 0 || la.kind == 15)) {SynErr(38); Get();}
+		Expect(15);
 		Expect(1);
 		from = t.val; 
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(38); Get();}
-		Expect(7);
+		while (!(la.kind == 0 || la.kind == 9)) {SynErr(39); Get();}
+		Expect(9);
 		applyStatement = new ApplyStatement( methodName, parameters, from ); 
 	}
 
@@ -488,14 +519,14 @@ public RuleClassStatement ruleClassStatement;
 		}
 		
 		bool[,] set = {
-		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x},
-		{x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, x,x,T,T, T,T,x,T, T,x,T,T, T,x},
-		{T,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,T,T,T, T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x}
+		{T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,x,x,x, T,x,T,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x},
+		{x,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
+		{T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x}
 
 		};
 	} // end Parser
@@ -516,43 +547,44 @@ public RuleClassStatement ruleClassStatement;
 			switch (n) {
 			case 0: s = "EOF expected"; break;
 			case 1: s = "ident expected"; break;
-			case 2: s = "number expected"; break;
-			case 3: s = "string expected"; break;
-			case 4: s = "badString expected"; break;
-			case 5: s = "char expected"; break;
-			case 6: s = "\"<%ruleclass\" expected"; break;
-			case 7: s = "\"%>\" expected"; break;
-			case 8: s = "\"<%end%>\" expected"; break;
-			case 9: s = "\"<%using\" expected"; break;
-			case 10: s = "\".\" expected"; break;
-			case 11: s = "\"<%rule\" expected"; break;
-			case 12: s = "\"(\" expected"; break;
-			case 13: s = "\",\" expected"; break;
-			case 14: s = "\")\" expected"; break;
-			case 15: s = "\"<%method\" expected"; break;
-			case 16: s = "\"<%=\" expected"; break;
-			case 17: s = "\"<%join\" expected"; break;
-			case 18: s = "\"<%apply\" expected"; break;
-			case 19: s = "\"([\" expected"; break;
-			case 20: s = "\"])\" expected"; break;
-			case 21: s = "\"from\" expected"; break;
-			case 22: s = "\"<%$\" expected"; break;
-			case 23: s = "\"$%>\" expected"; break;
-			case 24: s = "\"$-%>\" expected"; break;
-			case 25: s = "\"<%call\" expected"; break;
-			case 26: s = "\"<\" expected"; break;
-			case 27: s = "\">\" expected"; break;
-			case 28: s = "??? expected"; break;
-			case 29: s = "this symbol not expected in RuleMethodStart"; break;
-			case 30: s = "this symbol not expected in Value"; break;
-			case 31: s = "this symbol not expected in Join"; break;
-			case 32: s = "invalid Code"; break;
-			case 33: s = "invalid Call"; break;
-			case 34: s = "this symbol not expected in Call"; break;
-			case 35: s = "this symbol not expected in RuleMethodEnd"; break;
-			case 36: s = "invalid Apply"; break;
-			case 37: s = "this symbol not expected in Apply"; break;
+			case 2: s = "ruleClass expected"; break;
+			case 3: s = "rule expected"; break;
+			case 4: s = "join expected"; break;
+			case 5: s = "apply expected"; break;
+			case 6: s = "call expected"; break;
+			case 7: s = "method expected"; break;
+			case 8: s = "uses expected"; break;
+			case 9: s = "endStatement expected"; break;
+			case 10: s = "end expected"; break;
+			case 11: s = "value expected"; break;
+			case 12: s = "code expected"; break;
+			case 13: s = "codeEnd1 expected"; break;
+			case 14: s = "codeEnd2 expected"; break;
+			case 15: s = "from expected"; break;
+			case 16: s = "dot expected"; break;
+			case 17: s = "comma expected"; break;
+			case 18: s = "openB expected"; break;
+			case 19: s = "closB expected"; break;
+			case 20: s = "openB1 expected"; break;
+			case 21: s = "closB1 expected"; break;
+			case 22: s = "openG expected"; break;
+			case 23: s = "closG expected"; break;
+			case 24: s = "number expected"; break;
+			case 25: s = "string expected"; break;
+			case 26: s = "badString expected"; break;
+			case 27: s = "char expected"; break;
+			case 28: s = "text expected"; break;
+			case 29: s = "??? expected"; break;
+			case 30: s = "this symbol not expected in RuleMethodStart"; break;
+			case 31: s = "this symbol not expected in Value"; break;
+			case 32: s = "this symbol not expected in Join"; break;
+			case 33: s = "invalid Code"; break;
+			case 34: s = "invalid Call"; break;
+			case 35: s = "this symbol not expected in Call"; break;
+			case 36: s = "this symbol not expected in RuleMethodEnd"; break;
+			case 37: s = "invalid Apply"; break;
 			case 38: s = "this symbol not expected in Apply"; break;
+			case 39: s = "this symbol not expected in Apply"; break;
 
 				default: s = "error " + n; break;
 			}
@@ -565,553 +597,5 @@ public RuleClassStatement ruleClassStatement;
 		}
 
 	} // Errors
-
-}/*----------------------------------------------------------------------
-Compiler Generator Coco/R,
-Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
-extended by M. Loeberbauer & A. Woess, Univ. of Linz
-with improvements by Pat Terry, Rhodes University
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation; either version 2, or (at your option) any 
-later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
-for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program; if not, write to the Free Software Foundation, Inc., 
-59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-As an exception, it is allowed to write an extension of Coco/R that is
-used as a plugin in non-free software.
-
-If not otherwise stated, any source code generated by Coco/R (other than 
-Coco/R itself) does not fall under the GNU General Public License.
------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-// <autogenerated>
-//     This code was generated by COCO from Scanner.frame.
-//     Changes to this file may cause incorrect behavior and will be lost if 
-//     the code is regenerated.
-// </autogenerated>
-//------------------------------------------------------------------------------
-
-namespace WolfGenerator.Core {
-
-	public class Token {
-		public int kind;    // token kind
-		public int pos;     // token position in the source text (starting at 0)
-		public int col;     // token column (starting at 0)
-		public int line;    // token line (starting at 1)
-		public string val;  // token value
-		public Token next;  // ML 2005-03-11 Tokens are kept in linked list
-	}
-
-	public class Buffer {
-		public const char EOF = (char)256;
-		const int MAX_BUFFER_LENGTH = 64 * 1024; // 64KB
-		byte[] buf;         // input buffer
-		int bufStart;       // position of first byte in buffer relative to input stream
-		int bufLen;         // length of buffer
-		int fileLen;        // length of input stream
-		int pos;            // current position in buffer
-		Stream stream;      // input stream (seekable)
-		bool isUserStream;  // was the stream opened by the user?
-		
-	
-		protected Buffer(Buffer b) { // called in UTF8Buffer constructor
-			buf = b.buf;
-			bufStart = b.bufStart;
-			bufLen = b.bufLen;
-			fileLen = b.fileLen;
-			pos = b.pos;
-			stream = b.stream;
-			// keep destructor from closing the stream
-			b.stream = null;
-			isUserStream = b.isUserStream;
-		}
-		
-		public Buffer (Stream s, bool isUserStream) {
-			stream = s; this.isUserStream = isUserStream;
-			fileLen = bufLen = (int) s.Length;
-			if (stream.CanSeek && bufLen > MAX_BUFFER_LENGTH) bufLen = MAX_BUFFER_LENGTH;
-			buf = new byte[bufLen];
-			bufStart = Int32.MaxValue; // nothing in the buffer so far
-			Pos = 0; // setup buffer to position 0 (start)
-			if (bufLen == fileLen) Close();
-		}
-		
-		~Buffer() { Close(); }
-		
-		void Close() {
-			if (!isUserStream && stream != null) {
-				stream.Close();
-				stream = null;
-			}
-		}
-		
-		public virtual int Read () {
-			if (pos < bufLen) {
-				return buf[pos++];
-			} else if (Pos < fileLen) {
-				Pos = Pos; // shift buffer start to Pos
-				return buf[pos++];
-			} else {
-				return EOF;
-			}
-		}
-
-		public int Peek () {
-			if (pos < bufLen) {
-				return buf[pos];
-			} else if (Pos < fileLen) {
-				Pos = Pos; // shift buffer start to Pos
-				return buf[pos];
-			} else {
-				return EOF;
-			}
-		}
-		
-		public string GetString (int beg, int end) {
-			int len = end - beg;
-			char[] buf = new char[len];
-			int oldPos = Pos;
-			Pos = beg;
-			for (int i = 0; i < len; i++) buf[i] = (char) Read();
-			Pos = oldPos;
-			return new String(buf);
-		}
-
-		public int Pos {
-			get { return pos + bufStart; }
-			set {
-				if (value < 0) value = 0; 
-				else if (value > fileLen) value = fileLen;
-				if (value >= bufStart && value < bufStart + bufLen) { // already in buffer
-					pos = value - bufStart;
-				} else if (stream != null) { // must be swapped in
-					stream.Seek(value, SeekOrigin.Begin);
-					bufLen = stream.Read(buf, 0, buf.Length);
-					bufStart = value; pos = 0;
-				} else {
-					pos = fileLen - bufStart; // make Pos return fileLen
-				}
-			}
-		}
-	}
-
-//-----------------------------------------------------------------------------------
-// UTF8Buffer
-//-----------------------------------------------------------------------------------
-public class UTF8Buffer: Buffer {
-	public UTF8Buffer(Buffer b): base(b) {}
-
-	public override int Read() {
-		int ch;
-		do {
-			ch = base.Read();
-			// until we find a uft8 start (0xxxxxxx or 11xxxxxx)
-		} while ((ch >= 128) && ((ch & 0xC0) != 0xC0) && (ch != EOF));
-		if (ch < 128 || ch == EOF) {
-			// nothing to do, first 127 chars are the same in ascii and utf8
-			// 0xxxxxxx or end of file character
-		} else if ((ch & 0xF0) == 0xF0) {
-			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-			int c1 = ch & 0x07; ch = base.Read();
-			int c2 = ch & 0x3F; ch = base.Read();
-			int c3 = ch & 0x3F; ch = base.Read();
-			int c4 = ch & 0x3F;
-			ch = (((((c1 << 6) | c2) << 6) | c3) << 6) | c4;
-		} else if ((ch & 0xE0) == 0xE0) {
-			// 1110xxxx 10xxxxxx 10xxxxxx
-			int c1 = ch & 0x0F; ch = base.Read();
-			int c2 = ch & 0x3F; ch = base.Read();
-			int c3 = ch & 0x3F;
-			ch = (((c1 << 6) | c2) << 6) | c3;
-		} else if ((ch & 0xC0) == 0xC0) {
-			// 110xxxxx 10xxxxxx
-			int c1 = ch & 0x1F; ch = base.Read();
-			int c2 = ch & 0x3F;
-			ch = (c1 << 6) | c2;
-		}
-		return ch;
-	}
-}
-
-	public class Scanner {
-		const char EOL = '\n';
-		const int eofSym = 0; /* pdt */
-	const int charSetSize = 256;
-	const int maxT = 28;
-	const int noSym = 28;
-	short[] start = {
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0, 10,  0, 64, 17,  0,  5, 63, 31,  0,  0, 30,  0, 29,  0,
-	  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  0,  0, 62,  0, 61,  0,
-	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0, 49,  0,  0,
-	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
-	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	  -1};
-
-
-		public Buffer buffer; // scanner buffer
-		public string srcFile;
-		
-		Token t;          // current token
-		char ch;          // current input character
-		int pos;          // column number of current character
-		int line;         // line number of current character
-		int lineStart;    // start position of current line
-		int oldEols;      // EOLs that appeared in a comment;
-		BitArray ignore;  // set of characters to be ignored by the scanner
-		Token tokens;     // list of tokens already peeked (first token is a dummy)
-		Token pt;         // current peek token
-		
-		char[] tval = new char[128]; // text of current token
-		int tlen;         // length of current token
-		
-		public Scanner (string fileName) {
-			srcFile=fileName;
-			try {
-				Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-				buffer = new Buffer(stream, false);
-				Init();
-			} catch (IOException) {
-				throw new Exception(String.Format("--- Cannot open file {0}", fileName));
-			}
-		}
-		
-		public Scanner (Stream s) {
-			buffer = new Buffer(s, true);
-			Init();
-		}
-		
-		public virtual void WriteLine(string s) 
-		{
-			Console.WriteLine(s);
-		}
-		
-		public virtual void Write(string s) 
-		{
-			Console.Write(s);
-		}
-		
-		public virtual void WriteError(string fmt,string file, int lin, int col, string err)
-		{
-			Console.WriteLine(string.Format(fmt,new object[] {file, lin, col, err}));
-		}
-
-		
-		void Init() {
-			pos = -1; line = 1; lineStart = 0;
-			oldEols = 0;
-			NextCh();
-			if (ch == 0xEF) { // check optional byte order mark for UTF-8
-				NextCh(); int ch1 = ch;
-				NextCh(); int ch2 = ch;
-				if (ch1 != 0xBB || ch2 != 0xBF) {
-					throw new Exception(String.Format("illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2));
-				}
-				buffer = new UTF8Buffer(buffer);
-				NextCh();
-			}
-			ignore = new BitArray(charSetSize+1);
-			ignore[' '] = true;  // blanks are always white space
-		ignore[9] = true; ignore[10] = true; ignore[13] = true; 
-			pt = tokens = new Token();  // first token is a dummy
-		}
-		
-		void NextCh() {
-			if (oldEols > 0) { ch = EOL; oldEols--; } 
-			else {
-				ch = (char)buffer.Read(); pos++;
-				// replace isolated '\r' by '\n' in order to make
-				// eol handling uniform across Windows, Unix and Mac
-				if (ch == '\r' && buffer.Peek() != '\n') ch = EOL;
-				if (ch == EOL) { line++; lineStart = pos + 1; }
-			}
-
-		}
-
-		void AddCh() {
-			if (tlen >= tval.Length) {
-				char[] newBuf = new char[2 * tval.Length];
-				Array.Copy(tval, 0, newBuf, 0, tval.Length);
-				tval = newBuf;
-			}
-		tval[tlen++] = ch;
-			NextCh();
-		}
-
-
-
-
-		void CheckLiteral() {
-		switch (t.val) {
-			case "from": t.kind = 21; break;
-			default: break;
-		}
-		}
-
-		Token NextToken() {
-			while (ignore[ch]) NextCh();
-
-			t = new Token();
-			t.pos = pos; t.col = pos - lineStart + 1; t.line = line; 
-			int state = start[ch];
-			tlen = 0; AddCh();
-			
-			switch (state) {
-				case -1: { t.kind = eofSym; break; } // NextCh already done
-				case 0: { t.kind = noSym; break; }   // NextCh already done
-			case 1:
-				if ((ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z')) {AddCh(); goto case 1;}
-				else {t.kind = 1; t.val = new String(tval, 0, tlen); CheckLiteral(); return t;}
-			case 2:
-				if ((ch >= '0' && ch <= '9')) {AddCh(); goto case 2;}
-				else {t.kind = 2; break;}
-			case 3:
-				{t.kind = 3; break;}
-			case 4:
-				{t.kind = 4; break;}
-			case 5:
-				if ((ch <= 9 || ch >= 11 && ch <= 12 || ch >= 14 && ch <= '&' || ch >= '(' && ch <= '[' || ch >= ']' && ch <= 255)) {AddCh(); goto case 6;}
-				else if (ch == 92) {AddCh(); goto case 7;}
-				else {t.kind = noSym; break;}
-			case 6:
-				if (ch == 39) {AddCh(); goto case 9;}
-				else {t.kind = noSym; break;}
-			case 7:
-				if ((ch >= ' ' && ch <= '~')) {AddCh(); goto case 8;}
-				else {t.kind = noSym; break;}
-			case 8:
-				if ((ch >= '0' && ch <= '9' || ch >= 'a' && ch <= 'f')) {AddCh(); goto case 8;}
-				else if (ch == 39) {AddCh(); goto case 9;}
-				else {t.kind = noSym; break;}
-			case 9:
-				{t.kind = 5; break;}
-			case 10:
-				if ((ch <= 9 || ch >= 11 && ch <= 12 || ch >= 14 && ch <= '!' || ch >= '#' && ch <= '[' || ch >= ']' && ch <= 255)) {AddCh(); goto case 10;}
-				else if ((ch == 10 || ch == 13)) {AddCh(); goto case 4;}
-				else if (ch == '"') {AddCh(); goto case 3;}
-				else if (ch == 92) {AddCh(); goto case 11;}
-				else {t.kind = noSym; break;}
-			case 11:
-				if ((ch >= ' ' && ch <= '~')) {AddCh(); goto case 10;}
-				else {t.kind = noSym; break;}
-			case 12:
-				if (ch == 'l') {AddCh(); goto case 13;}
-				else {t.kind = noSym; break;}
-			case 13:
-				if (ch == 'a') {AddCh(); goto case 14;}
-				else {t.kind = noSym; break;}
-			case 14:
-				if (ch == 's') {AddCh(); goto case 15;}
-				else {t.kind = noSym; break;}
-			case 15:
-				if (ch == 's') {AddCh(); goto case 16;}
-				else {t.kind = noSym; break;}
-			case 16:
-				{t.kind = 6; break;}
-			case 17:
-				if (ch == '>') {AddCh(); goto case 18;}
-				else {t.kind = noSym; break;}
-			case 18:
-				{t.kind = 7; break;}
-			case 19:
-				if (ch == 'n') {AddCh(); goto case 20;}
-				else {t.kind = noSym; break;}
-			case 20:
-				if (ch == 'd') {AddCh(); goto case 21;}
-				else {t.kind = noSym; break;}
-			case 21:
-				if (ch == '%') {AddCh(); goto case 22;}
-				else {t.kind = noSym; break;}
-			case 22:
-				if (ch == '>') {AddCh(); goto case 23;}
-				else {t.kind = noSym; break;}
-			case 23:
-				{t.kind = 8; break;}
-			case 24:
-				if (ch == 's') {AddCh(); goto case 25;}
-				else {t.kind = noSym; break;}
-			case 25:
-				if (ch == 'i') {AddCh(); goto case 26;}
-				else {t.kind = noSym; break;}
-			case 26:
-				if (ch == 'n') {AddCh(); goto case 27;}
-				else {t.kind = noSym; break;}
-			case 27:
-				if (ch == 'g') {AddCh(); goto case 28;}
-				else {t.kind = noSym; break;}
-			case 28:
-				{t.kind = 9; break;}
-			case 29:
-				{t.kind = 10; break;}
-			case 30:
-				{t.kind = 13; break;}
-			case 31:
-				{t.kind = 14; break;}
-			case 32:
-				if (ch == 'e') {AddCh(); goto case 33;}
-				else {t.kind = noSym; break;}
-			case 33:
-				if (ch == 't') {AddCh(); goto case 34;}
-				else {t.kind = noSym; break;}
-			case 34:
-				if (ch == 'h') {AddCh(); goto case 35;}
-				else {t.kind = noSym; break;}
-			case 35:
-				if (ch == 'o') {AddCh(); goto case 36;}
-				else {t.kind = noSym; break;}
-			case 36:
-				if (ch == 'd') {AddCh(); goto case 37;}
-				else {t.kind = noSym; break;}
-			case 37:
-				{t.kind = 15; break;}
-			case 38:
-				{t.kind = 16; break;}
-			case 39:
-				if (ch == 'o') {AddCh(); goto case 40;}
-				else {t.kind = noSym; break;}
-			case 40:
-				if (ch == 'i') {AddCh(); goto case 41;}
-				else {t.kind = noSym; break;}
-			case 41:
-				if (ch == 'n') {AddCh(); goto case 42;}
-				else {t.kind = noSym; break;}
-			case 42:
-				{t.kind = 17; break;}
-			case 43:
-				if (ch == 'p') {AddCh(); goto case 44;}
-				else {t.kind = noSym; break;}
-			case 44:
-				if (ch == 'p') {AddCh(); goto case 45;}
-				else {t.kind = noSym; break;}
-			case 45:
-				if (ch == 'l') {AddCh(); goto case 46;}
-				else {t.kind = noSym; break;}
-			case 46:
-				if (ch == 'y') {AddCh(); goto case 47;}
-				else {t.kind = noSym; break;}
-			case 47:
-				{t.kind = 18; break;}
-			case 48:
-				{t.kind = 19; break;}
-			case 49:
-				if (ch == ')') {AddCh(); goto case 50;}
-				else {t.kind = noSym; break;}
-			case 50:
-				{t.kind = 20; break;}
-			case 51:
-				{t.kind = 22; break;}
-			case 52:
-				if (ch == '>') {AddCh(); goto case 53;}
-				else {t.kind = noSym; break;}
-			case 53:
-				{t.kind = 23; break;}
-			case 54:
-				if (ch == '%') {AddCh(); goto case 55;}
-				else {t.kind = noSym; break;}
-			case 55:
-				if (ch == '>') {AddCh(); goto case 56;}
-				else {t.kind = noSym; break;}
-			case 56:
-				{t.kind = 24; break;}
-			case 57:
-				if (ch == 'a') {AddCh(); goto case 58;}
-				else {t.kind = noSym; break;}
-			case 58:
-				if (ch == 'l') {AddCh(); goto case 59;}
-				else {t.kind = noSym; break;}
-			case 59:
-				if (ch == 'l') {AddCh(); goto case 60;}
-				else {t.kind = noSym; break;}
-			case 60:
-				{t.kind = 25; break;}
-			case 61:
-				{t.kind = 27; break;}
-			case 62:
-				if (ch == '%') {AddCh(); goto case 65;}
-				else {t.kind = 26; break;}
-			case 63:
-				if (ch == '[') {AddCh(); goto case 48;}
-				else {t.kind = 12; break;}
-			case 64:
-				if (ch == '%') {AddCh(); goto case 52;}
-				else if (ch == '-') {AddCh(); goto case 54;}
-				else {t.kind = noSym; break;}
-			case 65:
-				if (ch == 'r') {AddCh(); goto case 66;}
-				else if (ch == 'e') {AddCh(); goto case 19;}
-				else if (ch == 'u') {AddCh(); goto case 24;}
-				else if (ch == 'm') {AddCh(); goto case 32;}
-				else if (ch == '=') {AddCh(); goto case 38;}
-				else if (ch == 'j') {AddCh(); goto case 39;}
-				else if (ch == 'a') {AddCh(); goto case 43;}
-				else if (ch == '$') {AddCh(); goto case 51;}
-				else if (ch == 'c') {AddCh(); goto case 57;}
-				else {t.kind = noSym; break;}
-			case 66:
-				if (ch == 'u') {AddCh(); goto case 67;}
-				else {t.kind = noSym; break;}
-			case 67:
-				if (ch == 'l') {AddCh(); goto case 68;}
-				else {t.kind = noSym; break;}
-			case 68:
-				if (ch == 'e') {AddCh(); goto case 69;}
-				else {t.kind = noSym; break;}
-			case 69:
-				if (ch == 'c') {AddCh(); goto case 12;}
-				else {t.kind = 11; break;}
-
-			}
-			t.val = new String(tval, 0, tlen);
-			return t;
-		}
-		
-		// get the next token (possibly a token already seen during peeking)
-		public Token Scan () {
-			if (tokens.next == null) {
-				return NextToken();
-			} else {
-				pt = tokens = tokens.next;
-				return tokens;
-			}
-		}
-
-		// peek for the next token, ignore pragmas
-		public Token Peek () {
-			if (pt.next == null) {
-				do {
-					pt = pt.next = NextToken();
-				} while (pt.kind > maxT); // skip pragmas
-			} else {
-				do {
-					pt = pt.next;
-				} while (pt.kind > maxT);
-			}
-			return pt;
-		}
-		
-		// make sure that peeking starts at the current scan position
-		public void ResetPeek () { pt = tokens; }
-
-	} // end Scanner
 
 }

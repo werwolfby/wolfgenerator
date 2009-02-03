@@ -10,6 +10,11 @@ COMPILER WolfGenerator
 	string ExtractString( bool isStart, bool ifEnd, int startPos, int endPos )
 	{
 		string text = scanner.buffer.GetString( startPos, endPos );
+		return ExtractString( isStart, ifEnd, text );
+	}
+	
+	string ExtractString( bool isStart, bool ifEnd, string text )
+	{
 		if (!string.IsNullOrEmpty( text ))
 		{
 			int startIndex = 0;
@@ -39,6 +44,13 @@ COMPILER WolfGenerator
 		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
 		return la.pos;
 	}
+	
+	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, string text )
+	{
+		text = ExtractString( isStart, ifEnd, text );
+		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
+		return la.pos;
+	}
 
 CHARACTERS
 	letter    = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
@@ -54,12 +66,39 @@ CHARACTERS
 TOKENS
 
 	ident     = letter { letter | digit }.
+	
+	ruleClass    = "<%ruleclass".
+	rule         = "<%rule".
+	join         = "<%join".
+	apply        = "<%apply".
+	call         = "<%call".
+	method       = "<%method".
+	uses         = "<%using".
+	endStatement = "%>".
+	end          = "<%end%>".
+	value        = "<%=".
+	code         = "<%$".
+	codeEnd1     = "$%>".
+	codeEnd2     = "$-%>".
+	
+	from         = "from".
+	
+	dot          = ".".
+	comma        = ",".
+	openB        = "(".
+	closB        = ")".
+	openB1       = "([".
+	closB1       = "])".
+	openG        = "<".
+	closG        = ">".
 
 	number    = digit { digit }.
 	string    = '"' { stringCh | '\\' printable } '"'.
 	badString = '"' { stringCh | '\\' printable } (cr | lf).
 	char      = '\'' ( charCh | '\\' printable { hex } ) '\''.
 
+	text
+	
 IGNORE cr + lf + tab
 
 
@@ -107,21 +146,21 @@ RuleMethod<out RuleMethodStatement statement>                                   
                                                                                       CallStatement callStatement; .)
                     = RuleMethodStart<out methodName, out variables>               (. int startPos = t.pos + t.val.Length; .)
                      { 
-                      ANY 
-                      |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
+                      text                                                         (. AddStatement( isStart, statements, la.kind == _end, t.val ); .)
+                      |
                       Value<out valueStatement>                                    (. statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       
-                      |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
+                      |                                                            
                       Join<out joinStatement>                                      (. statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       
-                      |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
+                      |                                                            
                                                                                    (. isStart = false; .)
                       Code<out codeStatement, ref isStart>                         (. statements.Add( codeStatement ); startPos = t.pos + t.val.Length; .)
                       
-                      |                                                            (. AddStatement( isStart, startPos, statements, false ); .)
+                      |                                                            
                       Call<out callStatement>                                      (. statements.Add( callStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       } 
-                                                                                   (. AddStatement( isStart, startPos, statements, true ); .)
+                                                                                   
                       RuleMethodEnd                                                (. statement = new RuleMethodStatement( methodName, variables, statements ); .)
                       .
 

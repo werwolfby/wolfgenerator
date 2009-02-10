@@ -17,8 +17,14 @@ namespace Example.WolfGenerator
 
 			var mainClass = new MainClass();
 
-			Console.WriteLine( mainClass.Main( new object[] { 1, "String" } ) );
-
+			try
+			{
+				Console.WriteLine( mainClass.Main( new object[] { 1, "String" } ) );
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine( e );
+			}
 			var code = Generator.Generate( parser.ruleClassStatement ).ToString();
 
 			using (var stream = new StreamWriter( "../../GeneratedClass.cs" ))

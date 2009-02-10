@@ -198,165 +198,141 @@ namespace WolfGenerator.Core
 		public Func<Token, bool> IsStart;
 	}
 
-	public class Scanner
-	{
-		private const char EOL = '\n';
-		private const int eofSym = 0; /* pdt */
+	public class Scanner {
+		const char EOL = '\n';
+		const int eofSym = 0; /* pdt */
+	const int charSetSize = 256;
+	const int maxT = 29;
+	const int noSym = 29;
+	short[] start = {
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0, 66,  0, 64, 30,  0, 53, 65, 46,  0,  0, 45,  0, 44,  0,
+	 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,  0,  0, 63,  0, 62,  0,
+	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0, 48,  0,  0,
+	  0,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
+	  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	  -1};
 
-		private const int charSetSize = 256;
-		private const int maxT = 28;
-		private const int noSym = 28;
-
-		private readonly short[] start = {
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 63, 0, 61, 31, 0, 55, 62, 47, 0, 0, 46, 0, 45, 0,
-		                                 	52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 0, 0, 60, 0, 51, 0,
-		                                 	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		                                 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 49, 0, 0,
-		                                 	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		                                 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		                                 	-1
-		                                 };
 
 		public Buffer buffer; // scanner buffer
 		public string srcFile;
-
-		private Token t; // current token
-		private char ch; // current input character
-		private int pos; // column number of current character
-		private int line; // line number of current character
-		private int lineStart; // start position of current line
-		private int oldEols; // EOLs that appeared in a comment;
-		private BitArray ignore; // set of characters to be ignored by the scanner
-		private Token tokens; // list of tokens already peeked (first token is a dummy)
-		private Token pt; // current peek token
-
-		private char[] tval = new char[128]; // text of current token
-		private int tlen; // length of current token
-
-		public Scanner( string fileName )
-		{
-			this.srcFile = fileName;
-			try
-			{
-				Stream stream = new FileStream( fileName, FileMode.Open, FileAccess.Read, FileShare.Read );
-				this.buffer = new Buffer( stream, false );
-				this.Init();
-			}
-			catch (IOException)
-			{
-				throw new Exception( String.Format( "--- Cannot open file {0}", fileName ) );
+		
+		Token t;          // current token
+		char ch;          // current input character
+		int pos;          // column number of current character
+		int line;         // line number of current character
+		int lineStart;    // start position of current line
+		int oldEols;      // EOLs that appeared in a comment;
+		BitArray ignore;  // set of characters to be ignored by the scanner
+		Token tokens;     // list of tokens already peeked (first token is a dummy)
+		Token pt;         // current peek token
+		
+		char[] tval = new char[128]; // text of current token
+		int tlen;         // length of current token
+		
+		public Scanner (string fileName) {
+			srcFile=fileName;
+			try {
+				Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+				buffer = new Buffer(stream, false);
+				Init();
+			} catch (IOException) {
+				throw new Exception(String.Format("--- Cannot open file {0}", fileName));
 			}
 		}
-
-		public Scanner( Stream s )
+		
+		public Scanner (Stream s) {
+			buffer = new Buffer(s, true);
+			Init();
+		}
+		
+		public virtual void WriteLine(string s) 
 		{
-			this.buffer = new Buffer( s, true );
-			this.Init();
+			Console.WriteLine(s);
+		}
+		
+		public virtual void Write(string s) 
+		{
+			Console.Write(s);
+		}
+		
+		public virtual void WriteError(string fmt,string file, int lin, int col, string err)
+		{
+			Console.WriteLine(string.Format(fmt,new object[] {file, lin, col, err}));
 		}
 
-		public virtual void WriteLine( string s )
-		{
-			Console.WriteLine( s );
-		}
-
-		public virtual void Write( string s )
-		{
-			Console.Write( s );
-		}
-
-		public virtual void WriteError( string fmt, string file, int lin, int col, string err )
-		{
-			Console.WriteLine( string.Format( fmt, new object[] { file, lin, col, err } ) );
-		}
-
-		private void Init()
-		{
-			this.pos = -1;
-			this.line = 1;
-			this.lineStart = 0;
-			this.oldEols = 0;
-			this.NextCh();
-			if (this.ch == 0xEF)
-			{
-				// check optional byte order mark for UTF-8
-				this.NextCh();
-				int ch1 = this.ch;
-				this.NextCh();
-				int ch2 = this.ch;
-				if (ch1 != 0xBB || ch2 != 0xBF)
-					throw new Exception( String.Format( "illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2 ) );
-				this.buffer = new UTF8Buffer( this.buffer );
-				this.NextCh();
+		
+		void Init() {
+			pos = -1; line = 1; lineStart = 0;
+			oldEols = 0;
+			NextCh();
+			if (ch == 0xEF) { // check optional byte order mark for UTF-8
+				NextCh(); int ch1 = ch;
+				NextCh(); int ch2 = ch;
+				if (ch1 != 0xBB || ch2 != 0xBF) {
+					throw new Exception(String.Format("illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2));
+				}
+				buffer = new UTF8Buffer(buffer);
+				NextCh();
 			}
-			this.ignore = new BitArray( charSetSize + 1 );
-			this.ignore[' '] = true; // blanks are always white space
-			this.ignore[9] = true;
-			this.ignore[10] = true;
-			this.ignore[13] = true;
-			this.pt = this.tokens = new Token(); // first token is a dummy
+			ignore = new BitArray(charSetSize+1);
+			ignore[' '] = true;  // blanks are always white space
+		ignore[9] = true; ignore[10] = true; ignore[13] = true; 
+			pt = tokens = new Token();  // first token is a dummy
 		}
-
-		private void NextCh()
-		{
-			if (this.oldEols > 0)
-			{
-				this.ch = EOL;
-				this.oldEols--;
-			}
-			else
-			{
-				this.ch = (char)this.buffer.Read();
-				this.pos++;
+		
+		void NextCh() {
+			if (oldEols > 0) { ch = EOL; oldEols--; } 
+			else {
+				ch = (char)buffer.Read(); pos++;
 				// replace isolated '\r' by '\n' in order to make
 				// eol handling uniform across Windows, Unix and Mac
-				if (this.ch == '\r' && this.buffer.Peek() != '\n') this.ch = EOL;
-				if (this.ch == EOL)
-				{
-					this.line++;
-					this.lineStart = this.pos + 1;
-				}
+				if (ch == '\r' && buffer.Peek() != '\n') ch = EOL;
+				if (ch == EOL) { line++; lineStart = pos + 1; }
 			}
+
 		}
 
-		private void AddCh()
-		{
-			if (this.tlen >= this.tval.Length)
-			{
-				var newBuf = new char[2 * this.tval.Length];
-				Array.Copy( this.tval, 0, newBuf, 0, this.tval.Length );
-				this.tval = newBuf;
+		void AddCh() {
+			if (tlen >= tval.Length) {
+				char[] newBuf = new char[2 * tval.Length];
+				Array.Copy(tval, 0, newBuf, 0, tval.Length);
+				tval = newBuf;
 			}
-			this.tval[this.tlen++] = this.ch;
-			this.NextCh();
+		tval[tlen++] = ch;
+			NextCh();
 		}
 
-		private void CheckLiteral()
-		{
-			switch (this.t.val)
-			{
-				case "from":
-					this.t.kind = 15;
-					break;
-				default:
-					break;
-			}
-		}
 
+
+
+		void CheckLiteral() {
+		switch (t.val) {
+			case "from": t.kind = 15; break;
+			default: break;
+		}
+		}
+		
 		private readonly Waiter[] waiters = new[]
 		                                    {
 		                                    	new Waiter
 		                                    	{
 		                                    		IsStart = token => token.val == "<%rule",
+		                                    		IsFinish = token => token.val == "%>"
+		                                    	},
+		                                    	new Waiter
+		                                    	{
+		                                    		IsStart = token => token.val == "<%match",
 		                                    		IsFinish = token => token.val == "%>"
 		                                    	},
 		                                    	new Waiter
@@ -421,782 +397,266 @@ namespace WolfGenerator.Core
 				else this.AddCh();
 			}
 
-			this.t.kind = 28;
+			this.t.kind = 29;
 			this.t.val = new String( this.tval, 0, this.tlen );
 			return this.t;
 		}
 
-		private Token NextTokenDefault()
-		{
-			while (this.ignore[this.ch]) this.NextCh();
+		Token NextTokenDefault() {
+			while (ignore[ch]) NextCh();
 
-			this.t = new Token();
-			this.t.pos = this.pos;
-			this.t.col = this.pos - this.lineStart + 1;
-			this.t.line = this.line;
-			int state = this.start[this.ch];
-			this.tlen = 0;
-			this.AddCh();
+			t = new Token();
+			t.pos = pos; t.col = pos - lineStart + 1; t.line = line; 
+			int state = start[ch];
+			tlen = 0; AddCh();
+			
+			switch (state) {
+				case -1: { t.kind = eofSym; break; } // NextCh already done
+				case 0: { t.kind = noSym; break; }   // NextCh already done
+			case 1:
+				if ((ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z')) {AddCh(); goto case 1;}
+				else {t.kind = 1; t.val = new String(tval, 0, tlen); CheckLiteral(); return t;}
+			case 2:
+				if (ch == 'l') {AddCh(); goto case 3;}
+				else {t.kind = noSym; break;}
+			case 3:
+				if (ch == 'a') {AddCh(); goto case 4;}
+				else {t.kind = noSym; break;}
+			case 4:
+				if (ch == 's') {AddCh(); goto case 5;}
+				else {t.kind = noSym; break;}
+			case 5:
+				if (ch == 's') {AddCh(); goto case 6;}
+				else {t.kind = noSym; break;}
+			case 6:
+				{t.kind = 2; break;}
+			case 7:
+				if (ch == 'o') {AddCh(); goto case 8;}
+				else {t.kind = noSym; break;}
+			case 8:
+				if (ch == 'i') {AddCh(); goto case 9;}
+				else {t.kind = noSym; break;}
+			case 9:
+				if (ch == 'n') {AddCh(); goto case 10;}
+				else {t.kind = noSym; break;}
+			case 10:
+				{t.kind = 4; break;}
+			case 11:
+				if (ch == 'p') {AddCh(); goto case 12;}
+				else {t.kind = noSym; break;}
+			case 12:
+				if (ch == 'p') {AddCh(); goto case 13;}
+				else {t.kind = noSym; break;}
+			case 13:
+				if (ch == 'l') {AddCh(); goto case 14;}
+				else {t.kind = noSym; break;}
+			case 14:
+				if (ch == 'y') {AddCh(); goto case 15;}
+				else {t.kind = noSym; break;}
+			case 15:
+				{t.kind = 5; break;}
+			case 16:
+				if (ch == 'a') {AddCh(); goto case 17;}
+				else {t.kind = noSym; break;}
+			case 17:
+				if (ch == 'l') {AddCh(); goto case 18;}
+				else {t.kind = noSym; break;}
+			case 18:
+				if (ch == 'l') {AddCh(); goto case 19;}
+				else {t.kind = noSym; break;}
+			case 19:
+				{t.kind = 6; break;}
+			case 20:
+				if (ch == 't') {AddCh(); goto case 21;}
+				else {t.kind = noSym; break;}
+			case 21:
+				if (ch == 'h') {AddCh(); goto case 22;}
+				else {t.kind = noSym; break;}
+			case 22:
+				if (ch == 'o') {AddCh(); goto case 23;}
+				else {t.kind = noSym; break;}
+			case 23:
+				if (ch == 'd') {AddCh(); goto case 24;}
+				else {t.kind = noSym; break;}
+			case 24:
+				{t.kind = 7; break;}
+			case 25:
+				if (ch == 's') {AddCh(); goto case 26;}
+				else {t.kind = noSym; break;}
+			case 26:
+				if (ch == 'i') {AddCh(); goto case 27;}
+				else {t.kind = noSym; break;}
+			case 27:
+				if (ch == 'n') {AddCh(); goto case 28;}
+				else {t.kind = noSym; break;}
+			case 28:
+				if (ch == 'g') {AddCh(); goto case 29;}
+				else {t.kind = noSym; break;}
+			case 29:
+				{t.kind = 8; break;}
+			case 30:
+				if (ch == '>') {AddCh(); goto case 31;}
+				else {t.kind = noSym; break;}
+			case 31:
+				{t.kind = 9; break;}
+			case 32:
+				if (ch == 'n') {AddCh(); goto case 33;}
+				else {t.kind = noSym; break;}
+			case 33:
+				if (ch == 'd') {AddCh(); goto case 34;}
+				else {t.kind = noSym; break;}
+			case 34:
+				if (ch == '%') {AddCh(); goto case 35;}
+				else {t.kind = noSym; break;}
+			case 35:
+				if (ch == '>') {AddCh(); goto case 36;}
+				else {t.kind = noSym; break;}
+			case 36:
+				{t.kind = 10; break;}
+			case 37:
+				{t.kind = 11; break;}
+			case 38:
+				{t.kind = 12; break;}
+			case 39:
+				if (ch == '>') {AddCh(); goto case 40;}
+				else {t.kind = noSym; break;}
+			case 40:
+				{t.kind = 13; break;}
+			case 41:
+				if (ch == '%') {AddCh(); goto case 42;}
+				else {t.kind = noSym; break;}
+			case 42:
+				if (ch == '>') {AddCh(); goto case 43;}
+				else {t.kind = noSym; break;}
+			case 43:
+				{t.kind = 14; break;}
+			case 44:
+				{t.kind = 16; break;}
+			case 45:
+				{t.kind = 17; break;}
+			case 46:
+				{t.kind = 19; break;}
+			case 47:
+				{t.kind = 20; break;}
+			case 48:
+				if (ch == ')') {AddCh(); goto case 49;}
+				else {t.kind = noSym; break;}
+			case 49:
+				{t.kind = 21; break;}
+			case 50:
+				if ((ch >= '0' && ch <= '9')) {AddCh(); goto case 50;}
+				else {t.kind = 22; break;}
+			case 51:
+				{t.kind = 23; break;}
+			case 52:
+				{t.kind = 24; break;}
+			case 53:
+				if ((ch <= 9 || ch >= 11 && ch <= 12 || ch >= 14 && ch <= '&' || ch >= '(' && ch <= '[' || ch >= ']' && ch <= 255)) {AddCh(); goto case 54;}
+				else if (ch == 92) {AddCh(); goto case 55;}
+				else {t.kind = noSym; break;}
+			case 54:
+				if (ch == 39) {AddCh(); goto case 57;}
+				else {t.kind = noSym; break;}
+			case 55:
+				if ((ch >= ' ' && ch <= '~')) {AddCh(); goto case 56;}
+				else {t.kind = noSym; break;}
+			case 56:
+				if ((ch >= '0' && ch <= '9' || ch >= 'a' && ch <= 'f')) {AddCh(); goto case 56;}
+				else if (ch == 39) {AddCh(); goto case 57;}
+				else {t.kind = noSym; break;}
+			case 57:
+				{t.kind = 25; break;}
+			case 58:
+				if (ch == 't') {AddCh(); goto case 59;}
+				else {t.kind = noSym; break;}
+			case 59:
+				if (ch == 'c') {AddCh(); goto case 60;}
+				else {t.kind = noSym; break;}
+			case 60:
+				if (ch == 'h') {AddCh(); goto case 61;}
+				else {t.kind = noSym; break;}
+			case 61:
+				{t.kind = 26; break;}
+			case 62:
+				{t.kind = 28; break;}
+			case 63:
+				if (ch == '%') {AddCh(); goto case 67;}
+				else {t.kind = 27; break;}
+			case 64:
+				if (ch == '%') {AddCh(); goto case 39;}
+				else if (ch == '-') {AddCh(); goto case 41;}
+				else {t.kind = noSym; break;}
+			case 65:
+				if (ch == '[') {AddCh(); goto case 47;}
+				else {t.kind = 18; break;}
+			case 66:
+				if ((ch <= 9 || ch >= 11 && ch <= 12 || ch >= 14 && ch <= '!' || ch >= '#' && ch <= '[' || ch >= ']' && ch <= 255)) {AddCh(); goto case 66;}
+				else if ((ch == 10 || ch == 13)) {AddCh(); goto case 52;}
+				else if (ch == '"') {AddCh(); goto case 51;}
+				else if (ch == 92) {AddCh(); goto case 68;}
+				else {t.kind = noSym; break;}
+			case 67:
+				if (ch == 'r') {AddCh(); goto case 69;}
+				else if (ch == 'j') {AddCh(); goto case 7;}
+				else if (ch == 'a') {AddCh(); goto case 11;}
+				else if (ch == 'c') {AddCh(); goto case 16;}
+				else if (ch == 'm') {AddCh(); goto case 70;}
+				else if (ch == 'u') {AddCh(); goto case 25;}
+				else if (ch == 'e') {AddCh(); goto case 32;}
+				else if (ch == '=') {AddCh(); goto case 37;}
+				else if (ch == '$') {AddCh(); goto case 38;}
+				else {t.kind = noSym; break;}
+			case 68:
+				if ((ch >= ' ' && ch <= '~')) {AddCh(); goto case 66;}
+				else {t.kind = noSym; break;}
+			case 69:
+				if (ch == 'u') {AddCh(); goto case 71;}
+				else {t.kind = noSym; break;}
+			case 70:
+				if (ch == 'e') {AddCh(); goto case 20;}
+				else if (ch == 'a') {AddCh(); goto case 58;}
+				else {t.kind = noSym; break;}
+			case 71:
+				if (ch == 'l') {AddCh(); goto case 72;}
+				else {t.kind = noSym; break;}
+			case 72:
+				if (ch == 'e') {AddCh(); goto case 73;}
+				else {t.kind = noSym; break;}
+			case 73:
+				if (ch == 'c') {AddCh(); goto case 2;}
+				else {t.kind = 3; break;}
 
-			switch (state)
-			{
-				case -1:
-				{
-					this.t.kind = eofSym;
-					break;
-				} // NextCh already done
-				case 0:
-				{
-					this.t.kind = noSym;
-					break;
-				} // NextCh already done
-				case 1:
-					if ((this.ch >= '0' && this.ch <= '9' || this.ch >= 'A' && this.ch <= 'Z' || this.ch >= 'a' && this.ch <= 'z'))
-					{
-						this.AddCh();
-						goto case 1;
-					}
-					else
-					{
-						this.t.kind = 1;
-						this.t.val = new String( this.tval, 0, this.tlen );
-						this.CheckLiteral();
-						return this.t;
-					}
-				case 2:
-					if (this.ch == 'l')
-					{
-						this.AddCh();
-						goto case 3;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 3:
-					if (this.ch == 'a')
-					{
-						this.AddCh();
-						goto case 4;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 4:
-					if (this.ch == 's')
-					{
-						this.AddCh();
-						goto case 5;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 5:
-					if (this.ch == 's')
-					{
-						this.AddCh();
-						goto case 6;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 6:
-				{
-					this.t.kind = 2;
-					break;
-				}
-				case 7:
-					if (this.ch == 'o')
-					{
-						this.AddCh();
-						goto case 8;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 8:
-					if (this.ch == 'i')
-					{
-						this.AddCh();
-						goto case 9;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 9:
-					if (this.ch == 'n')
-					{
-						this.AddCh();
-						goto case 10;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 10:
-				{
-					this.t.kind = 4;
-					break;
-				}
-				case 11:
-					if (this.ch == 'p')
-					{
-						this.AddCh();
-						goto case 12;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 12:
-					if (this.ch == 'p')
-					{
-						this.AddCh();
-						goto case 13;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 13:
-					if (this.ch == 'l')
-					{
-						this.AddCh();
-						goto case 14;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 14:
-					if (this.ch == 'y')
-					{
-						this.AddCh();
-						goto case 15;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 15:
-				{
-					this.t.kind = 5;
-					break;
-				}
-				case 16:
-					if (this.ch == 'a')
-					{
-						this.AddCh();
-						goto case 17;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 17:
-					if (this.ch == 'l')
-					{
-						this.AddCh();
-						goto case 18;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 18:
-					if (this.ch == 'l')
-					{
-						this.AddCh();
-						goto case 19;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 19:
-				{
-					this.t.kind = 6;
-					break;
-				}
-				case 20:
-					if (this.ch == 'e')
-					{
-						this.AddCh();
-						goto case 21;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 21:
-					if (this.ch == 't')
-					{
-						this.AddCh();
-						goto case 22;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 22:
-					if (this.ch == 'h')
-					{
-						this.AddCh();
-						goto case 23;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 23:
-					if (this.ch == 'o')
-					{
-						this.AddCh();
-						goto case 24;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 24:
-					if (this.ch == 'd')
-					{
-						this.AddCh();
-						goto case 25;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 25:
-				{
-					this.t.kind = 7;
-					break;
-				}
-				case 26:
-					if (this.ch == 's')
-					{
-						this.AddCh();
-						goto case 27;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 27:
-					if (this.ch == 'i')
-					{
-						this.AddCh();
-						goto case 28;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 28:
-					if (this.ch == 'n')
-					{
-						this.AddCh();
-						goto case 29;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 29:
-					if (this.ch == 'g')
-					{
-						this.AddCh();
-						goto case 30;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 30:
-				{
-					this.t.kind = 8;
-					break;
-				}
-				case 31:
-					if (this.ch == '>')
-					{
-						this.AddCh();
-						goto case 32;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 32:
-				{
-					this.t.kind = 9;
-					break;
-				}
-				case 33:
-					if (this.ch == 'n')
-					{
-						this.AddCh();
-						goto case 34;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 34:
-					if (this.ch == 'd')
-					{
-						this.AddCh();
-						goto case 35;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 35:
-					if (this.ch == '%')
-					{
-						this.AddCh();
-						goto case 36;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 36:
-					if (this.ch == '>')
-					{
-						this.AddCh();
-						goto case 37;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 37:
-				{
-					this.t.kind = 10;
-					break;
-				}
-				case 38:
-				{
-					this.t.kind = 11;
-					break;
-				}
-				case 39:
-				{
-					this.t.kind = 12;
-					break;
-				}
-				case 40:
-					if (this.ch == '>')
-					{
-						this.AddCh();
-						goto case 41;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 41:
-				{
-					this.t.kind = 13;
-					break;
-				}
-				case 42:
-					if (this.ch == '%')
-					{
-						this.AddCh();
-						goto case 43;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 43:
-					if (this.ch == '>')
-					{
-						this.AddCh();
-						goto case 44;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 44:
-				{
-					this.t.kind = 14;
-					break;
-				}
-				case 45:
-				{
-					this.t.kind = 16;
-					break;
-				}
-				case 46:
-				{
-					this.t.kind = 17;
-					break;
-				}
-				case 47:
-				{
-					this.t.kind = 19;
-					break;
-				}
-				case 48:
-				{
-					this.t.kind = 20;
-					break;
-				}
-				case 49:
-					if (this.ch == ')')
-					{
-						this.AddCh();
-						goto case 50;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 50:
-				{
-					this.t.kind = 21;
-					break;
-				}
-				case 51:
-				{
-					this.t.kind = 23;
-					break;
-				}
-				case 52:
-					if ((this.ch >= '0' && this.ch <= '9'))
-					{
-						this.AddCh();
-						goto case 52;
-					}
-					else
-					{
-						this.t.kind = 24;
-						break;
-					}
-				case 53:
-				{
-					this.t.kind = 25;
-					break;
-				}
-				case 54:
-				{
-					this.t.kind = 26;
-					break;
-				}
-				case 55:
-					if ((this.ch <= 9 || this.ch >= 11 && this.ch <= 12 || this.ch >= 14 && this.ch <= '&' ||
-					     this.ch >= '(' && this.ch <= '[' || this.ch >= ']' && this.ch <= 255))
-					{
-						this.AddCh();
-						goto case 56;
-					}
-					else if (this.ch == 92)
-					{
-						this.AddCh();
-						goto case 57;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 56:
-					if (this.ch == 39)
-					{
-						this.AddCh();
-						goto case 59;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 57:
-					if ((this.ch >= ' ' && this.ch <= '~'))
-					{
-						this.AddCh();
-						goto case 58;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 58:
-					if ((this.ch >= '0' && this.ch <= '9' || this.ch >= 'a' && this.ch <= 'f'))
-					{
-						this.AddCh();
-						goto case 58;
-					}
-					else if (this.ch == 39)
-					{
-						this.AddCh();
-						goto case 59;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 59:
-				{
-					this.t.kind = 27;
-					break;
-				}
-				case 60:
-					if (this.ch == '%')
-					{
-						this.AddCh();
-						goto case 64;
-					}
-					else
-					{
-						this.t.kind = 22;
-						break;
-					}
-				case 61:
-					if (this.ch == '%')
-					{
-						this.AddCh();
-						goto case 40;
-					}
-					else if (this.ch == '-')
-					{
-						this.AddCh();
-						goto case 42;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 62:
-					if (this.ch == '[')
-					{
-						this.AddCh();
-						goto case 48;
-					}
-					else
-					{
-						this.t.kind = 18;
-						break;
-					}
-				case 63:
-					if ((this.ch <= 9 || this.ch >= 11 && this.ch <= 12 || this.ch >= 14 && this.ch <= '!' ||
-					     this.ch >= '#' && this.ch <= '[' || this.ch >= ']' && this.ch <= 255))
-					{
-						this.AddCh();
-						goto case 63;
-					}
-					else if ((this.ch == 10 || this.ch == 13))
-					{
-						this.AddCh();
-						goto case 54;
-					}
-					else if (this.ch == '"')
-					{
-						this.AddCh();
-						goto case 53;
-					}
-					else if (this.ch == 92)
-					{
-						this.AddCh();
-						goto case 65;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 64:
-					if (this.ch == 'r')
-					{
-						this.AddCh();
-						goto case 66;
-					}
-					else if (this.ch == 'j')
-					{
-						this.AddCh();
-						goto case 7;
-					}
-					else if (this.ch == 'a')
-					{
-						this.AddCh();
-						goto case 11;
-					}
-					else if (this.ch == 'c')
-					{
-						this.AddCh();
-						goto case 16;
-					}
-					else if (this.ch == 'm')
-					{
-						this.AddCh();
-						goto case 20;
-					}
-					else if (this.ch == 'u')
-					{
-						this.AddCh();
-						goto case 26;
-					}
-					else if (this.ch == 'e')
-					{
-						this.AddCh();
-						goto case 33;
-					}
-					else if (this.ch == '=')
-					{
-						this.AddCh();
-						goto case 38;
-					}
-					else if (this.ch == '$')
-					{
-						this.AddCh();
-						goto case 39;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 65:
-					if ((this.ch >= ' ' && this.ch <= '~'))
-					{
-						this.AddCh();
-						goto case 63;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 66:
-					if (this.ch == 'u')
-					{
-						this.AddCh();
-						goto case 67;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 67:
-					if (this.ch == 'l')
-					{
-						this.AddCh();
-						goto case 68;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 68:
-					if (this.ch == 'e')
-					{
-						this.AddCh();
-						goto case 69;
-					}
-					else
-					{
-						this.t.kind = noSym;
-						break;
-					}
-				case 69:
-					if (this.ch == 'c')
-					{
-						this.AddCh();
-						goto case 2;
-					}
-					else
-					{
-						this.t.kind = 3;
-						break;
-					}
 			}
-			this.t.val = new String( this.tval, 0, this.tlen );
-			return this.t;
+			t.val = new String(tval, 0, tlen);
+			return t;
 		}
-
+		
 		// get the next token (possibly a token already seen during peeking)
-		public Token Scan()
-		{
-			if (this.tokens.next == null) return this.NextToken();
-			else
-			{
-				this.pt = this.tokens = this.tokens.next;
-				return this.tokens;
+		public Token Scan () {
+			if (tokens.next == null) {
+				return NextToken();
+			} else {
+				pt = tokens = tokens.next;
+				return tokens;
 			}
 		}
 
 		// peek for the next token, ignore pragmas
-		public Token Peek()
-		{
-			if (this.pt.next == null)
-			{
-				do
-				{
-					this.pt = this.pt.next = this.NextToken();
-				} while (this.pt.kind > maxT); // skip pragmas
+		public Token Peek () {
+			if (pt.next == null) {
+				do {
+					pt = pt.next = NextToken();
+				} while (pt.kind > maxT); // skip pragmas
+			} else {
+				do {
+					pt = pt.next;
+				} while (pt.kind > maxT);
 			}
-			else
-			{
-				do
-				{
-					this.pt = this.pt.next;
-				} while (this.pt.kind > maxT);
-			}
-			return this.pt;
+			return pt;
 		}
-
+		
 		// make sure that peeking starts at the current scan position
-		public void ResetPeek()
-		{
-			this.pt = this.tokens;
-		}
+		public void ResetPeek () { pt = tokens; }
+
 	} // end Scanner
 }

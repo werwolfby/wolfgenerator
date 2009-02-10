@@ -15,6 +15,8 @@
  *   25.01.2009 10:57 - Exted ToString method (check if contains any statement).
  *   27.01.2009 01:54 - Add Generate method.
  *   02.02.2009 01:37 - BugFix: If Variables is null or haven't any variable generate parameterless method.
+ *   04.02.2009 01:53 - Add matchMethodStatement : MatchMethodStatement field.
+ *   04.02.2009 02:11 - Fix: Generate method. Use MatchMethod generation.
  *
  *******************************************************/
 
@@ -33,15 +35,24 @@ namespace WolfGenerator.Core.AST
 	/// </summary>
 	public class RuleMethodStatement : RuleClassMethodStatement
 	{
+		private readonly MatchMethodStatement matchMethodStatement;
 		private readonly string name;
 		private readonly IList<Variable> variables;
 		private readonly IList<RuleStatement> statements;
 
-		public RuleMethodStatement( string name, IList<Variable> variables, IList<RuleStatement> statements )
+		public RuleMethodStatement( MatchMethodStatement matchMethodStatement, string name, IList<Variable> variables, IList<RuleStatement> statements )
 		{
+			this.matchMethodStatement = matchMethodStatement;
 			this.name = name;
 			this.variables = variables;
 			this.statements = statements;
+
+			if (this.matchMethodStatement != null) this.matchMethodStatement.RuleMethod = this;
+		}
+
+		public MatchMethodStatement MatchMethodStatement
+		{
+			get { return this.matchMethodStatement; }
 		}
 
 		public string Name
@@ -61,8 +72,14 @@ namespace WolfGenerator.Core.AST
 
 		public override void Generate( CodeWriter writer )
 		{
+			if (this.MatchMethodStatement != null) this.MatchMethodStatement.Generate( writer );
 			writer.Append( "public CodeWriter " );
 			writer.Append( this.Name );
+			if (this.MatchMethodStatement != null)
+			{
+				//writer.Append( "_" );
+				//writer.Append( this.MatchMethodStatement.Name );
+			}
 			if (this.variables == null || this.variables.Count == 0)
 			{
 				writer.AppendLine( "()" );

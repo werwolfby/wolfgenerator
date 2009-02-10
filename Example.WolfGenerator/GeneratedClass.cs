@@ -21,15 +21,17 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+	[MatchMethod( "SetField" )]
+	private bool Match_SetField_IsId( string field )
+	{
+		return field == "Id";
+	}
 	public CodeWriter SetField( string field )
 	{
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
-		writer.Append( "'[" );
-		writer.AppendText( field );
-		writer.Indent = 0;
-		writer.Append( "]' = @" );
+		writer.Append( "'[<Id>]' = @" );
 		writer.AppendText( field );
 
 		return writer;

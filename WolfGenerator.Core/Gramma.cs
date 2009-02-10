@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 04.02.2009 0:43:11
+// Compiled by vsCoco on 10.02.2009 20:23:59
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -54,28 +54,29 @@ namespace WolfGenerator.Core {
 	const int _apply = 5;
 	const int _call = 6;
 	const int _method = 7;
-	const int _uses = 8;
-	const int _endStatement = 9;
-	const int _end = 10;
-	const int _value = 11;
-	const int _code = 12;
-	const int _codeEnd1 = 13;
-	const int _codeEnd2 = 14;
-	const int _from = 15;
-	const int _dot = 16;
-	const int _comma = 17;
-	const int _openB = 18;
-	const int _closB = 19;
-	const int _openB1 = 20;
-	const int _closB1 = 21;
-	const int _openG = 22;
-	const int _closG = 23;
-	const int _number = 24;
-	const int _string = 25;
-	const int _badString = 26;
-	const int _char = 27;
-	const int _text = 28;
-	const int maxT = 29;
+	const int _match = 8;
+	const int _uses = 9;
+	const int _endStatement = 10;
+	const int _end = 11;
+	const int _value = 12;
+	const int _code = 13;
+	const int _codeEnd1 = 14;
+	const int _codeEnd2 = 15;
+	const int _from = 16;
+	const int _dot = 17;
+	const int _comma = 18;
+	const int _openB = 19;
+	const int _closB = 20;
+	const int _openB1 = 21;
+	const int _closB1 = 22;
+	const int _number = 23;
+	const int _string = 24;
+	const int _badString = 25;
+	const int _char = 26;
+	const int _openG = 27;
+	const int _closG = 28;
+	const int _text = 29;
+	const int maxT = 30;
 
 		const bool T = true;
 		const bool x = false;
@@ -210,14 +211,14 @@ public RuleClassStatement ruleClassStatement;
 		List<RuleClassMethodStatement> ruleMethodStatementList = null; 
 		string name; 
 		RuleClassStart(out name);
-		while (la.kind == 8) {
+		while (la.kind == 9) {
 			UsingStatement usingStatement; 
 			Using(out usingStatement);
 			if (usingStatementList == null) usingStatementList = new List<UsingStatement>();
 			usingStatementList.Add( usingStatement ); 
 		}
-		while (la.kind == 3 || la.kind == 7) {
-			if (la.kind == 3) {
+		while (la.kind == 3 || la.kind == 7 || la.kind == 8) {
+			if (la.kind == 3 || la.kind == 8) {
 				RuleMethodStatement ruleMethod; 
 				RuleMethod(out ruleMethod);
 				if (ruleMethodStatementList == null) 
@@ -239,22 +240,22 @@ public RuleClassStatement ruleClassStatement;
 		Expect(2);
 		Expect(1);
 		name = t.val; 
-		Expect(9);
+		Expect(10);
 	}
 
 	void Using(out UsingStatement usingStatement) {
 		List<string> namespaceList = new List<string>(); 
-		Expect(8);
+		Expect(9);
 		Expect(1);
 		namespaceList.Add( t.val ); 
-		while (la.kind == 16) {
+		while (la.kind == 17) {
 			Get();
 			Expect(1);
 			namespaceList.Add( t.val ); 
 		}
 		string namespaceName = string.Join( ".", namespaceList.ToArray() );
 		usingStatement = new UsingStatement( namespaceName ); 
-		Expect(9);
+		Expect(10);
 	}
 
 	void RuleMethod(out RuleMethodStatement statement) {
@@ -264,20 +265,24 @@ public RuleClassStatement ruleClassStatement;
 		ValueStatement valueStatement;
 		JoinStatement joinStatement;
 		CodeStatement codeStatement;
-		CallStatement callStatement; 
+		CallStatement callStatement;
+		MatchMethodStatement matchStatement = null; 
+		if (la.kind == 8) {
+			MatchMethod(out matchStatement);
+		}
 		RuleMethodStart(out methodName, out variables);
 		int startPos = t.pos + t.val.Length; 
 		while (StartOf(1)) {
-			if (la.kind == 28) {
+			if (la.kind == 29) {
 				Get();
 				AddStatement( isStart, statements, la.kind == _end, t.val ); 
-			} else if (la.kind == 11) {
+			} else if (la.kind == 12) {
 				Value(out valueStatement);
 				statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; 
 			} else if (la.kind == 4) {
 				Join(out joinStatement);
 				statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; 
-			} else if (la.kind == 12) {
+			} else if (la.kind == 13) {
 				isStart = false; 
 				Code(out codeStatement, ref isStart);
 				statements.Add( codeStatement ); startPos = t.pos + t.val.Length; 
@@ -287,7 +292,7 @@ public RuleClassStatement ruleClassStatement;
 			}
 		}
 		RuleMethodEnd();
-		statement = new RuleMethodStatement( methodName, variables, statements ); 
+		statement = new RuleMethodStatement( matchStatement, methodName, variables, statements ); 
 	}
 
 	void Method(out MethodStatement methodStatement) {
@@ -298,30 +303,45 @@ public RuleClassStatement ruleClassStatement;
 		Type(out returnType);
 		Expect(1);
 		name = t.val; 
-		Expect(18);
+		Expect(19);
 		Variable currentVariable; 
 		if (la.kind == 1) {
 			Var(out currentVariable);
 			if (variables == null) variables = new List<Variable>();
 			   variables.Add( currentVariable ); 
-			while (la.kind == 17) {
+			while (la.kind == 18) {
 				Get();
 				Var(out currentVariable);
 				variables.Add( currentVariable ); 
 			}
 		}
-		Expect(19);
-		Expect(9);
+		Expect(20);
+		Expect(10);
 		startPos = t.pos + t.val.Length; 
 		while (StartOf(2)) {
 			Get();
 		}
-		Expect(10);
+		Expect(11);
 		methodStatement = new MethodStatement( returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); 
 	}
 
 	void RuleClassEnd() {
+		Expect(11);
+	}
+
+	void MatchMethod(out MatchMethodStatement statement) {
+		string name; string code; 
+		Expect(8);
+		Expect(1);
+		name = t.val; 
 		Expect(10);
+		int startPos = t.pos + t.val.Length; 
+		while (StartOf(2)) {
+			Get();
+		}
+		code = ExtractString( true, true, startPos, la.pos ); 
+		Expect(11);
+		statement = new MatchMethodStatement( name, code ); 
 	}
 
 	void RuleMethodStart(out string name, out IList<Variable> variables ) {
@@ -330,31 +350,31 @@ public RuleClassStatement ruleClassStatement;
 		Expect(3);
 		Expect(1);
 		name = t.val; 
-		Expect(18);
+		Expect(19);
 		if (la.kind == 1) {
 			Var(out var);
 			if (variableList == null) variableList = new List<Variable>();
 			variableList.Add( var ); 
-			while (la.kind == 17) {
+			while (la.kind == 18) {
 				Get();
 				Var(out var);
 				variableList.Add( var ); 
 			}
 		}
-		ExpectWeak(19, 3);
-		while (!(la.kind == 0 || la.kind == 9)) {SynErr(30); Get();}
-		Expect(9);
+		ExpectWeak(20, 3);
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(31); Get();}
+		Expect(10);
 		variables = variableList == null ? null : variableList.AsReadOnly(); 
 	}
 
 	void Value(out ValueStatement valueStatement) {
-		Expect(11);
+		Expect(12);
 		int pos = t.pos + t.val.Length; 
 		while (StartOf(4)) {
 			Get();
 		}
-		while (!(la.kind == 0 || la.kind == 9)) {SynErr(31); Get();}
-		Expect(9);
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(32); Get();}
+		Expect(10);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
 		valueStatement = new ValueStatement( value.Trim() );  
@@ -367,11 +387,11 @@ public RuleClassStatement ruleClassStatement;
 		ApplyStatement applyStatement;
 		CallStatement callStatement; 
 		Expect(4);
-		Expect(25);
+		Expect(24);
 		@string = t.val.Substring( 1, t.val.Length - 2 ); 
-		Expect(9);
-		while (la.kind == 5 || la.kind == 6 || la.kind == 11) {
-			if (la.kind == 11) {
+		Expect(10);
+		while (la.kind == 5 || la.kind == 6 || la.kind == 12) {
+			if (la.kind == 12) {
 				Value(out valueStatement);
 				if (statements == null) statements = new List<RuleStatement>();
 				statements.Add( valueStatement ); 
@@ -385,24 +405,24 @@ public RuleClassStatement ruleClassStatement;
 				statements.Add( callStatement ); 
 			}
 		}
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(32); Get();}
-		Expect(10);
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(33); Get();}
+		Expect(11);
 		joinStatement = new JoinStatement( @string, statements ); 
 	}
 
 	void Code(out CodeStatement codeStatement, ref bool isStart) {
-		Expect(12);
+		Expect(13);
 		int startPos = t.pos + t.val.Length; 
 		while (StartOf(5)) {
 			Get();
 		}
 		string value = scanner.buffer.GetString( startPos, la.pos ); 
-		if (la.kind == 13) {
+		if (la.kind == 14) {
 			Get();
-		} else if (la.kind == 14) {
+		} else if (la.kind == 15) {
 			Get();
 			isStart = true; 
-		} else SynErr(33);
+		} else SynErr(34);
 		codeStatement = new CodeStatement( value.Trim() ); 
 	}
 
@@ -412,33 +432,33 @@ public RuleClassStatement ruleClassStatement;
 		Expect(1);
 		methodName = t.val; 
 		int startPos = -1; int endPos = -1; 
-		if (la.kind == 20) {
+		if (la.kind == 21) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(6)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(21);
-		} else if (la.kind == 18) {
+			Expect(22);
+		} else if (la.kind == 19) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(7)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(19);
-		} else SynErr(34);
+			Expect(20);
+		} else SynErr(35);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 9)) {SynErr(35); Get();}
-		Expect(9);
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(36); Get();}
+		Expect(10);
 		callStatement = new CallStatement( methodName, parameters ); 
 	}
 
 	void RuleMethodEnd() {
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(36); Get();}
-		Expect(10);
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(37); Get();}
+		Expect(11);
 	}
 
 	void Var(out Variable var) {
@@ -453,23 +473,23 @@ public RuleClassStatement ruleClassStatement;
 		List<WolfGenerator.Core.AST.Type> genericParameters = null; 
 		Expect(1);
 		name.Append( t.val ); 
-		while (la.kind == 16) {
+		while (la.kind == 17) {
 			Get();
 			Expect(1);
 			name.Append( '.' ); name.Append( t.val ); 
 		}
-		if (la.kind == 22) {
+		if (la.kind == 27) {
 			genericParameters = new List<WolfGenerator.Core.AST.Type>();
 			WolfGenerator.Core.AST.Type generic; 
 			Get();
 			Type(out generic);
 			genericParameters.Add( generic ); 
-			while (la.kind == 17) {
+			while (la.kind == 18) {
 				Get();
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
-			Expect(23);
+			Expect(28);
 		}
 		type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); 
 	}
@@ -480,31 +500,31 @@ public RuleClassStatement ruleClassStatement;
 		Expect(1);
 		methodName = t.val; 
 		int startPos = -1; int endPos = -1; 
-		if (la.kind == 20) {
+		if (la.kind == 21) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(6)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(21);
-		} else if (la.kind == 18) {
+			Expect(22);
+		} else if (la.kind == 19) {
 			Get();
 			startPos = t.pos + t.val.Length; 
 			while (StartOf(7)) {
 				Get();
 			}
 			endPos = la.pos; 
-			Expect(19);
-		} else SynErr(37);
+			Expect(20);
+		} else SynErr(38);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 15)) {SynErr(38); Get();}
-		Expect(15);
+		while (!(la.kind == 0 || la.kind == 16)) {SynErr(39); Get();}
+		Expect(16);
 		Expect(1);
 		from = t.val; 
-		while (!(la.kind == 0 || la.kind == 9)) {SynErr(39); Get();}
-		Expect(9);
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(40); Get();}
+		Expect(10);
 		applyStatement = new ApplyStatement( methodName, parameters, from ); 
 	}
 
@@ -519,14 +539,14 @@ public RuleClassStatement ruleClassStatement;
 		}
 		
 		bool[,] set = {
-		{T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		{x,x,x,x, T,x,T,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x},
-		{x,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		{T,x,x,x, x,x,x,x, x,T,T,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		{x,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x}
+		{T,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+		{x,x,x,x, T,x,T,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x},
+		{x,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
+		{T,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+		{x,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,x}
 
 		};
 	} // end Parser
@@ -553,38 +573,39 @@ public RuleClassStatement ruleClassStatement;
 			case 5: s = "apply expected"; break;
 			case 6: s = "call expected"; break;
 			case 7: s = "method expected"; break;
-			case 8: s = "uses expected"; break;
-			case 9: s = "endStatement expected"; break;
-			case 10: s = "end expected"; break;
-			case 11: s = "value expected"; break;
-			case 12: s = "code expected"; break;
-			case 13: s = "codeEnd1 expected"; break;
-			case 14: s = "codeEnd2 expected"; break;
-			case 15: s = "from expected"; break;
-			case 16: s = "dot expected"; break;
-			case 17: s = "comma expected"; break;
-			case 18: s = "openB expected"; break;
-			case 19: s = "closB expected"; break;
-			case 20: s = "openB1 expected"; break;
-			case 21: s = "closB1 expected"; break;
-			case 22: s = "openG expected"; break;
-			case 23: s = "closG expected"; break;
-			case 24: s = "number expected"; break;
-			case 25: s = "string expected"; break;
-			case 26: s = "badString expected"; break;
-			case 27: s = "char expected"; break;
-			case 28: s = "text expected"; break;
-			case 29: s = "??? expected"; break;
-			case 30: s = "this symbol not expected in RuleMethodStart"; break;
-			case 31: s = "this symbol not expected in Value"; break;
-			case 32: s = "this symbol not expected in Join"; break;
-			case 33: s = "invalid Code"; break;
-			case 34: s = "invalid Call"; break;
-			case 35: s = "this symbol not expected in Call"; break;
-			case 36: s = "this symbol not expected in RuleMethodEnd"; break;
-			case 37: s = "invalid Apply"; break;
-			case 38: s = "this symbol not expected in Apply"; break;
+			case 8: s = "match expected"; break;
+			case 9: s = "uses expected"; break;
+			case 10: s = "endStatement expected"; break;
+			case 11: s = "end expected"; break;
+			case 12: s = "value expected"; break;
+			case 13: s = "code expected"; break;
+			case 14: s = "codeEnd1 expected"; break;
+			case 15: s = "codeEnd2 expected"; break;
+			case 16: s = "from expected"; break;
+			case 17: s = "dot expected"; break;
+			case 18: s = "comma expected"; break;
+			case 19: s = "openB expected"; break;
+			case 20: s = "closB expected"; break;
+			case 21: s = "openB1 expected"; break;
+			case 22: s = "closB1 expected"; break;
+			case 23: s = "number expected"; break;
+			case 24: s = "string expected"; break;
+			case 25: s = "badString expected"; break;
+			case 26: s = "char expected"; break;
+			case 27: s = "openG expected"; break;
+			case 28: s = "closG expected"; break;
+			case 29: s = "text expected"; break;
+			case 30: s = "??? expected"; break;
+			case 31: s = "this symbol not expected in RuleMethodStart"; break;
+			case 32: s = "this symbol not expected in Value"; break;
+			case 33: s = "this symbol not expected in Join"; break;
+			case 34: s = "invalid Code"; break;
+			case 35: s = "invalid Call"; break;
+			case 36: s = "this symbol not expected in Call"; break;
+			case 37: s = "this symbol not expected in RuleMethodEnd"; break;
+			case 38: s = "invalid Apply"; break;
 			case 39: s = "this symbol not expected in Apply"; break;
+			case 40: s = "this symbol not expected in Apply"; break;
 
 				default: s = "error " + n; break;
 			}

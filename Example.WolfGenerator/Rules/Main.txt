@@ -11,8 +11,11 @@
 Test text
 <%end%>
 
+<%match IsId%>
+return field == "Id";
+<%end%>
 <%rule SetField( string field )%>
-'[<%= field %>]' = @<%= field %>
+'[<Id>]' = @<%= field %>
 <%end%>
 
 <%rule Main( IEnumerable value )%>

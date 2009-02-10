@@ -73,6 +73,7 @@ TOKENS
 	apply        = "<%apply".
 	call         = "<%call".
 	method       = "<%method".
+	match        = "<%match".
 	uses         = "<%using".
 	endStatement = "%>".
 	end          = "<%end%>".
@@ -96,7 +97,7 @@ TOKENS
 	string    = '"' { stringCh | '\\' printable } '"'.
 	badString = '"' { stringCh | '\\' printable } (cr | lf).
 	char      = '\'' ( charCh | '\\' printable { hex } ) '\''.
-
+	
 	text
 	
 IGNORE cr + lf + tab
@@ -128,14 +129,20 @@ RuleClassStart<out string name> = "<%ruleclass" ident                           
                                    "%>".
 RuleClassEnd   = "<%end%>".
 
-Using<out UsingStatement usingStatement>                                                            
-(. List<string> namespaceList = new List<string>(); .) 
+Using<out UsingStatement usingStatement>                                           (. List<string> namespaceList = new List<string>(); .) 
 =
 	"<%using" ident                                                                (. namespaceList.Add( t.val ); .)
 	{ "."  ident                                                                   (. namespaceList.Add( t.val ); .)
 	}                                                                              (. string namespaceName = string.Join( ".", namespaceList.ToArray() );
 	                                                                                  usingStatement = new UsingStatement( namespaceName ); .)
 	"%>".
+	
+MatchMethod<out MatchMethodStatement statement>                                    (. string name; string code; .)
+                   = "<%match" ident                                               (. name = t.val; .)
+                     "%>"                                                          (. int startPos = t.pos + t.val.Length; .)
+                     {ANY}                                                         (. code = ExtractString( true, true, startPos, la.pos ); .)
+                     "<%end%>"                                                     (. statement = new MatchMethodStatement( name, code ); .)
+                     .
 
 RuleMethod<out RuleMethodStatement statement>                                      (. string methodName; IList<Variable> variables;
                                                                                       List<RuleStatement> statements = new List<RuleStatement>();
@@ -143,8 +150,10 @@ RuleMethod<out RuleMethodStatement statement>                                   
                                                                                       ValueStatement valueStatement;
                                                                                       JoinStatement joinStatement;
                                                                                       CodeStatement codeStatement;
-                                                                                      CallStatement callStatement; .)
-                    = RuleMethodStart<out methodName, out variables>               (. int startPos = t.pos + t.val.Length; .)
+                                                                                      CallStatement callStatement;
+                                                                                      MatchMethodStatement matchStatement = null; .)
+                    = [ MatchMethod<out matchStatement> ]
+                     RuleMethodStart<out methodName, out variables>                (. int startPos = t.pos + t.val.Length; .)
                      { 
                       text                                                         (. AddStatement( isStart, statements, la.kind == _end, t.val ); .)
                       |
@@ -161,7 +170,7 @@ RuleMethod<out RuleMethodStatement statement>                                   
                       Call<out callStatement>                                      (. statements.Add( callStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       } 
                                                                                    
-                      RuleMethodEnd                                                (. statement = new RuleMethodStatement( methodName, variables, statements ); .)
+                      RuleMethodEnd                                                (. statement = new RuleMethodStatement( matchStatement, methodName, variables, statements ); .)
                       .
 
 RuleMethodStart <. out string name, out IList<Variable> variables .>               (. Variable var = null; 

@@ -70,6 +70,7 @@
     <Compile Include="AST\CallStatement.cs" />
     <Compile Include="AST\CodeStatement.cs" />
     <Compile Include="AST\JoinStatement.cs" />
+    <Compile Include="AST\MatchMethodStatement.cs" />
     <Compile Include="AST\MethodStatement.cs" />
     <Compile Include="AST\RuleClassMethodStatement.cs" />
     <Compile Include="AST\RuleClassStatement.cs" />
@@ -82,7 +83,10 @@
     <Compile Include="AST\Variable.cs" />
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
-    <Compile Include="Scanner.cs" />
+    <Compile Include="MatchMethodAttribute.cs" />
+    <Compile Include="Scanner.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="WolfGeneratorCustomToolGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGeneratorWithSite.cs" />
@@ -107,6 +111,7 @@
       <LastGenOutput>Gramma.cs</LastGenOutput>
     </None>
     <None Include="Parser.frame" />
+    <None Include="Scanner.frame" />
     <None Include="test.snk" />
   </ItemGroup>
   <ItemGroup>

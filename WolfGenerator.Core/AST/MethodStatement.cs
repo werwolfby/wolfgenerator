@@ -59,7 +59,7 @@ namespace WolfGenerator.Core.AST
 			get { return this.code; }
 		}
 
-		public override void Generate( CodeWriter writer )
+		public override void Generate( CodeWriter writer, string fileName )
 		{
 			writer.Append( "public " );
 			writer.Append( returnType.ToString() );

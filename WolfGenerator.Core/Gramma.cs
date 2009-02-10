@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 10.02.2009 20:23:59
+// Compiled by vsCoco on 10.02.2009 20:43:30
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -69,12 +69,12 @@ namespace WolfGenerator.Core {
 	const int _closB = 20;
 	const int _openB1 = 21;
 	const int _closB1 = 22;
-	const int _number = 23;
-	const int _string = 24;
-	const int _badString = 25;
-	const int _char = 26;
-	const int _openG = 27;
-	const int _closG = 28;
+	const int _openG = 23;
+	const int _closG = 24;
+	const int _number = 25;
+	const int _string = 26;
+	const int _badString = 27;
+	const int _char = 28;
 	const int _text = 29;
 	const int maxT = 30;
 
@@ -387,7 +387,7 @@ public RuleClassStatement ruleClassStatement;
 		ApplyStatement applyStatement;
 		CallStatement callStatement; 
 		Expect(4);
-		Expect(24);
+		Expect(26);
 		@string = t.val.Substring( 1, t.val.Length - 2 ); 
 		Expect(10);
 		while (la.kind == 5 || la.kind == 6 || la.kind == 12) {
@@ -478,7 +478,7 @@ public RuleClassStatement ruleClassStatement;
 			Expect(1);
 			name.Append( '.' ); name.Append( t.val ); 
 		}
-		if (la.kind == 27) {
+		if (la.kind == 23) {
 			genericParameters = new List<WolfGenerator.Core.AST.Type>();
 			WolfGenerator.Core.AST.Type generic; 
 			Get();
@@ -489,7 +489,7 @@ public RuleClassStatement ruleClassStatement;
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
-			Expect(28);
+			Expect(24);
 		}
 		type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); 
 	}
@@ -588,12 +588,12 @@ public RuleClassStatement ruleClassStatement;
 			case 20: s = "closB expected"; break;
 			case 21: s = "openB1 expected"; break;
 			case 22: s = "closB1 expected"; break;
-			case 23: s = "number expected"; break;
-			case 24: s = "string expected"; break;
-			case 25: s = "badString expected"; break;
-			case 26: s = "char expected"; break;
-			case 27: s = "openG expected"; break;
-			case 28: s = "closG expected"; break;
+			case 23: s = "openG expected"; break;
+			case 24: s = "closG expected"; break;
+			case 25: s = "number expected"; break;
+			case 26: s = "string expected"; break;
+			case 27: s = "badString expected"; break;
+			case 28: s = "char expected"; break;
 			case 29: s = "text expected"; break;
 			case 30: s = "??? expected"; break;
 			case 31: s = "this symbol not expected in RuleMethodStart"; break;

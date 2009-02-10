@@ -8,6 +8,7 @@
  * 
  * History:
  *   27.01.2009 01:54 - Extracted as super class from RuleMethodStatement
+ *   10.02.2009 20:27 - Add fileName parameter to Generate method
  *
  *******************************************************/
 
@@ -17,6 +18,6 @@ namespace WolfGenerator.Core.AST
 {
 	public abstract class RuleClassMethodStatement 
 	{
-		public abstract void Generate( CodeWriter writer );
+		public abstract void Generate( CodeWriter writer, string fileName );
 	}
 }

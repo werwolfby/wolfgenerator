@@ -19,15 +19,22 @@ namespace WolfGenerator.Core
 	public class MatchMethodAttribute : Attribute
 	{
 		private readonly string ruleMethodName;
+		private readonly string fileName;
 
-		public MatchMethodAttribute( string ruleMethodName )
+		public MatchMethodAttribute( string ruleMethodName, string fileName )
 		{
 			this.ruleMethodName = ruleMethodName;
+			this.fileName = fileName;
 		}
 
 		public string RuleMethodName
 		{
 			get { return this.ruleMethodName; }
+		}
+
+		public string FileName
+		{
+			get { return this.fileName; }
 		}
 	}
 }

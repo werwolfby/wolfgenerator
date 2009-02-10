@@ -10,6 +10,7 @@
  *   04.02.2009 01:39 - Create Wireframe
  *   04.02.2009 01:45 - Implement Generate method.
  *   04.02.2009 02:12 - Fix: Generate method.
+ *   10.02.2009 20:30 - Add support fileName of Generated method
  *
  *******************************************************/
 
@@ -42,10 +43,12 @@ namespace WolfGenerator.Core.AST
 
 		internal RuleMethodStatement RuleMethod { get; set; }
 
-		public override void Generate( CodeWriter writer )
+		public override void Generate( CodeWriter writer, string fileName )
 		{
 			writer.Append( "[MatchMethod( \"" );
 			writer.Append( RuleMethod.Name );
+			writer.Append( "\", \"" );
+			writer.Append( fileName );
 			writer.AppendLine( "\" )]" );
 			writer.Append( "private bool Match_" );
 			writer.Append( RuleMethod.Name );

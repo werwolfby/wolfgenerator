@@ -21,7 +21,7 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
-	[MatchMethod( "SetField" )]
+	[MatchMethod( "SetField", "test.rule" )]
 	private bool Match_SetField_IsId( string field )
 	{
 		return field == "Id";

@@ -12,6 +12,7 @@
  *   04.02.2009 01:01 - Add default namespaces.
  *   04.02.2009 01:13 - Add default namespace `WolfGenerator.Core`.
  *   04.02.2009 01:15 - Remove default namespace `System.Reflection`.
+ *   10.02.2009 20:31 - Add support fileName of Generated method
  *
  *******************************************************/
 
@@ -30,7 +31,7 @@ namespace WolfGenerator.Core.Writer
 		                                                     	"WolfGenerator.Core",
 		                                                     };
 
-		public static CodeWriter Generate( RuleClassStatement ruleClassStatement )
+		public static CodeWriter Generate( RuleClassStatement ruleClassStatement, string fileName )
 		{
 			var writer = new CodeWriter();
 
@@ -63,7 +64,7 @@ namespace WolfGenerator.Core.Writer
 			{
 				foreach (var ruleMethodStatement in ruleClassStatement.RuleMethodStatements)
 				{
-					ruleMethodStatement.Generate( writer );
+					ruleMethodStatement.Generate( writer, fileName );
 				}
 			}
 

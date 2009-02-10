@@ -17,6 +17,7 @@
  *   02.02.2009 01:37 - BugFix: If Variables is null or haven't any variable generate parameterless method.
  *   04.02.2009 01:53 - Add matchMethodStatement : MatchMethodStatement field.
  *   04.02.2009 02:11 - Fix: Generate method. Use MatchMethod generation.
+ *   10.02.2009 20:28 - Add support fileName of Generate method
  *
  *******************************************************/
 
@@ -70,9 +71,9 @@ namespace WolfGenerator.Core.AST
 			get { return this.statements; }
 		}
 
-		public override void Generate( CodeWriter writer )
+		public override void Generate( CodeWriter writer, string fileName )
 		{
-			if (this.MatchMethodStatement != null) this.MatchMethodStatement.Generate( writer );
+			if (this.MatchMethodStatement != null) this.MatchMethodStatement.Generate( writer, fileName );
 			writer.Append( "public CodeWriter " );
 			writer.Append( this.Name );
 			if (this.MatchMethodStatement != null)

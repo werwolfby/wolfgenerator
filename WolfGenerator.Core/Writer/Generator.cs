@@ -12,7 +12,8 @@
  *   04.02.2009 01:01 - Add default namespaces.
  *   04.02.2009 01:13 - Add default namespace `WolfGenerator.Core`.
  *   04.02.2009 01:15 - Remove default namespace `System.Reflection`.
- *   10.02.2009 20:31 - Add support fileName of Generated method
+ *   10.02.2009 20:31 - Add support fileName of Generated method.
+ *   11.02.2009 20:38 - Add new generate code from MatchMethodGroup.
  *
  *******************************************************/
 
@@ -60,11 +61,20 @@ namespace WolfGenerator.Core.Writer
 			writer.AppendLine( "{" );
 			writer.Indent++;
 
-			if (ruleClassStatement.RuleMethodStatements != null && ruleClassStatement.RuleMethodStatements.Count > 0)
+			//if (ruleClassStatement.RuleMethodStatements != null && ruleClassStatement.RuleMethodStatements.Count > 0)
+			//{
+			//    foreach (var ruleMethodStatement in ruleClassStatement.RuleMethodStatements)
+			//    {
+			//        ruleMethodStatement.Generate( writer, fileName );
+			//    }
+			//}
+
+			if (ruleClassStatement.MatchMethodGroups != null && ruleClassStatement.MatchMethodGroups.Count > 0)
 			{
-				foreach (var ruleMethodStatement in ruleClassStatement.RuleMethodStatements)
+				foreach (var matchMethodGroup in ruleClassStatement.MatchMethodGroups)
 				{
-					ruleMethodStatement.Generate( writer, fileName );
+					if (matchMethodGroup.IsMatched) GenerateMatchMethod( matchMethodGroup, fileName, writer );
+					else GenerateSingleMethod( matchMethodGroup, fileName, writer );
 				}
 			}
 
@@ -72,6 +82,22 @@ namespace WolfGenerator.Core.Writer
 			writer.AppendLine( "}" );
 
 			return writer;
+		}
+
+		private static void GenerateMatchMethod( RuleMethodGroup methodGroup, string fileName, CodeWriter writer )
+		{
+			foreach (var matchStatement in methodGroup.MatchStatements)
+			{
+				matchStatement.MatchMethodStatement.Generate( writer, fileName );
+				matchStatement.Generate( writer, fileName );
+			}
+
+			if (methodGroup.DefaultStatement != null) methodGroup.DefaultStatement.Generate( writer, fileName, true );
+		}
+
+		private static void GenerateSingleMethod( RuleMethodGroup methodGroup, string fileName, CodeWriter writer )
+		{
+			methodGroup.DefaultStatement.Generate( writer, fileName );
 		}
 	}
 }

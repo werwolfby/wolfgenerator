@@ -15,7 +15,11 @@ Test text
 return field == "Id";
 <%end%>
 <%rule SetField( string field )%>
-'[<Id>]' = @<%= field %>
+'[Id]' = @<%= field %>
+<%end%>
+
+<%rule SetField( string field )%>
+'[<%= field %>]' = @<%= field %>
 <%end%>
 
 <%rule Main( IEnumerable value )%>

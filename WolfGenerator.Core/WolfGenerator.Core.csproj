@@ -74,6 +74,7 @@
     <Compile Include="AST\MethodStatement.cs" />
     <Compile Include="AST\RuleClassMethodStatement.cs" />
     <Compile Include="AST\RuleClassStatement.cs" />
+    <Compile Include="AST\RuleMethodGroup.cs" />
     <Compile Include="AST\RuleMethodStatement.cs" />
     <Compile Include="AST\RuleStatement.cs" />
     <Compile Include="AST\TextStatement.cs" />

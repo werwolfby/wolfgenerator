@@ -8,10 +8,6 @@ using Example.WolfGenerator;
 
 public partial class MainClass : GeneratorBase
 {
-	public int Test2( int a, int b )
-	{
-		return 15;
-	}
 	public CodeWriter TempRule()
 	{
 		var writer = new CodeWriter();
@@ -26,12 +22,25 @@ public partial class MainClass : GeneratorBase
 	{
 		return field == "Id";
 	}
-	public CodeWriter SetField( string field )
+	public CodeWriter SetField_IsId( string field )
 	{
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
-		writer.Append( "'[<Id>]' = @" );
+		writer.Append( "'[Id]' = @" );
+		writer.AppendText( field );
+
+		return writer;
+	}
+	public CodeWriter SetField_Default( string field )
+	{
+		var writer = new CodeWriter();
+
+		writer.Indent = 0;
+		writer.Append( "'[" );
+		writer.AppendText( field );
+		writer.Indent = 0;
+		writer.Append( "]' = @" );
 		writer.AppendText( field );
 
 		return writer;

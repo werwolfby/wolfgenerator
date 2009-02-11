@@ -18,10 +18,12 @@
  *                      statements and rule method statements).
  *   27.01.2009 02:00 - change collection type from RuleMethodStatements to RuleClassMethodStatement
  *   25.01.2009 08:33 - Update EBNF.
+ *   11.02.2009 20:25 - Add MatchMethodGroups property.
  *
  *******************************************************/
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace WolfGenerator.Core.AST
@@ -36,12 +38,17 @@ namespace WolfGenerator.Core.AST
 		private readonly string name;
 		private readonly IList<UsingStatement> usingStatements;
 		private readonly IList<RuleClassMethodStatement> ruleMethodStatements;
+		private readonly IList<RuleMethodGroup> matchMethodGroups;
 
 		public RuleClassStatement( string name, IList<UsingStatement> usingStatements, IList<RuleClassMethodStatement> ruleMethodStatements )
 		{
 			this.name = name;
 			this.usingStatements = usingStatements;
 			this.ruleMethodStatements = ruleMethodStatements;
+
+			this.matchMethodGroups = (from statement in ruleMethodStatements.OfType<RuleMethodStatement>()
+			                          group statement by statement.MethodHeader
+			                          into g select new RuleMethodGroup( g )).ToList().AsReadOnly();
 		}
 
 		public string Name
@@ -57,6 +64,11 @@ namespace WolfGenerator.Core.AST
 		public IList<RuleClassMethodStatement> RuleMethodStatements
 		{
 			get { return this.ruleMethodStatements; }
+		}
+
+		public IList<RuleMethodGroup> MatchMethodGroups
+		{
+			get { return this.matchMethodGroups; }
 		}
 
 		public override string ToString()

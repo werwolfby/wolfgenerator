@@ -18,6 +18,10 @@
  *   04.02.2009 01:53 - Add matchMethodStatement : MatchMethodStatement field.
  *   04.02.2009 02:11 - Fix: Generate method. Use MatchMethod generation.
  *   10.02.2009 20:28 - Add support fileName of Generate method
+ *   11.02.2009 20:14 - Update EBNF.
+ *   11.02.2009 20:15 - Add MethodHeader property to simple `group by` using.
+ *   11.02.2009 20:33 - Add support Generate default rule method.
+ *   11.02.2009 20:41 - Fix: Generate method.
  *
  *******************************************************/
 
@@ -30,7 +34,7 @@ using WolfGenerator.Core.Writer;
 namespace WolfGenerator.Core.AST
 {
 	/// <summary>
-	/// EBNF: RuleMethod      = RuleMethodStart {ANY | Value } RuleMethodEnd.
+	/// EBNF: RuleMethod      = [MatchMethod] RuleMethodStart {ANY | Value | Join | Code | Call} RuleMethodEnd.
 	///       RuleMethodStart = <%rule ident ( [ Var { , Var } ] ) %>.
 	///       RuleMethodEnd   = <%end%>.
 	/// </summary>
@@ -71,16 +75,50 @@ namespace WolfGenerator.Core.AST
 			get { return this.statements; }
 		}
 
+		public string MethodHeader
+		{
+			get
+			{
+				var builder = new StringBuilder();
+
+				builder.Append( name );
+
+				if (variables != null)
+				{
+					builder.Append( "( " );
+
+					for (int i = 0; i < variables.Count; i++)
+					{
+						var variable = variables[i];
+
+						builder.Append( variable );
+						if (i < variables.Count - 1) builder.Append( ", " );
+					}
+
+					builder.Append( " )" );
+				}
+				else builder.Append( "()" );
+
+				return builder.ToString();
+			}
+		}
+
 		public override void Generate( CodeWriter writer, string fileName )
 		{
-			if (this.MatchMethodStatement != null) this.MatchMethodStatement.Generate( writer, fileName );
+			Generate( writer, fileName, false );
+		}
+
+		public void Generate( CodeWriter writer, string fileName, bool isDefault )
+		{
 			writer.Append( "public CodeWriter " );
 			writer.Append( this.Name );
 			if (this.MatchMethodStatement != null)
 			{
-				//writer.Append( "_" );
-				//writer.Append( this.MatchMethodStatement.Name );
+				writer.Append( "_" );
+				writer.Append( this.MatchMethodStatement.Name );
 			}
+			else if (isDefault) writer.Append( "_Default" );
+
 			if (this.variables == null || this.variables.Count == 0)
 			{
 				writer.AppendLine( "()" );
@@ -114,23 +152,8 @@ namespace WolfGenerator.Core.AST
 			var builder = new StringBuilder();
 
 			builder.Append( "<%rule " );
-			builder.Append( name );
 
-			if (variables != null)
-			{
-				builder.Append( "( " );
-
-				for (int i = 0; i < variables.Count; i++)
-				{
-					var variable = variables[i];
-
-					builder.Append( variable );
-					if (i < variables.Count - 1) builder.Append( ", " );
-				}
-
-				builder.Append( " )" );
-			}
-			else builder.Append( "()" );
+			builder.Append( MethodHeader );
 
 			builder.AppendLine( "%>" );
 

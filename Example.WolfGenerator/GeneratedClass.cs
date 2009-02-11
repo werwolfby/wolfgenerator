@@ -8,6 +8,7 @@ using Example.WolfGenerator;
 
 public partial class MainClass : GeneratorBase
 {
+	[RuleMethod( "TempRule", null, "test.rule" )]
 	public CodeWriter TempRule()
 	{
 		var writer = new CodeWriter();
@@ -17,21 +18,23 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
-	[MatchMethod( "SetField", "test.rule" )]
+	[MatchMethod( "SetField", "IsId", "test.rule" )]
 	private bool Match_SetField_IsId( string field )
 	{
 		return field == "Id";
 	}
+	[RuleMethod( "SetField", "IsId", "test.rule" )]
 	public CodeWriter SetField_IsId( string field )
 	{
 		var writer = new CodeWriter();
 
 		writer.Indent = 0;
-		writer.Append( "'[Id]' = @" );
+		writer.Append( "'[<Id>]' = @" );
 		writer.AppendText( field );
 
 		return writer;
 	}
+	[RuleMethod( "SetField", null, "test.rule" )]
 	public CodeWriter SetField_Default( string field )
 	{
 		var writer = new CodeWriter();
@@ -45,6 +48,7 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+	[RuleMethod( "Main", null, "test.rule" )]
 	public CodeWriter Main( IEnumerable value )
 	{
 		var writer = new CodeWriter();
@@ -72,6 +76,7 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+	[RuleMethod( "Test", null, "test.rule" )]
 	public CodeWriter Test( int value, object a )
 	{
 		var writer = new CodeWriter();
@@ -92,6 +97,7 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+	[RuleMethod( "Test", null, "test.rule" )]
 	public CodeWriter Test( string value, object a )
 	{
 		var writer = new CodeWriter();

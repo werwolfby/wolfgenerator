@@ -85,6 +85,7 @@
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
     <Compile Include="MatchMethodAttribute.cs" />
+    <Compile Include="RuleMethodAttribute.cs" />
     <Compile Include="Scanner.cs">
       <SubType>Code</SubType>
     </Compile>

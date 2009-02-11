@@ -22,6 +22,7 @@
  *   11.02.2009 20:15 - Add MethodHeader property to simple `group by` using.
  *   11.02.2009 20:33 - Add support Generate default rule method.
  *   11.02.2009 20:41 - Fix: Generate method.
+ *   11.02.2009 21:59 - Add RuleMethod attribute generate supporting.
  *
  *******************************************************/
 
@@ -110,6 +111,13 @@ namespace WolfGenerator.Core.AST
 
 		public void Generate( CodeWriter writer, string fileName, bool isDefault )
 		{
+			writer.Append( "[RuleMethod( \"" );
+			writer.Append( this.name );
+			writer.Append( "\", " );
+			writer.Append( this.matchMethodStatement != null ? '"' + this.matchMethodStatement.Name + '"' : "null" );
+			writer.Append( ", \"" );
+			writer.Append( fileName );
+			writer.AppendLine( "\" )]" );
 			writer.Append( "public CodeWriter " );
 			writer.Append( this.Name );
 			if (this.MatchMethodStatement != null)

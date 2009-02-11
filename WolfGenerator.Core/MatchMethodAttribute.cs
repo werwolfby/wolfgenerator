@@ -8,6 +8,7 @@
  * 
  * History:
  *   04.02.2009 01:37 - Create Wireframe
+ *   11.02.2009 21:?? - Add MatchMethodName property.
  *
  *******************************************************/
 
@@ -19,17 +20,24 @@ namespace WolfGenerator.Core
 	public class MatchMethodAttribute : Attribute
 	{
 		private readonly string ruleMethodName;
+		private readonly string mathcMethodName;
 		private readonly string fileName;
 
-		public MatchMethodAttribute( string ruleMethodName, string fileName )
+		public MatchMethodAttribute( string ruleMethodName, string mathcMethodName, string fileName )
 		{
 			this.ruleMethodName = ruleMethodName;
+			this.mathcMethodName = mathcMethodName;
 			this.fileName = fileName;
 		}
 
 		public string RuleMethodName
 		{
 			get { return this.ruleMethodName; }
+		}
+
+		public string MathcMethodName
+		{
+			get { return this.mathcMethodName; }
 		}
 
 		public string FileName

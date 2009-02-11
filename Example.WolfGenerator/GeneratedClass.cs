@@ -8,7 +8,6 @@ using Example.WolfGenerator;
 
 public partial class MainClass : GeneratorBase
 {
-	[RuleMethod( "TempRule", null, "test.rule" )]
 	public CodeWriter TempRule()
 	{
 		var writer = new CodeWriter();
@@ -23,7 +22,6 @@ public partial class MainClass : GeneratorBase
 	{
 		return field == "Id";
 	}
-	[RuleMethod( "SetField", "IsId", "test.rule" )]
 	public CodeWriter SetField_IsId( string field )
 	{
 		var writer = new CodeWriter();
@@ -48,7 +46,6 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
-	[RuleMethod( "Main", null, "test.rule" )]
 	public CodeWriter Main( IEnumerable value )
 	{
 		var writer = new CodeWriter();
@@ -76,7 +73,6 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
-	[RuleMethod( "Test", null, "test.rule" )]
 	public CodeWriter Test( int value, object a )
 	{
 		var writer = new CodeWriter();
@@ -97,7 +93,6 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
-	[RuleMethod( "Test", null, "test.rule" )]
 	public CodeWriter Test( string value, object a )
 	{
 		var writer = new CodeWriter();

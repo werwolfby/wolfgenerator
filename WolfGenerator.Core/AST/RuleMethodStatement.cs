@@ -23,6 +23,7 @@
  *   11.02.2009 20:33 - Add support Generate default rule method.
  *   11.02.2009 20:41 - Fix: Generate method.
  *   11.02.2009 21:59 - Add RuleMethod attribute generate supporting.
+ *   11.02.2009 22:12 - Add to generate method boolean parameter to generate RuleMethod Attribute.
  *
  *******************************************************/
 
@@ -106,18 +107,21 @@ namespace WolfGenerator.Core.AST
 
 		public override void Generate( CodeWriter writer, string fileName )
 		{
-			Generate( writer, fileName, false );
+			Generate( writer, fileName, false, false );
 		}
 
-		public void Generate( CodeWriter writer, string fileName, bool isDefault )
+		public void Generate( CodeWriter writer, string fileName, bool isDefault, bool generateAttribute )
 		{
-			writer.Append( "[RuleMethod( \"" );
-			writer.Append( this.name );
-			writer.Append( "\", " );
-			writer.Append( this.matchMethodStatement != null ? '"' + this.matchMethodStatement.Name + '"' : "null" );
-			writer.Append( ", \"" );
-			writer.Append( fileName );
-			writer.AppendLine( "\" )]" );
+			if (generateAttribute)
+			{
+				writer.Append( "[RuleMethod( \"" );
+				writer.Append( this.name );
+				writer.Append( "\", " );
+				writer.Append( this.matchMethodStatement != null ? '"' + this.matchMethodStatement.Name + '"' : "null" );
+				writer.Append( ", \"" );
+				writer.Append( fileName );
+				writer.AppendLine( "\" )]" );
+			}
 			writer.Append( "public CodeWriter " );
 			writer.Append( this.Name );
 			if (this.MatchMethodStatement != null)

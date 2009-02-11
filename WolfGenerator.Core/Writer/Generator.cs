@@ -14,6 +14,7 @@
  *   04.02.2009 01:15 - Remove default namespace `System.Reflection`.
  *   10.02.2009 20:31 - Add support fileName of Generated method.
  *   11.02.2009 20:38 - Add new generate code from MatchMethodGroup.
+ *   11.02.2009 22:12 - GenerateSingleMethod - don't generate RuleMethod attribute.
  *
  *******************************************************/
 
@@ -92,12 +93,12 @@ namespace WolfGenerator.Core.Writer
 				matchStatement.Generate( writer, fileName );
 			}
 
-			if (methodGroup.DefaultStatement != null) methodGroup.DefaultStatement.Generate( writer, fileName, true );
+			if (methodGroup.DefaultStatement != null) methodGroup.DefaultStatement.Generate( writer, fileName, true, true );
 		}
 
 		private static void GenerateSingleMethod( RuleMethodGroup methodGroup, string fileName, CodeWriter writer )
 		{
-			methodGroup.DefaultStatement.Generate( writer, fileName );
+			methodGroup.DefaultStatement.Generate( writer, fileName, false, false );
 		}
 	}
 }

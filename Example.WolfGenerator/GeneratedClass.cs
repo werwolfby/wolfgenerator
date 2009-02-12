@@ -22,6 +22,7 @@ public partial class MainClass : GeneratorBase
 	{
 		return field == "Id";
 	}
+	[RuleMethod( "SetField", "IsId", "test.rule" )]
 	public CodeWriter SetField_IsId( string field )
 	{
 		var writer = new CodeWriter();

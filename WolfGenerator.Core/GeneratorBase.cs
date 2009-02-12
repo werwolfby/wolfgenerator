@@ -11,6 +11,8 @@
  *   04.02.2009 01:15 - Make constructor protected.
  *   11.02.2009 20:51 - Add InnerInvoke method.
  *   11.02.2009 21:41 - Finish first implementation of match methods.
+ *   12.02.2009 20:55 - Change field type of some inner classes from MethodInfo to string, 
+ *                      because we use only name of method.
  *
  *******************************************************/
 
@@ -26,9 +28,9 @@ namespace WolfGenerator.Core
 	{
 		private class MatchMethodData
 		{
-			public MethodInfo matchMethodInfo;
+			public string matchMethodName;
 
-			public MethodInfo ruleMethodInfo;
+			public string ruleMethodName;
 		}
 
 		private class MatchMethodDataCollection
@@ -37,7 +39,7 @@ namespace WolfGenerator.Core
 
 			public MatchMethodData[] methodDatas;
 
-			public MethodInfo defaultMethodInfo;
+			public string defaultMethodName;
 		}
 
 		private class MatchMethodCollection
@@ -53,7 +55,7 @@ namespace WolfGenerator.Core
 			}
 		}
 
-		private MatchMethodCollection matchMethodCollection;
+		private readonly MatchMethodCollection matchMethodCollection;
 
 		protected GeneratorBase()
 		{
@@ -61,7 +63,7 @@ namespace WolfGenerator.Core
 			                   where m.GetAttribute<RuleMethodAttribute>() != null
 			                   select new
 			                          {
-			                          	Method = m,
+			                          	MethodName = m.Name,
 			                          	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>()
 			                          }).ToArray();
 
@@ -71,7 +73,7 @@ namespace WolfGenerator.Core
 			                    where m.GetAttribute<MatchMethodAttribute>() != null
 			                    select new
 			                           {
-			                           	Method = m,
+			                           	MethodName = m.Name,
 			                           	MatchMethodAttribute = m.GetAttribute<MatchMethodAttribute>()
 			                           }).ToArray();
 
@@ -87,12 +89,12 @@ namespace WolfGenerator.Core
 			                        	               	mm.MatchMethodAttribute.MathcMethodName
 			                        	               select new MatchMethodData
 			                        	                      {
-			                        	                      	ruleMethodInfo = rm.Method,
-			                        	                      	matchMethodInfo = mm.Method
+			                        	                      	ruleMethodName = rm.MethodName,
+			                        	                      	matchMethodName = mm.MethodName
 			                        	                      }).ToArray(),
-			                        	defaultMethodInfo =
+			                        	defaultMethodName =
 			                        		ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
-			                        		                                  p.RuleMethodAttribute.Name == methodName ).Method
+			                        		                                  p.RuleMethodAttribute.Name == methodName ).MethodName
 
 			                        }).ToArray();
 
@@ -113,19 +115,19 @@ namespace WolfGenerator.Core
 
 				foreach (var data in matches)
 				{
-					if (!this.InnerInvoke<bool>( data.matchMethodInfo.Name, parameters )) continue;
+					if (!this.InnerInvoke<bool>( data.matchMethodName, parameters )) continue;
 
-					name = data.ruleMethodInfo.Name;
+					name = data.ruleMethodName;
 					isFinded = true;
 					break;
 				}
 
                 if (!isFinded)
                 {
-                	if (methodCollection.defaultMethodInfo == null)
+                	if (methodCollection.defaultMethodName == null)
                 		throw new Exception( "Can't find right method " + name );
 
-                	name = methodCollection.defaultMethodInfo.Name;
+                	name = methodCollection.defaultMethodName;
                 }
 			}
 

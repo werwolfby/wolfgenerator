@@ -15,6 +15,7 @@
  *   10.02.2009 20:31 - Add support fileName of Generated method.
  *   11.02.2009 20:38 - Add new generate code from MatchMethodGroup.
  *   11.02.2009 22:12 - GenerateSingleMethod - don't generate RuleMethod attribute.
+ *   11.02.2009 21:05 - Fix: GenerateMatchMethod add attribute in generated rule class method.
  *
  *******************************************************/
 
@@ -90,7 +91,7 @@ namespace WolfGenerator.Core.Writer
 			foreach (var matchStatement in methodGroup.MatchStatements)
 			{
 				matchStatement.MatchMethodStatement.Generate( writer, fileName );
-				matchStatement.Generate( writer, fileName );
+				matchStatement.Generate( writer, fileName, false, true );
 			}
 
 			if (methodGroup.DefaultStatement != null) methodGroup.DefaultStatement.Generate( writer, fileName, true, true );

@@ -9,6 +9,9 @@
  * History:
  *   25.01.2009 08:58 - Create Wireframe
  *   25.01.2009 09:01 - Override ToString method.
+ *   14.02.2009 12:02 - GenericParameters must be not null.
+ *                      if genericParameters argument in constructor is null
+ *                      create empty array[Type].
  *
  *******************************************************/
 
@@ -28,7 +31,7 @@ namespace WolfGenerator.Core.AST
 		public Type( string typeName, IList<Type> genericParameters )
 		{
 			this.typeName = typeName;
-			this.genericParameters = genericParameters;
+			this.genericParameters = genericParameters ?? new Type[0];
 		}
 
 		public string TypeName

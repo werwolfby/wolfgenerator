@@ -47,7 +47,8 @@
     <Reference Include="VSLangProj, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ParserTest.cs" />
+    <Compile Include="AssertHelper.cs" />
+    <Compile Include="ParserTest\TypeUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

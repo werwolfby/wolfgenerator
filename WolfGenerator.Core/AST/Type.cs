@@ -13,6 +13,7 @@
  *                      if genericParameters argument in constructor is null
  *                      create empty array[Type].
  *   14.02.2009 13:16 - FIX: ToString, check if generic parameters is empty.
+ *   14.02.2009 13:21 - Add Type constructor with `params` attribute argument list, to support hand initialize.
  *
  *******************************************************/
 
@@ -28,6 +29,8 @@ namespace WolfGenerator.Core.AST
 	{
 		private readonly string typeName;
 		private readonly IList<Type> genericParameters;
+
+		public Type( string typeName, params Type[] genericParameters ) : this( typeName, (IList<Type>)genericParameters ) {}
 
 		public Type( string typeName, IList<Type> genericParameters )
 		{

@@ -27,12 +27,14 @@ namespace UnitTest.WolfGenerator.ParserTest
 		private readonly Type dictionaryType;
 		private readonly Type listType;
 		private readonly Type simpleType;
+		private readonly Type funcType;
 
 		public TypeUnitTest()
 		{
 			this.simpleType     = new Type( "int", null );
-			this.listType       = new Type( "List", new[] { this.simpleType } );
-			this.dictionaryType = new Type( "Dictionary", new[] { new Type( "string", null ), listType, } );
+			this.listType       = new Type( "List", this.simpleType );
+			this.dictionaryType = new Type( "Dictionary", new Type( "string", null ), listType );
+			this.funcType       = new Type( "Func", listType, dictionaryType, listType, simpleType );
 		}
 
 		[TestMethod]
@@ -71,6 +73,19 @@ namespace UnitTest.WolfGenerator.ParserTest
 		public void DistionaryTypeToStringTest()
 		{
 			var str = TypeToString( dictionaryType, ",", "<", ">" );
+			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
+		}
+
+		[TestMethod]
+		public void FuncTypeTest()
+		{
+			MainTestMethod2( funcType );
+		}
+
+		[TestMethod]
+		public void FuncTypeToStringTest()
+		{
+			var str = TypeToString( funcType, ",", "<", ">" );
 			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
 		}
 

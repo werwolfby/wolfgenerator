@@ -10,6 +10,8 @@
  *   14.02.2009 11:50 - Create Wireframe
  *   14.02.2009 12:49 - First full type test implementation
  *   14.02.2009 13:17 - Add ToString method test
+ *   14.02.2009 21:57 - Made inner variable static and public.
+ *   14.02.2009 22:01 - Made TypeToString, MainTestMethod, MainTestMethod2 static.
  *
  *******************************************************/
 
@@ -24,17 +26,17 @@ namespace UnitTest.WolfGenerator.ParserTest
 	[TestClass]
 	public class TypeUnitTest
 	{
-		private readonly Type dictionaryType;
-		private readonly Type listType;
-		private readonly Type simpleType;
-		private readonly Type funcType;
+		public static readonly Type dictionaryType;
+		public static readonly Type listType;
+		public static readonly Type simpleType;
+		public static readonly Type funcType;
 
-		public TypeUnitTest()
+		static TypeUnitTest()
 		{
-			this.simpleType     = new Type( "int", null );
-			this.listType       = new Type( "List", this.simpleType );
-			this.dictionaryType = new Type( "Dictionary", new Type( "string", null ), listType );
-			this.funcType       = new Type( "Func", listType, dictionaryType, listType, simpleType );
+			simpleType     = new Type( "int", null );
+			listType       = new Type( "List", simpleType );
+			dictionaryType = new Type( "Dictionary", new Type( "string", null ), listType );
+			funcType       = new Type( "Func", listType, dictionaryType, listType, simpleType );
 		}
 
 		[TestMethod]
@@ -89,7 +91,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
 		}
 
-		public string TypeToString( Type t, string ag, string sg, string eg )
+		public static string TypeToString( Type t, string ag, string sg, string eg )
 		{
 			var builder = new StringBuilder();
 			builder.Append( t.TypeName );
@@ -106,20 +108,20 @@ namespace UnitTest.WolfGenerator.ParserTest
 			return builder.ToString();
 		}
 
-		private void MainTestMethod( Type expectedType, string ag, string sg, string eg, Func<Type, Type, int> tf )
+		private static void MainTestMethod( Type expectedType, string ag, string sg, string eg, Func<Type, Type, int> tf )
 		{
-			var typeStatementText = this.TypeToString( expectedType, ag, sg, eg );
+			var typeStatementText = TypeToString( expectedType, ag, sg, eg );
 
 			var actualType = ParserHelper.ParseType( typeStatementText );
 
 			tf( expectedType, actualType );
 		}
 
-		private void MainTestMethod2( Type type )
+		private static void MainTestMethod2( Type type )
 		{
 			Func<string, string, string, int> func = ( ag, sg, eg ) =>
 			                                         {
-			                                         	this.MainTestMethod( type, ag, sg, eg, AssertHelper.AssertType );
+			                                         	MainTestMethod( type, ag, sg, eg, AssertHelper.AssertType );
 			                                         	return 0;
 			                                         };
 

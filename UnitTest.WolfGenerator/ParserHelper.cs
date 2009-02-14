@@ -8,6 +8,7 @@
  * 
  * History:
  *   14.02.2009 12:52 - Create Wireframe
+ *   14.02.2009 21:53 - Add ParseVariable method.
  *
  *******************************************************/
 
@@ -20,12 +21,23 @@ namespace UnitTest.WolfGenerator
 	{
 		public static Type ParseType( string statement )
 		{
-			Type actualType;
+			Type type;
 			var parser = new Parser_Accessor( statement );
 
 			parser.InitParse();
-			parser.Type( out actualType );
-			return actualType;
+			parser.Type( out type );
+			return type;
+		}
+
+		public static Variable ParseVariable( string statement )
+		{
+			Variable var;
+			var parser = new Parser_Accessor( statement );
+
+			parser.InitParse();
+			parser.Var( out var );
+
+			return var;
 		}
 	}
 }

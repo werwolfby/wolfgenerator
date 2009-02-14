@@ -12,6 +12,7 @@
  *   14.02.2009 12:02 - GenericParameters must be not null.
  *                      if genericParameters argument in constructor is null
  *                      create empty array[Type].
+ *   14.02.2009 13:16 - FIX: ToString, check if generic parameters is empty.
  *
  *******************************************************/
 
@@ -50,14 +51,14 @@ namespace WolfGenerator.Core.AST
 
 			builder.Append( this.typeName );
 
-			if (this.genericParameters != null)
+			if (this.genericParameters.Count > 0)
 			{
 				var generic = new string[this.genericParameters.Count];
 
 				for (var i = 0; i < this.genericParameters.Count; i++)
 					generic[i] = this.genericParameters[i].ToString();
 
-				builder.AppendFormat( "<{0}>", string.Join( ", ", generic ) );
+				builder.AppendFormat( "<{0}>", string.Join( ",", generic ) );
 			}
 
 			return builder.ToString();

@@ -9,13 +9,13 @@
  * History:
  *   14.02.2009 11:50 - Create Wireframe
  *   14.02.2009 12:49 - First full type test implementation
+ *   14.02.2009 13:17 - Add ToString method test
  *
  *******************************************************/
 
 using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WolfGenerator.Core;
 using Type=WolfGenerator.Core.AST.Type;
 using System.Linq;
 
@@ -42,15 +42,36 @@ namespace UnitTest.WolfGenerator.ParserTest
 		}
 
 		[TestMethod]
+		public void SimpleTypeToStringTest()
+		{
+			var str = TypeToString( simpleType, ",", "<", ">" );
+			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
+		}
+
+		[TestMethod]
 		public void ListTypeTest()
 		{
 			MainTestMethod2( listType );
 		}
 
 		[TestMethod]
+		public void ListTypeToStringTest()
+		{
+			var str = TypeToString( listType, ",", "<", ">" );
+			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
+		}
+
+		[TestMethod]
 		public void DictionaryTypeTest()
 		{
 			MainTestMethod2( dictionaryType );
+		}
+
+		[TestMethod]
+		public void DistionaryTypeToStringTest()
+		{
+			var str = TypeToString( dictionaryType, ",", "<", ">" );
+			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
 		}
 
 		public string TypeToString( Type t, string ag, string sg, string eg )
@@ -72,13 +93,9 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 		private void MainTestMethod( Type expectedType, string ag, string sg, string eg, Func<Type, Type, int> tf )
 		{
-			Type actualType;
-
 			var typeStatementText = this.TypeToString( expectedType, ag, sg, eg );
-			var parser = new Parser_Accessor( typeStatementText );
 
-			parser.InitParse();
-			parser.Type( out actualType );
+			var actualType = ParserHelper.ParseType( typeStatementText );
 
 			tf( expectedType, actualType );
 		}

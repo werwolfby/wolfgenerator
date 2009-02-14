@@ -67,25 +67,51 @@ namespace UnitTest.WolfGenerator
 
 			var target = new Parser_Accessor( usingStatementText );
 			UsingStatement usingStatement;
+			target.InitParse();
 			target.Using( out usingStatement );
 
 			Assert.AreEqual( @namespace, usingStatement.Namespace );
 		}
 
 		/// <summary>
-		///A test for Type
+		///A test for not generic Type
 		///</summary>
 		[TestMethod()]
 		[DeploymentItem("WolfGenerator.Core.dll")]
 		public void TypeTest()
 		{
-			PrivateObject param0 = null; // TODO: Initialize to an appropriate value
-			Parser_Accessor target = new Parser_Accessor(param0); // TODO: Initialize to an appropriate value
-			Type type = null; // TODO: Initialize to an appropriate value
-			Type typeExpected = null; // TODO: Initialize to an appropriate value
-			target.Type(out type);
-			Assert.AreEqual(typeExpected, type);
-			Assert.Inconclusive("A method that does not return a value cannot be verified.");
+			var type = "int";
+			var target = new Parser_Accessor( type );
+
+			Type typeStatement;
+
+			target.InitParse();
+			target.Type( out typeStatement );
+
+			Assert.AreEqual( type, typeStatement.TypeName );
+			Assert.IsNull( typeStatement.GenericParameters, type + " must be not generic type" );
+		}
+
+		/// <summary>
+		///A test for not generic Type
+		///</summary>
+		[TestMethod()]
+		[DeploymentItem("WolfGenerator.Core.dll")]
+		public void GenericTypeTest()
+		{
+			var type = "List<int>";
+			var target = new Parser_Accessor( type );
+
+			Type typeStatement;
+
+			target.InitParse();
+			target.Type( out typeStatement );
+
+			Assert.AreEqual( "List", typeStatement.TypeName );
+			Assert.IsNotNull( typeStatement.GenericParameters, type + " must be generic type" );
+			Assert.AreEqual( 1, typeStatement.GenericParameters.Count, type + " must contain only one generic parameter" );
+			Assert.AreEqual( "int", typeStatement.GenericParameters[0].TypeName,
+			                 "Second parameter must be int, but not " + typeStatement.GenericParameters[0].TypeName );
 		}
 
 		/// <summary>
@@ -95,16 +121,35 @@ namespace UnitTest.WolfGenerator
 		[DeploymentItem("WolfGenerator.Core.dll")]
 		public void RuleMethodStartTest()
 		{
-			PrivateObject param0 = null; // TODO: Initialize to an appropriate value
-			Parser_Accessor target = new Parser_Accessor(param0); // TODO: Initialize to an appropriate value
-			string name = string.Empty; // TODO: Initialize to an appropriate value
-			string nameExpected = string.Empty; // TODO: Initialize to an appropriate value
-			IList<Variable> variables = null; // TODO: Initialize to an appropriate value
-			IList<Variable> variablesExpected = null; // TODO: Initialize to an appropriate value
-			target.RuleMethodStart(out name, out variables);
-			Assert.AreEqual(nameExpected, name);
-			Assert.AreEqual(variablesExpected, variables);
-			Assert.Inconclusive("A method that does not return a value cannot be verified.");
+			var nameExpected = "Item";
+			var ruleMethodStartStatementText = "<%rule " + nameExpected + "( List<List<int>> a, string b )%>";
+
+			string name;
+			IList<Variable> variables;
+
+			var target = new Parser_Accessor( ruleMethodStartStatementText );
+
+			target.InitParse();
+			target.RuleMethodStart( out name, out variables );
+
+			Assert.AreEqual( nameExpected, name );
+			Assert.IsNotNull( variables );
+			Assert.AreEqual( 2, variables.Count, "Such method must contain only 2 variables" );
+
+			Assert.AreEqual( "a", variables[0].Name );
+			Assert.AreEqual( "b", variables[1].Name );
+
+			Assert.AreEqual( "List", variables[0].Type.TypeName );
+			Assert.IsNotNull( variables[0].Type.GenericParameters );
+			Assert.AreEqual( 1, variables[0].Type.GenericParameters.Count );
+			Assert.AreEqual( "List", variables[0].Type.GenericParameters[0].TypeName );
+			Assert.IsNotNull( variables[0].Type.GenericParameters[0].GenericParameters );
+			Assert.AreEqual( 1, variables[0].Type.GenericParameters[0].GenericParameters.Count );
+			Assert.AreEqual( "int", variables[0].Type.GenericParameters[0].GenericParameters[0].TypeName );
+			Assert.IsNotNull( variables[0].Type.GenericParameters[0].GenericParameters[0].GenericParameters );
+
+			Assert.AreEqual( "string", variables[1].Type.TypeName );
+			Assert.IsNotNull( variables[1].Type.GenericParameters );
 		}
 
 		/// <summary>

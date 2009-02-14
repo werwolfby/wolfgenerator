@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 10.02.2009 20:43:30
+// Compiled by vsCoco on 12.02.2009 23:05:32
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -529,10 +529,16 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 
-		public void Parse() {
+
+		public void InitParse()
+		{
 			la = new Token();
 			la.val = "";		
 			Get();
+		}
+		
+		public void Parse() {
+			InitParse();
 		WolfGenerator();
 
 		Expect(0);

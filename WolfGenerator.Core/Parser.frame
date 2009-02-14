@@ -122,10 +122,16 @@ using System.Collections;
 		}
 		
 -->productions
-		public void Parse() {
+
+		public void InitParse()
+		{
 			la = new Token();
 			la.val = "";		
 			Get();
+		}
+		
+		public void Parse() {
+			InitParse();
 -->parseRoot
 		Expect(0);
 		}

@@ -8,6 +8,7 @@
  * 
  * History:
  *   03.02.2009 23:43 - Create Wireframe
+ *   14.02.2009 22:35 - Fix: GetTextToken() forget to check if find end of file.
  *
  *******************************************************/
 
@@ -393,7 +394,7 @@ namespace WolfGenerator.Core
 
 			while (!end)
 			{
-				if (this.ch == '<' && this.buffer.Peek() == '%') end = true;
+				if (this.ch == Buffer.EOF || (this.ch == '<' && this.buffer.Peek() == '%')) end = true;
 				else this.AddCh();
 			}
 

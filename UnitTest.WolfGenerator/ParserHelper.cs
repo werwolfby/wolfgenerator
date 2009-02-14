@@ -9,6 +9,8 @@
  * History:
  *   14.02.2009 12:52 - Create Wireframe
  *   14.02.2009 21:53 - Add ParseVariable method.
+ *   14.02.2009 22:24 - Add base parser method `Parse`.
+ *   14.02.2009 22:27 - Add ParseValue and use all old methods by using `Parse` method.
  *
  *******************************************************/
 
@@ -19,25 +21,33 @@ namespace UnitTest.WolfGenerator
 {
 	public class ParserHelper
 	{
+		private delegate void ParseDelegate<T>( Parser_Accessor p, out T t );
+
 		public static Type ParseType( string statement )
 		{
-			Type type;
-			var parser = new Parser_Accessor( statement );
-
-			parser.InitParse();
-			parser.Type( out type );
-			return type;
+			return Parse( statement, delegate( Parser_Accessor p, out Type t ) { p.Type( out t ); } );
 		}
 
 		public static Variable ParseVariable( string statement )
 		{
-			Variable var;
+			return Parse( statement, delegate( Parser_Accessor p, out Variable t ) { p.Var( out t ); } );
+		}
+
+		public static ValueStatement ParseValue( string statement )
+		{
+			return Parse( statement, delegate( Parser_Accessor p, out ValueStatement t ) { p.Value( out t ); } );
+		}
+
+		private static T Parse<T>( string statement, ParseDelegate<T> parseMethod )
+		{
+			T t;
+
 			var parser = new Parser_Accessor( statement );
 
 			parser.InitParse();
-			parser.Var( out var );
+			parseMethod( parser, out t );
 
-			return var;
+			return t;
 		}
 	}
 }

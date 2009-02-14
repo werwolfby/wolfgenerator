@@ -50,6 +50,7 @@
     <Compile Include="AssertHelper.cs" />
     <Compile Include="ParserHelper.cs" />
     <Compile Include="ParserTest\TypeUnitTest.cs" />
+    <Compile Include="ParserTest\ValueUnitTest.cs" />
     <Compile Include="ParserTest\VariableUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

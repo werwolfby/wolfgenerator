@@ -8,6 +8,7 @@
  * 
  * History:
  *   14.02.2009 11:51 - Create Wireframe
+ *   14.02.2009 12:39 - Change type of method AssertType to int, to support Func<> syntax.
  *
  *******************************************************/
 
@@ -18,7 +19,7 @@ namespace UnitTest.WolfGenerator
 {
 	public class AssertHelper
 	{
-		public static void AssertType( Type expected, Type actual )
+		public static int AssertType( Type expected, Type actual )
 		{
 			Assert.AreEqual( expected.TypeName, actual.TypeName, "Wrong name of types" );
 			if (expected.GenericParameters.Count > 0)
@@ -37,6 +38,8 @@ namespace UnitTest.WolfGenerator
 			{
 				Assert.AreEqual( 0, expected.GenericParameters.Count, "Expected type contains generic parameters" );
 			}
+
+			return 0;
 		}
 	}
 }

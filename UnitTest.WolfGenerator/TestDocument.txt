@@ -1,0 +1,13 @@
+﻿Version 2.1.0.*:
+
+Syntax: 
+Not Tested                RuleClass       = "<%ruleclass" ident "%>" {Using} {RuleMethod} "<%end%>".
+Not Tested                Using           = "<%using" ident { "."  ident } "%>".
+Not Tested                MatchMethod     = "<%match" ident "%>" {ANY} "<%end%>".
+Not Tested                RuleMethod      = [MatchMethod] "<%rule" ident ( [ Var { "," Var } ] ) "%>" { ANY | Value | Join | Code } "<%end%>".
+... Tested                Var             = Type ident.
+... Tested                Type            = ident { "." ident } [ "<" Type { "," Type } ">" ].
+... Tested                Value           = "<%=" {ANY} "%>".
+Not Tested                Join            = "<%join" string "%>" { Value | Apply } "<%end%>".
+... Tested                Apply           = "<%apply" ident ( "([" {ANY} "])" | "(" {ANY} ")" ) "from" ident "%>".
+Not Tested                Code            = "<%$" {ANY} ("$%>" | "$-%>").

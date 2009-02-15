@@ -10,6 +10,7 @@
  *   14.02.2009 11:51 - Create Wireframe
  *   14.02.2009 12:39 - Change type of method AssertType to int, to support Func<> syntax.
  *   14.02.2009 22:05 - Add AssertVariable. Add in AssertType check for null GenericParameters.
+ *   15.02.2009 10:47 - Add AssertApply.
  *
  *******************************************************/
 
@@ -51,6 +52,14 @@ namespace UnitTest.WolfGenerator
 			                 string.Format( "expected name ('{0}') don't match actual name ('{1}')", expected.Name, actual.Name ) );
 			AssertType( expected.Type, actual.Type );
 
+			return 0;
+		}
+
+		public static int AssertApply( ApplyStatement expected, ApplyStatement actual )
+		{
+			Assert.AreEqual( expected.ApplyMethod, actual.ApplyMethod, "Apply Method are wrong" );
+			Assert.AreEqual( expected.Parameters, actual.Parameters, "Apply Parameters are different" );
+			Assert.AreEqual( expected.From, actual.From, "Apply from are different" );
 			return 0;
 		}
 	}

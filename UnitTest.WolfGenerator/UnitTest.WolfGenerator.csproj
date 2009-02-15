@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="AssertHelper.cs" />
     <Compile Include="ParserHelper.cs" />
+    <Compile Include="ParserTest\ApplyUnitTest.cs" />
     <Compile Include="ParserTest\TypeUnitTest.cs" />
     <Compile Include="ParserTest\ValueUnitTest.cs" />
     <Compile Include="ParserTest\VariableUnitTest.cs" />
@@ -62,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Shadow Include="Test References\WolfGenerator.Core.accessor" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestDocument.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

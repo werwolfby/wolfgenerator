@@ -55,6 +55,7 @@
     <Compile Include="ParserTest\MatchUnitTest.cs" />
     <Compile Include="ParserTest\RuleMethodUnitTest.cs" />
     <Compile Include="ParserTest\TypeUnitTest.cs" />
+    <Compile Include="ParserTest\UsingUnitTest.cs" />
     <Compile Include="ParserTest\ValueUnitTest.cs" />
     <Compile Include="ParserTest\VariableUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

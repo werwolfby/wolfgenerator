@@ -157,6 +157,11 @@ namespace UnitTest.WolfGenerator
 				AssertVariable( expectedVariables[i], variables[i] );
 		}
 
+		public static void AssertUsing( UsingStatement expected, UsingStatement actual )
+		{
+			Assert.AreEqual( expected.Namespace, actual.Namespace );
+		}
+
 		private static void AssertJoinInnerStatementHelper<T>( RuleStatement expected, RuleStatement actual, Func<T,T,int> assertFunc )
 			where T : RuleStatement
 		{

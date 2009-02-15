@@ -16,6 +16,8 @@
  *   15.02.2009 11:50 - Add ParseJoin method.
  *   15.02.2009 14:20 - Add ParseMatch method.
  *   15.02.2009 14:20 - Add ParseRuleMethodStart method.
+ *   15.02.2009 16:28 - Add ParseUsing method.
+ *   15.02.2009 16:33 - Change parse methods from anonymous method to delegate.
  *
  *******************************************************/
 
@@ -25,47 +27,46 @@ using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator
 {
-	// ReSharper disable ConvertToLambdaExpression
 	public class ParserHelper
 	{
 		private delegate void ParseDelegate<T>( Parser_Accessor p, out T t );
 
 		public static Type ParseType( string statement )
 		{
-			return Parse( statement, delegate( Parser_Accessor p, out Type t ) { p.Type( out t ); } );
+			return Parse( statement, ( Parser_Accessor p, out Type t ) => p.Type( out t ) );
 		}
 
 		public static Variable ParseVariable( string statement )
 		{
-			return Parse( statement, delegate( Parser_Accessor p, out Variable t ) { p.Var( out t ); } );
+			return Parse( statement, ( Parser_Accessor p, out Variable t ) => p.Var( out t ) );
 		}
 
 		public static ValueStatement ParseValue( string statement )
 		{
-			return Parse( statement, delegate( Parser_Accessor p, out ValueStatement t ) { p.Value( out t ); } );
+			return Parse( statement, ( Parser_Accessor p, out ValueStatement t ) => p.Value( out t ) );
 		}
 
 		public static ApplyStatement ParseApply( string statement )
 		{
-			return Parse( statement, delegate( Parser_Accessor p, out ApplyStatement t ) { p.Apply( out t ); } );
+			return Parse( statement, ( Parser_Accessor p, out ApplyStatement t ) => p.Apply( out t ) );
 		}
 
 		public static CodeStatement ParseCode( string statement, out bool isStart )
 		{
 			var tempIsStart = false;
-			var codeStatement = Parse( statement, delegate( Parser_Accessor p, out CodeStatement t ) { p.Code( out t, ref tempIsStart ); } );
+			var codeStatement = Parse( statement, ( Parser_Accessor p, out CodeStatement t ) => p.Code( out t, ref tempIsStart ) );
 			isStart = tempIsStart;
 			return codeStatement;
 		}
 
 		public static MatchMethodStatement ParseMatch( string statement )
 		{
-			return Parse( statement, delegate( Parser_Accessor p, out MatchMethodStatement t ) { p.MatchMethod( out t ); } );
+			return Parse( statement, ( Parser_Accessor p, out MatchMethodStatement t ) => p.MatchMethod( out t ) );
 		}
 
 		public static JoinStatement ParseJoin( string statementText )
 		{
-			return Parse( statementText, delegate( Parser_Accessor p, out JoinStatement t ) { p.Join( out t ); } );
+			return Parse( statementText, ( Parser_Accessor p, out JoinStatement t ) => p.Join( out t ) );
 		}
 
 		public static void ParseRuleMethodStart( string statement, out string name, out IList<Variable> variables )
@@ -83,7 +84,12 @@ namespace UnitTest.WolfGenerator
 
 		public static RuleMethodStatement ParseRuleMethod( string statement )
 		{
-			return Parse( statement, delegate( Parser_Accessor p, out RuleMethodStatement t ) { p.RuleMethod( out t ); } );
+			return Parse( statement, ( Parser_Accessor p, out RuleMethodStatement t ) => p.RuleMethod( out t ) );
+		}
+
+		public static UsingStatement ParseUsing( string statement )
+		{
+			return Parse( statement, ( Parser_Accessor p, out UsingStatement t ) => p.Using( out t ) );
 		}
 
 		private static T Parse<T>( string statement, ParseDelegate<T> parseMethod )

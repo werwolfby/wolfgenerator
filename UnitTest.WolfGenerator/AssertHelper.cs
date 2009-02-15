@@ -15,6 +15,7 @@
  *   15.02.2009 13:29 - Move AssertValue from ValueUnitTest.
  *   15.02.2009 13:33 - Fix: Forget AssertValue make return type to int.
  *   15.02.2009 13:47 - Add AssertJoin method (I hope in functional style).
+ *   15.02.2009 14:07 - Fix: again forget return type of AssertJoin method.
  *
  *******************************************************/
 
@@ -112,7 +113,7 @@ namespace UnitTest.WolfGenerator
 			return 0;
 		}
 
-		public static void AssertJoin( JoinStatement expected, JoinStatement actual )
+		public static int AssertJoin( JoinStatement expected, JoinStatement actual )
 		{
 			var joinInnerTypes = new JoinInnerStatementData[]
 			                     {
@@ -135,6 +136,16 @@ namespace UnitTest.WolfGenerator
 
 				if (!finded) Assert.Fail( "Join cann't containt statement of type: {0}", expected.Statements[i].GetType() );
 			}
+
+			return 0;
+		}
+
+		public static int AssertMatch( MatchMethodStatement expected, MatchMethodStatement actual )
+		{
+			Assert.AreEqual( expected.Name, actual.Name, "Match method name" );
+			Assert.AreEqual( expected.Code.Trim(), actual.Code.Trim(), "Match code" );
+
+			return 0;
 		}
 
 		private static void AssertJoinInnerStatementHelper<T>( RuleStatement expected, RuleStatement actual, Func<T,T,int> assertFunc )

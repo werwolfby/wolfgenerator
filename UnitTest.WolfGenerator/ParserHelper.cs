@@ -14,6 +14,7 @@
  *   15.02.2009 10:42 - Add ParseApply method.
  *   15.02.2009 11:25 - Add ParseCode method.
  *   15.02.2009 11:50 - Add ParseJoin method.
+ *   15.02.2009 14:20 - Add ParseMatch method.
  *
  *******************************************************/
 
@@ -52,6 +53,11 @@ namespace UnitTest.WolfGenerator
 			var codeStatement = Parse( statement, delegate( Parser_Accessor p, out CodeStatement t ) { p.Code( out t, ref tempIsStart ); } );
 			isStart = tempIsStart;
 			return codeStatement;
+		}
+
+		public static MatchMethodStatement ParseMatch( string statement )
+		{
+			return Parse( statement, delegate( Parser_Accessor p, out MatchMethodStatement t ) { p.MatchMethod( out t ); } );
 		}
 
 		public static JoinStatement ParseJoin( string statementText )

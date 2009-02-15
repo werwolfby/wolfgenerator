@@ -12,6 +12,7 @@
  *   14.02.2009 22:24 - Add base parser method `Parse`.
  *   14.02.2009 22:27 - Add ParseValue and use all old methods by using `Parse` method.
  *   15.02.2009 10:42 - Add ParseApply method.
+ *   15.02.2009 11:25 - Add ParseCode method.
  *
  *******************************************************/
 
@@ -42,6 +43,14 @@ namespace UnitTest.WolfGenerator
 		public static ApplyStatement ParseApply( string statement )
 		{
 			return Parse( statement, delegate( Parser_Accessor p, out ApplyStatement t ) { p.Apply( out t ); } );
+		}
+
+		public static CodeStatement ParseCode( string statement, out bool isStart )
+		{
+			var tempIsStart = false;
+			var codeStatement = Parse( statement, delegate( Parser_Accessor p, out CodeStatement t ) { p.Code( out t, ref tempIsStart ); } );
+			isStart = tempIsStart;
+			return codeStatement;
 		}
 
 		private static T Parse<T>( string statement, ParseDelegate<T> parseMethod )

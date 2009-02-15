@@ -6,9 +6,12 @@
  * File: CodeStatement.cs
  * Remarks:
  * 
+ *   TODO: Add is start parse parameter to code implicity
+ * 
  * History:
  *   26.01.2009 23:25 - Create Wireframe
  *   30.01.2009 20:17 - Add EBNF comment.
+ *   15.02.2009 11:22 - Add Value property.
  *
  *******************************************************/
 
@@ -26,6 +29,11 @@ namespace WolfGenerator.Core.AST
 		public CodeStatement( string value )
 		{
 			this.value = value;
+		}
+
+		public string Value
+		{
+			get { return this.value; }
 		}
 
 		public override void Generate( CodeWriter writer, string innerWriter )

@@ -8,6 +8,6 @@ Not Tested                RuleMethod      = [MatchMethod] "<%rule" ident ( [ Var
 ... Tested                Var             = Type ident.
 ... Tested                Type            = ident { "." ident } [ "<" Type { "," Type } ">" ].
 ... Tested                Value           = "<%=" {ANY} "%>".
-Not Tested                Join            = "<%join" string "%>" { Value | Apply } "<%end%>".
+... Tested                Join            = "<%join" string "%>" { Value | Apply } "<%end%>".
 ... Tested                Apply           = "<%apply" ident ( "([" {ANY} "])" | "(" {ANY} ")" ) "from" ident "%>".
 ... Tested                Code            = "<%$" {ANY} ("$%>" | "$-%>").

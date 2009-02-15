@@ -10,4 +10,4 @@ Not Tested                RuleMethod      = [MatchMethod] "<%rule" ident ( [ Var
 ... Tested                Value           = "<%=" {ANY} "%>".
 Not Tested                Join            = "<%join" string "%>" { Value | Apply } "<%end%>".
 ... Tested                Apply           = "<%apply" ident ( "([" {ANY} "])" | "(" {ANY} ")" ) "from" ident "%>".
-Not Tested                Code            = "<%$" {ANY} ("$%>" | "$-%>").
+... Tested                Code            = "<%$" {ANY} ("$%>" | "$-%>").

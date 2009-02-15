@@ -24,6 +24,7 @@
  *   11.02.2009 20:41 - Fix: Generate method.
  *   11.02.2009 21:59 - Add RuleMethod attribute generate supporting.
  *   11.02.2009 22:12 - Add to generate method boolean parameter to generate RuleMethod Attribute.
+ *   15.02.2009 16:16 - Now Variables & Statements properti instead null return empty collection.
  *
  *******************************************************/
 
@@ -51,8 +52,8 @@ namespace WolfGenerator.Core.AST
 		{
 			this.matchMethodStatement = matchMethodStatement;
 			this.name = name;
-			this.variables = variables;
-			this.statements = statements;
+			this.variables = variables ?? new Variable[0];
+			this.statements = statements ?? new RuleStatement[0];
 
 			if (this.matchMethodStatement != null) this.matchMethodStatement.RuleMethod = this;
 		}

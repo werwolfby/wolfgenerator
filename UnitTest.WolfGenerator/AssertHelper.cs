@@ -16,10 +16,12 @@
  *   15.02.2009 13:33 - Fix: Forget AssertValue make return type to int.
  *   15.02.2009 13:47 - Add AssertJoin method (I hope in functional style).
  *   15.02.2009 14:07 - Fix: again forget return type of AssertJoin method.
+ *   15.02.2009 15:56 - Add AssertVariables.
  *
  *******************************************************/
 
 using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core.AST;
 using Type=WolfGenerator.Core.AST.Type;
@@ -52,7 +54,7 @@ namespace UnitTest.WolfGenerator
 
 			public override void Invoke( RuleStatement expected, RuleStatement actual )
 			{
-				AssertJoinInnerStatementHelper( expected, actual, Func );
+				AssertJoinInnerStatementHelper( expected, actual, this.Func );
 			}
 		}
 
@@ -146,6 +148,13 @@ namespace UnitTest.WolfGenerator
 			Assert.AreEqual( expected.Code.Trim(), actual.Code.Trim(), "Match code" );
 
 			return 0;
+		}
+
+		public static void AssertVariables( Variable[] expectedVariables, IList<Variable> variables ) 
+		{
+			Assert.AreEqual( expectedVariables.Length, variables.Count, "Variables count dismatch" );
+			for (var i = 0; i < expectedVariables.Length; i++)
+				AssertVariable( expectedVariables[i], variables[i] );
 		}
 
 		private static void AssertJoinInnerStatementHelper<T>( RuleStatement expected, RuleStatement actual, Func<T,T,int> assertFunc )

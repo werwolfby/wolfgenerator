@@ -4,7 +4,7 @@ Syntax:
 Not Tested                RuleClass       = "<%ruleclass" ident "%>" {Using} {RuleMethod} "<%end%>".
 Not Tested                Using           = "<%using" ident { "."  ident } "%>".
 ... Tested                MatchMethod     = "<%match" ident "%>" {ANY} "<%end%>".
-Not Tested                RuleMethod      = [MatchMethod] "<%rule" ident ( [ Var { "," Var } ] ) "%>" { ANY | Value | Join | Code } "<%end%>".
+... Tested                RuleMethod      = [MatchMethod] "<%rule" ident ( [ Var { "," Var } ] ) "%>" { ANY | Value | Join | Code } "<%end%>".
 ... Tested                Var             = Type ident.
 ... Tested                Type            = ident { "." ident } [ "<" Type { "," Type } ">" ].
 ... Tested                Value           = "<%=" {ANY} "%>".

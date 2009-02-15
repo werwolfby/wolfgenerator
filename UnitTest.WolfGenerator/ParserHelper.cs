@@ -15,14 +15,17 @@
  *   15.02.2009 11:25 - Add ParseCode method.
  *   15.02.2009 11:50 - Add ParseJoin method.
  *   15.02.2009 14:20 - Add ParseMatch method.
+ *   15.02.2009 14:20 - Add ParseRuleMethodStart method.
  *
  *******************************************************/
 
+using System.Collections.Generic;
 using WolfGenerator.Core;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator
 {
+	// ReSharper disable ConvertToLambdaExpression
 	public class ParserHelper
 	{
 		private delegate void ParseDelegate<T>( Parser_Accessor p, out T t );
@@ -63,6 +66,24 @@ namespace UnitTest.WolfGenerator
 		public static JoinStatement ParseJoin( string statementText )
 		{
 			return Parse( statementText, delegate( Parser_Accessor p, out JoinStatement t ) { p.Join( out t ); } );
+		}
+
+		public static void ParseRuleMethodStart( string statement, out string name, out IList<Variable> variables )
+		{
+			string n = null;
+			IList<Variable> var = null;
+			Parse( statement, delegate( Parser_Accessor p, out RuleStatement s )
+			                  {
+			                  	s = null;
+			                  	p.RuleMethodStart( out n, out var );
+			                  } );
+			name = n;
+			variables = var;
+		}
+
+		public static RuleMethodStatement ParseRuleMethod( string statement )
+		{
+			return Parse( statement, delegate( Parser_Accessor p, out RuleMethodStatement t ) { p.RuleMethod( out t ); } );
 		}
 
 		private static T Parse<T>( string statement, ParseDelegate<T> parseMethod )

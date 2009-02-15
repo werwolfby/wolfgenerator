@@ -8,33 +8,40 @@
  * 
  * History:
  *   14.02.2009 22:17 - Create Wireframe
+ *   15.02.2009 11:41 - Make values field array of ValueStatement.
+ *   15.02.2009 13:28 - Extract AssertValue and move it to AssertHelper.
  *
  *******************************************************/
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
 	[TestClass]
 	public class ValueUnitTest
 	{
-		public static string[] values = new[]
-		                                {
-		                                	"var",
-		                                	"codeWriter.ToString()",
-		                                	"\"String\""
-		                                };
+		public static ValueStatement[] values = new[]
+		                                        {
+		                                        	new ValueStatement( "var" ),
+		                                        	new ValueStatement( "codeWriter.ToString()" ),
+		                                        	new ValueStatement( "\"String\"" ),
+		                                        };
 
 		[TestMethod]
 		public void ValueTest()
 		{
 			foreach (var value in values)
 			{
-				var valueStatementText = "<%= " + value + " %>";
+				var valueStatementText = ValueToString( value, " " );
 				var valueStatement = ParserHelper.ParseValue( valueStatementText );
-				Assert.IsNotNull( valueStatement.Value, "Value can't be null" );
-				Assert.AreEqual( value.Trim(), valueStatement.Value.Trim() );
+				AssertHelper.AssertValue( value, valueStatement );
 			}
+		}
+
+		public static string ValueToString( ValueStatement valueStatement, string spaces )
+		{
+			return "<%=" + spaces + valueStatement.Value + spaces + "%>";
 		}
 	}
 }

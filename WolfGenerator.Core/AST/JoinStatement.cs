@@ -12,11 +12,14 @@
  *   25.01.2009 11:51 - Add Statements property & extend ToString method.
  *   26.01.2009 00:38 - Add Generate method without implementation.
  *   30.01.2009 20:15 - Add EBNF Comment.
+ *   15.02.2009 13:53 - Statements property now newer return null (insted it return empty collection).
+ *   15.02.2009 13:56 - Add check for type of inner statements (and throw exception in such way).
  *
  *******************************************************/
 
 using System.Collections.Generic;
 using System.Text;
+using WolfGenerator.Core.AST.Exception;
 
 namespace WolfGenerator.Core.AST
 {
@@ -31,7 +34,14 @@ namespace WolfGenerator.Core.AST
 		public JoinStatement( string @string, IList<RuleStatement> statements )
 		{
 			this.@string = @string;
-			this.statements = statements;
+			this.statements = statements ?? new RuleStatement[0];
+
+			foreach (var statement in this.statements)
+			{
+				if (statement is ValueStatement) continue;
+				if (statement is ApplyStatement) continue;
+				throw new JoinBuildException( "Can't contain statement of type: " + statement.GetType() );
+			}
 		}
 
 		public string String

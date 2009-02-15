@@ -9,6 +9,7 @@
  * History:
  *   15.02.2009 11:19 - Create Wireframe
  *   15.02.2009 11:32 - Finish first implementation.
+ *   15.02.2009 11:38 - Make statements field public.
  *
  *******************************************************/
 
@@ -21,7 +22,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 	[TestClass]
 	public class CodeUnitTest
 	{
-		private static readonly CodeStatement[] statements = new[]
+		public static readonly CodeStatement[] statements = new[]
 		                                                     {
 		                                                     	new CodeStatement( "if (true) return;" ),
 		                                                     };

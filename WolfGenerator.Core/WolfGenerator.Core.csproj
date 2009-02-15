@@ -69,6 +69,8 @@
     <Compile Include="AST\ApplyStatement.cs" />
     <Compile Include="AST\CallStatement.cs" />
     <Compile Include="AST\CodeStatement.cs" />
+    <Compile Include="AST\Exception\ASTBuildException.cs" />
+    <Compile Include="AST\Exception\JoinBuildException.cs" />
     <Compile Include="AST\JoinStatement.cs" />
     <Compile Include="AST\MatchMethodStatement.cs" />
     <Compile Include="AST\MethodStatement.cs" />

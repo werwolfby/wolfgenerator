@@ -10,6 +10,7 @@
  *   15.02.2009 14:23 - Create Wireframe
  *   15.02.2009 14:39 - Implement RuleMethodStart check
  *   15.02.2009 14:39 - Implement RuleMethod test
+ *   15.02.2009 16:23 - Add StatelessRuleMethodTest - check that variables & statements is empty collection.
  *
  *******************************************************/
 
@@ -23,21 +24,6 @@ namespace UnitTest.WolfGenerator.ParserTest
 	[TestClass]
 	public class RuleMethodUnitTest
 	{
-		[TestMethod]
-		public void SimpleRuleMethodStartTest()
-		{
-			var expectedName = "Test";
-			var expectedVariables = new[] { VariableUnitTest.simpleVariable, VariableUnitTest.listVariable };
-			var ruleMethodStartStatementText = RuleMethodStartToString( expectedName, expectedVariables, ",", "<", ">" );
-
-			string name;
-			IList<Variable> variables;
-			ParserHelper.ParseRuleMethodStart( ruleMethodStartStatementText, out name, out variables );
-
-			Assert.AreEqual( expectedName, name, "Rule name dismatch" );
-			AssertHelper.AssertVariables( expectedVariables, variables );
-		}
-
 		public abstract class RuleStatementChecker 
 		{
 			protected RuleStatementChecker( string text )
@@ -80,6 +66,34 @@ namespace UnitTest.WolfGenerator.ParserTest
 		}
 
 		[TestMethod]
+		public void StatelessRuleMethodTest()
+		{
+			var ruleMethodStatementText = RuleMethodStartToString( "Test", new Variable[0], ",", "<", ">" ) + "\r\n" + "<%end%>";
+			var ruleMethodStatement = ParserHelper.ParseRuleMethod( ruleMethodStatementText );
+
+			Assert.IsNotNull( ruleMethodStatement.Variables, "Variables must be not null" );
+			Assert.IsNotNull( ruleMethodStatement.Statements, "Statements must be not null" );
+
+			Assert.AreEqual( 0, ruleMethodStatement.Variables.Count, "Such rule method mustn't contains any variable" );
+			Assert.AreEqual( 0, ruleMethodStatement.Statements.Count, "Such rule method mustn't contains any statement" );
+		}
+
+		[TestMethod]
+		public void SimpleRuleMethodStartTest()
+		{
+			var expectedName = "Test";
+			var expectedVariables = new[] { VariableUnitTest.simpleVariable, VariableUnitTest.listVariable };
+			var ruleMethodStartStatementText = RuleMethodStartToString( expectedName, expectedVariables, ",", "<", ">" );
+
+			string name;
+			IList<Variable> variables;
+			ParserHelper.ParseRuleMethodStart( ruleMethodStartStatementText, out name, out variables );
+
+			Assert.AreEqual( expectedName, name, "Rule name dismatch" );
+			AssertHelper.AssertVariables( expectedVariables, variables );
+		}
+
+		[TestMethod]
 		public void RuleMethodTest()
 		{
 			var expectedName = "Test";
@@ -111,9 +125,11 @@ namespace UnitTest.WolfGenerator.ParserTest
 		public static string RuleMethodStartToString( string expectedName, Variable[] expectedVariables, string ag, string sg, string eg )
 		{
 			return "<%rule " + expectedName + "( " +
-			       expectedVariables
-			       	.Select( variable => VariableUnitTest.VariableToString( variable, ag, sg, eg ) )
-			       	.Aggregate( ( s1, s2 ) => s1 + ag + s2 )
+			       (expectedVariables.Length > 0
+			        	? expectedVariables
+			        	  	.Select( variable => VariableUnitTest.VariableToString( variable, ag, sg, eg ) )
+			        	  	.Aggregate( ( s1, s2 ) => s1 + ag + s2 )
+			        	: "")
 			       + " )%>";
 		}
 	}

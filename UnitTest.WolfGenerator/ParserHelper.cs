@@ -18,6 +18,7 @@
  *   15.02.2009 14:20 - Add ParseRuleMethodStart method.
  *   15.02.2009 16:28 - Add ParseUsing method.
  *   15.02.2009 16:33 - Change parse methods from anonymous method to delegate.
+ *   18.02.2009 00:10 - Add ParseClass method.
  *
  *******************************************************/
 
@@ -90,6 +91,13 @@ namespace UnitTest.WolfGenerator
 		public static UsingStatement ParseUsing( string statement )
 		{
 			return Parse( statement, ( Parser_Accessor p, out UsingStatement t ) => p.Using( out t ) );
+		}
+
+		public static RuleClassStatement ParseClass( string statement )
+		{
+			var parser = new Parser( statement );
+			parser.Parse();
+			return parser.ruleClassStatement;
 		}
 
 		private static T Parse<T>( string statement, ParseDelegate<T> parseMethod )

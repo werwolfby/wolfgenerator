@@ -1,7 +1,7 @@
 ﻿Version 2.1.0.*:
 
 Syntax: 
-Not Tested                RuleClass       = "<%ruleclass" ident "%>" {Using} {RuleMethod} "<%end%>".
+... Tested                RuleClass       = "<%ruleclass" ident "%>" {Using} {RuleMethod} "<%end%>".
 ... Tested                Using           = "<%using" ident { "."  ident } "%>".
 ... Tested                MatchMethod     = "<%match" ident "%>" {ANY} "<%end%>".
 ... Tested                RuleMethod      = [MatchMethod] "<%rule" ident ( [ Var { "," Var } ] ) "%>" { ANY | Value | Join | Code } "<%end%>".

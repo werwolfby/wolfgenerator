@@ -19,6 +19,7 @@
  *   27.01.2009 02:00 - change collection type from RuleMethodStatements to RuleClassMethodStatement
  *   25.01.2009 08:33 - Update EBNF.
  *   11.02.2009 20:25 - Add MatchMethodGroups property.
+ *   18.02.2009 00:19 - RuleMethodStatements always return not null collection (instead null return empty array).
  *
  *******************************************************/
 
@@ -44,9 +45,9 @@ namespace WolfGenerator.Core.AST
 		{
 			this.name = name;
 			this.usingStatements = usingStatements;
-			this.ruleMethodStatements = ruleMethodStatements;
+			this.ruleMethodStatements = ruleMethodStatements ?? new RuleClassMethodStatement[0];
 
-			this.matchMethodGroups = (from statement in ruleMethodStatements.OfType<RuleMethodStatement>()
+			this.matchMethodGroups = (from statement in this.ruleMethodStatements.OfType<RuleMethodStatement>()
 			                          group statement by statement.MethodHeader
 			                          into g select new RuleMethodGroup( g )).ToList().AsReadOnly();
 		}

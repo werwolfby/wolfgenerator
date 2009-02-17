@@ -60,6 +60,7 @@
     <Compile Include="ParserTest\ValueUnitTest.cs" />
     <Compile Include="ParserTest\VariableUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Writer\LineUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WolfGenerator.Core\WolfGenerator.Core.csproj">

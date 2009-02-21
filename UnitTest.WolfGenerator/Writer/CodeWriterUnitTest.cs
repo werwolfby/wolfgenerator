@@ -39,11 +39,11 @@ namespace UnitTest.WolfGenerator.Writer
 
 		private class CodeWriterHelperHierarchy
 		{
-			public readonly CodeWriterHelper[] startHelpers;
-			public readonly CodeWriterHelperHierarchy[] innerItems;
-			public readonly CodeWriterHelper[] endHelpers;
+			public readonly IEnumerable<CodeWriterHelper> startHelpers;
+			public readonly IEnumerable<CodeWriterHelperHierarchy> innerItems;
+			public readonly IEnumerable<CodeWriterHelper> endHelpers;
 
-			public CodeWriterHelperHierarchy( CodeWriterHelper[] startHelpers, CodeWriterHelperHierarchy[] innerItems, CodeWriterHelper[] endHelpers )
+			public CodeWriterHelperHierarchy( IEnumerable<CodeWriterHelper> startHelpers, IEnumerable<CodeWriterHelper> endHelpers, params CodeWriterHelperHierarchy[] innerItems )
 			{
 				this.startHelpers = startHelpers ?? new CodeWriterHelper[0];
 				this.innerItems = innerItems ?? new CodeWriterHelperHierarchy[0];
@@ -126,12 +126,7 @@ namespace UnitTest.WolfGenerator.Writer
 			mainCodeWriter.AppendLine();
             AppendCodeWriter( mainCodeWriter, linesEnd );
 
-			var hierarchy = new CodeWriterHelperHierarchy( linesStart,
-			                                               new[]
-			                                               {
-			                                               	new CodeWriterHelperHierarchy( lines1, null, lines2 )
-			                                               },
-			                                               linesEnd );
+			var hierarchy = new CodeWriterHelperHierarchy( linesStart, linesEnd, new CodeWriterHelperHierarchy( lines1, lines2 ) );
 
 			var expectedText = BuildText( hierarchy );
             var actualText = mainCodeWriter.ToString();

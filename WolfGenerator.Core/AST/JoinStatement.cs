@@ -14,6 +14,7 @@
  *   30.01.2009 20:15 - Add EBNF Comment.
  *   15.02.2009 13:53 - Statements property now newer return null (insted it return empty collection).
  *   15.02.2009 13:56 - Add check for type of inner statements (and throw exception in such way).
+ *   21.02.2009 18:17 - Forget add check for CallStatement.
  *
  *******************************************************/
 
@@ -40,6 +41,7 @@ namespace WolfGenerator.Core.AST
 			{
 				if (statement is ValueStatement) continue;
 				if (statement is ApplyStatement) continue;
+				if (statement is CallStatement) continue;
 				throw new JoinBuildException( "Can't contain statement of type: " + statement.GetType() );
 			}
 		}

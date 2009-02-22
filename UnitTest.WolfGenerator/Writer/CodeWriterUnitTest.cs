@@ -11,6 +11,7 @@
  *   21.02.2009 17:51 - Finish SimpleCodeWriterTest
  *   21.02.2009 17:56 - Finish ComplexCodeWriterTest
  *   21.02.2009 18:40 - Finish InnerAppendCodeWriterTest
+ *   21.02.2009 18:44 - Add some code optimization
  *
  *******************************************************/
 

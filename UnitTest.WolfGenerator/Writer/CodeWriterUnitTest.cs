@@ -12,9 +12,11 @@
  *   21.02.2009 17:56 - Finish ComplexCodeWriterTest
  *   21.02.2009 18:40 - Finish InnerAppendCodeWriterTest
  *   21.02.2009 18:44 - Add some code optimization
+ *   23.02.2009 00:17 - Finish MultyLineTest
  *
  *******************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -135,6 +137,59 @@ namespace UnitTest.WolfGenerator.Writer
 			Assert.AreEqual( expectedText, actualText );
 		}
 
+		[TestMethod]
+		public void MultyLineTest()
+		{
+			var lines = new[]
+			            {
+			            	new CodeWriterHelper( 0, "namespace Test" ),
+			            	new CodeWriterHelper( 0, "{" ),
+			            	new CodeWriterHelper( 1, "public class Main\r\n{\r\n}" ),
+			            	new CodeWriterHelper( 0, "}" ),
+			            };
+
+			var codeWriter = GetCodeWriter( lines );
+
+			var expectedText = BuildText( lines );
+			var actualText = codeWriter.ToString();
+
+			Assert.AreEqual( expectedText, actualText );
+		}
+
+		[TestMethod]
+		public void PrivateTest()
+		{
+			var codeWriter = new CodeWriter_Accessor();
+
+			Assert.IsNull( codeWriter.lastLine, "After initialize CodeWriter lastLine must be null" );
+			Assert.IsNotNull( codeWriter.Lines, "Lines must be not null" );
+			Assert.AreEqual( 0, codeWriter.Lines.Count, "Lines must be empty" );
+
+			codeWriter.Append( "Test" );
+            Assert.IsNotNull( codeWriter.lastLine, "After Append text lastLine must be not null" );
+			Assert.AreEqual( 1, codeWriter.Lines.Count, "After first Append text code write must consist from one line" );
+
+            codeWriter.AppendLine( "Text" );
+			Assert.IsNull( codeWriter.lastLine, "After initialize CodeWriter lastLine must be null" );
+			Assert.AreEqual( 1, codeWriter.Lines.Count, "After first Append text code write must consist from one line" );
+
+			codeWriter.InnerAppend( "Text", false );
+            Assert.IsNotNull( codeWriter.lastLine, "After Append text lastLine must be not null" );
+			Assert.AreEqual( 2, codeWriter.Lines.Count, "CodeWrite must consist from two line" );
+
+			codeWriter.InnerAppend( "Text", true );
+            Assert.IsNull( codeWriter.lastLine, "After Append text lastLine must be not null" );
+			Assert.AreEqual( 2, codeWriter.Lines.Count, "CodeWrite must consist from two line" );
+
+			codeWriter.AppendText( "new\r\nline" );
+			Assert.IsNotNull( codeWriter.lastLine, "Appended text not finish last line, but CodeWriter finish it" );
+			Assert.AreEqual( 4, codeWriter.Lines.Count, "CodeWrite must consist from four line" );
+
+			codeWriter.AppendText( "new\r\nlines\r\n" );
+			Assert.IsNull( codeWriter.lastLine, "Appended text finish last line, but CodeWriter doesn't" );
+			Assert.AreEqual( 5, codeWriter.Lines.Count, "CodeWrite must consist from five line" );
+		}
+
 		private static string BuildText( IEnumerable<CodeWriterHelper> lines ) 
 		{
 			var builder = new StringBuilder();
@@ -143,9 +198,32 @@ namespace UnitTest.WolfGenerator.Writer
 
 			foreach (var line in lines)
 			{
-				builder.Append( new string( '\t', line.indent ) );
+				var indentLine = new string( '\t', line.indent );
+				builder.Append( indentLine );
 				foreach (var text in line.texts)
-					builder.Append( text );
+				{
+					if (!text.Contains( "\r\n" ))
+					{
+						builder.Append( text );
+					}
+					else
+					{
+						var textItems = text.Split( new[] { "\r\n" }, StringSplitOptions.None );
+						for (var j = 0; j < textItems.Length; j++)
+						{
+							var s = textItems[j];
+							if (j < textItems.Length - 1)
+							{
+								builder.AppendLine( s );
+								builder.Append( indentLine );
+							}
+							else
+							{
+								builder.Append( s );
+							}
+						}
+					}
+				}
 				if (i < count - 1) builder.AppendLine();
 				i++;
 			}
@@ -192,7 +270,7 @@ namespace UnitTest.WolfGenerator.Writer
 			{
 				codeWriter.Indent = line.indent;
 				foreach (var text in line.texts)
-					codeWriter.Append( text );
+					codeWriter.AppendText( text );
 				codeWriter.AppendLine();
 			}
 		}

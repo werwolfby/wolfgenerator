@@ -16,6 +16,7 @@
  *   26.01.2009 11:07 - Add method AppendLines. Fix: Append( CodeWriter ) use AppendLines.
  *   27.01.2009 00:03 - BugFix: AppendLines - check if appending text contains any line.
  *   27.01.2009 00:45 - BugFix: AppendLines - ufff... tired...
+ *   23.02.2009 00:15 - Rewrite all Append method with help of InnerAppend method.
  *
  *******************************************************/
 
@@ -56,70 +57,49 @@ namespace WolfGenerator.Core.Writer
 			this.AppendLines( textLines, cropLastLine );
 		}
 
-		private void AppendLines( IList<Line> textLines, bool cropLastLine ) 
-		{
-			var startIndex = 0;
-
-			if (this.lastLine != null)
-			{
-				// Add text for last line only if any line is specify
-				if (textLines.Count > 0) this.lastLine.Append( textLines[0].GetText() );
-				// Finish last line if more than one lines will append.
-				if (textLines.Count > 1) this.lastLine = null;
-				startIndex = 1;
-			}
-
-			var oldInden = this.Indent;
-
-			for (var i = startIndex; i < textLines.Count; i++)
-			{
-				this.Indent = oldInden + textLines[i].Indent;
-				if (textLines[i] == EmptyLine.Instance)
-				{
-					if (i == textLines.Count - 1 && !cropLastLine) continue;
-					this.AppendLine();
-				}
-				else
-				{
-					if (i == textLines.Count - 1 && !cropLastLine) this.Append( textLines[i].GetText() );
-					else this.AppendLine( textLines[i].GetText() );
-				}
-			}
-
-			if (cropLastLine) this.lastLine = null;
-
-			this.Indent = oldInden;
-		}
-
 		public void AppendLine()
 		{
-			if (this.lastLine != null) this.lastLine = null;
-			else this.lines.Add( EmptyLine.Instance );
+			InnerAppend( "", true );
 		}
 
 		public void AppendLine( string text )
 		{
-			if (this.lastLine != null)
-			{
-				this.lastLine.Append( text );
-				this.lastLine = null;
-			}
-			else this.lines.Add( new Line( this.Indent, text ) );
+			InnerAppend( text, true );
 		}
 
 		public void Append( string text )
 		{
-			if (this.lastLine == null)
-			{
-				this.lastLine = new Line( this.Indent );
-				this.lines.Add( this.lastLine );
-			}
-			this.lastLine.Append( text );
+			InnerAppend( text, false );
 		}
 
 		public void Append( CodeWriter codeWriter )
 		{
 			AppendLines( codeWriter.Lines, false );
+		}
+
+		private void AppendLines( IList<Line> textLines, bool cropLastLine ) 
+		{
+			var oldInden = this.Indent;
+
+			for (var i = 0; i < textLines.Count; i++)
+			{
+				this.Indent = oldInden + textLines[i].Indent;
+				InnerAppend( textLines[i].GetText(), cropLastLine || i < textLines.Count - 1 );
+			}
+
+			this.Indent = oldInden;
+		}
+
+		private void InnerAppend( string lineSegment, bool newLine )
+		{
+			if (lastLine == null)
+			{
+				lastLine = new Line( Indent );
+				this.lines.Add( lastLine );
+			}
+			lastLine.Append( lineSegment );
+
+			if (newLine) lastLine = null;
 		}
 
 		public override string ToString()

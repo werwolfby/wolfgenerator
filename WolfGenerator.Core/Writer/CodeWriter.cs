@@ -17,6 +17,7 @@
  *   27.01.2009 00:03 - BugFix: AppendLines - check if appending text contains any line.
  *   27.01.2009 00:45 - BugFix: AppendLines - ufff... tired...
  *   23.02.2009 00:15 - Rewrite all Append method with help of InnerAppend method.
+ *   23.02.2009 00:37 - BugFix: ToString - if line is empty, don't add indent string just break line.
  *
  *******************************************************/
 
@@ -110,7 +111,7 @@ namespace WolfGenerator.Core.Writer
 			{
 				var line = this.lines[i];
 
-				if (line == EmptyLine.Instance)
+				if (line == EmptyLine.Instance || line.GetText() == "")
 				{
 					builder.AppendLine();
 				}

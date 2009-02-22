@@ -42,7 +42,7 @@ namespace WolfGenerator.Core.Writer
 
 		public void Append( string text )
 		{
-			if (text.Contains( "\r" ) || text.Contains( "\n" )) throw new MultiLineException( text );
+			if (text.Contains( "\r" ) || text.Contains( "\n" )) throw new MultyLineException( text );
 			builder.Append( text );
 		}
 

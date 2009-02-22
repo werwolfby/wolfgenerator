@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{154ACD0B-4A5E-48E7-B14C-40E252202844}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -106,7 +106,7 @@
     <Compile Include="Writer\CodeWriter.cs" />
     <Compile Include="Writer\EmptyLine.cs" />
     <Compile Include="Writer\Exception\LineException.cs" />
-    <Compile Include="Writer\Exception\MultiLineException.cs" />
+    <Compile Include="Writer\Exception\MultyLineException.cs" />
     <Compile Include="Writer\Exception\WriterException.cs" />
     <Compile Include="Writer\Generator.cs" />
     <Compile Include="Writer\Line.cs" />

@@ -13,6 +13,7 @@
  *   21.02.2009 18:40 - Finish InnerAppendCodeWriterTest
  *   21.02.2009 18:44 - Add some code optimization
  *   23.02.2009 00:17 - Finish MultyLineTest
+ *   23.02.2009 00:44 - Finish CodeWriterExceptionTest.
  *
  *******************************************************/
 
@@ -22,6 +23,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core.Writer;
 using System.Linq;
+using WolfGenerator.Core.Writer.Exception;
 
 namespace UnitTest.WolfGenerator.Writer
 {
@@ -188,6 +190,14 @@ namespace UnitTest.WolfGenerator.Writer
 			codeWriter.AppendText( "new\r\nlines\r\n" );
 			Assert.IsNull( codeWriter.lastLine, "Appended text finish last line, but CodeWriter doesn't" );
 			Assert.AreEqual( 5, codeWriter.Lines.Count, "CodeWrite must consist from five line" );
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(MultyLineException))]
+		public void CodeWriterExceptionTest()
+		{
+			var codeWriter = new CodeWriter();
+			codeWriter.Append( "new\r\nline" );
 		}
 
 		private static string BuildText( IEnumerable<CodeWriterHelper> lines ) 

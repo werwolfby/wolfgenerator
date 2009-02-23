@@ -38,8 +38,8 @@ namespace WolfGenerator.Core.AST
 {
 	/// <summary>
 	/// EBNF: RuleMethod      = [MatchMethod] RuleMethodStart {ANY | Value | Join | Code | Call} RuleMethodEnd.
-	///       RuleMethodStart = <%rule ident ( [ Var { , Var } ] ) %>.
-	///       RuleMethodEnd   = <%end%>.
+	///       RuleMethodStart = &lt;%rule ident ( [ Var { , Var } ] ) %&gt;.
+	///       RuleMethodEnd   = &lt;%end%&gt;.
 	/// </summary>
 	public class RuleMethodStatement : RuleClassMethodStatement
 	{

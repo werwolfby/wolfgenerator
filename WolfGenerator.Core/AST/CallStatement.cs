@@ -18,7 +18,7 @@ using WolfGenerator.Core.Writer;
 namespace WolfGenerator.Core.AST
 {
 	/// <summary>
-	/// EBNF: Call = "&lt;&call" ident ( ("([" {ANY} "])") | ("(" {ANY} ")") ) "%&gt;".
+	/// EBNF: Call = "&lt;%call" ident ( ("([" {ANY} "])") | ("(" {ANY} ")") ) "%&gt;".
 	/// </summary>
 	public class CallStatement : RuleStatement
 	{

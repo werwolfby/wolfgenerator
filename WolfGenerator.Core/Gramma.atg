@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using WolfGenerator.Core.AST;
+using WolfGenerator.Core.Writer;
 
 COMPILER WolfGenerator
 
@@ -83,6 +84,9 @@ TOKENS
 	codeEnd2     = "$-%>".
 	
 	from         = "from".
+	with         = "with".
+	space        = "Space".
+	clone        = "Clone".
 	
 	dot          = ".".
 	comma        = ",".
@@ -213,9 +217,16 @@ Join<out JoinStatement joinStatement>                                           
                                                                                       List<RuleStatement> statements = null;
                                                                                       ValueStatement valueStatement;
                                                                                       ApplyStatement applyStatement;
-                                                                                      CallStatement callStatement; .)
+                                                                                      CallStatement callStatement; 
+                                                                                      AppendType appendType = AppendType.EmptyLastLine; .)
                 = 
                   "<%join" string                                                  (. @string = t.val.Substring( 1, t.val.Length - 2 ); .)
+                  ["with"
+                   ("Space"                                                        (. appendType = AppendType.SpaceLastLine; .)
+                    | 
+                    "Clone"                                                        (. appendType = AppendType.CloneLastLine; .)
+                   )
+                  ]
                   "%>" 
                   {                    
                     Value<out valueStatement>                                      (. if (statements == null) statements = new List<RuleStatement>();

@@ -354,7 +354,7 @@ public class UTF8Buffer: Buffer {
 
 			while (!end)
 			{
-				if (this.ch == '<' && this.buffer.Peek() == '%') end = true;
+				if (this.ch == Buffer.EOF || (this.ch == '<' && this.buffer.Peek() == '%')) end = true;
 				else this.AddCh();
 			}
 

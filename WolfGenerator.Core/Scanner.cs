@@ -17,181 +17,149 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 
-namespace WolfGenerator.Core
-{
-	public class Token
-	{
-		public int kind; // token kind
-		public int pos; // token position in the source text (starting at 0)
-		public int col; // token column (starting at 0)
-		public int line; // token line (starting at 1)
-		public string val; // token value
-		public Token next; // ML 2005-03-11 Tokens are kept in linked list
+namespace WolfGenerator.Core {
+
+using System.Linq;
+
+	public class Token {
+		public int kind;    // token kind
+		public int pos;     // token position in the source text (starting at 0)
+		public int col;     // token column (starting at 0)
+		public int line;    // token line (starting at 1)
+		public string val;  // token value
+		public Token next;  // ML 2005-03-11 Tokens are kept in linked list
 	}
 
-	public class Buffer
-	{
+	public class Buffer {
 		public const char EOF = (char)256;
-		private const int MAX_BUFFER_LENGTH = 64 * 1024; // 64KB
-		private readonly byte[] buf; // input buffer
-		private int bufStart; // position of first byte in buffer relative to input stream
-		private int bufLen; // length of buffer
-		private readonly int fileLen; // length of input stream
-		private int pos; // current position in buffer
-		private Stream stream; // input stream (seekable)
-		private readonly bool isUserStream; // was the stream opened by the user?
-
-		protected Buffer( Buffer b )
-		{
-			// called in UTF8Buffer constructor
-			this.buf = b.buf;
-			this.bufStart = b.bufStart;
-			this.bufLen = b.bufLen;
-			this.fileLen = b.fileLen;
-			this.pos = b.pos;
-			this.stream = b.stream;
+		const int MAX_BUFFER_LENGTH = 64 * 1024; // 64KB
+		byte[] buf;         // input buffer
+		int bufStart;       // position of first byte in buffer relative to input stream
+		int bufLen;         // length of buffer
+		int fileLen;        // length of input stream
+		int pos;            // current position in buffer
+		Stream stream;      // input stream (seekable)
+		bool isUserStream;  // was the stream opened by the user?
+		
+	
+		protected Buffer(Buffer b) { // called in UTF8Buffer constructor
+			buf = b.buf;
+			bufStart = b.bufStart;
+			bufLen = b.bufLen;
+			fileLen = b.fileLen;
+			pos = b.pos;
+			stream = b.stream;
 			// keep destructor from closing the stream
 			b.stream = null;
-			this.isUserStream = b.isUserStream;
+			isUserStream = b.isUserStream;
 		}
-
-		public Buffer( Stream s, bool isUserStream )
-		{
-			this.stream = s;
-			this.isUserStream = isUserStream;
-			this.fileLen = this.bufLen = (int)s.Length;
-			if (this.stream.CanSeek && this.bufLen > MAX_BUFFER_LENGTH) this.bufLen = MAX_BUFFER_LENGTH;
-			this.buf = new byte[this.bufLen];
-			this.bufStart = Int32.MaxValue; // nothing in the buffer so far
-			this.Pos = 0; // setup buffer to position 0 (start)
-			if (this.bufLen == this.fileLen) this.Close();
+		
+		public Buffer (Stream s, bool isUserStream) {
+			stream = s; this.isUserStream = isUserStream;
+			fileLen = bufLen = (int) s.Length;
+			if (stream.CanSeek && bufLen > MAX_BUFFER_LENGTH) bufLen = MAX_BUFFER_LENGTH;
+			buf = new byte[bufLen];
+			bufStart = Int32.MaxValue; // nothing in the buffer so far
+			Pos = 0; // setup buffer to position 0 (start)
+			if (bufLen == fileLen) Close();
 		}
-
-		~Buffer()
-		{
-			this.Close();
+		
+		~Buffer() { Close(); }
+		
+		void Close() {
+			if (!isUserStream && stream != null) {
+				stream.Close();
+				stream = null;
+			}
 		}
-
-		private void Close()
-		{
-			if (!this.isUserStream && this.stream != null)
-			{
-				this.stream.Close();
-				this.stream = null;
+		
+		public virtual int Read () {
+			if (pos < bufLen) {
+				return buf[pos++];
+			} else if (Pos < fileLen) {
+				Pos = Pos; // shift buffer start to Pos
+				return buf[pos++];
+			} else {
+				return EOF;
 			}
 		}
 
-		public virtual int Read()
-		{
-			if (this.pos < this.bufLen) return this.buf[this.pos++];
-			else if (this.Pos < this.fileLen)
-			{
-				this.Pos = this.Pos; // shift buffer start to Pos
-				return this.buf[this.pos++];
+		public int Peek () {
+			if (pos < bufLen) {
+				return buf[pos];
+			} else if (Pos < fileLen) {
+				Pos = Pos; // shift buffer start to Pos
+				return buf[pos];
+			} else {
+				return EOF;
 			}
-			else return EOF;
+		}
+		
+		public string GetString (int beg, int end) {
+			int len = end - beg;
+			char[] buf = new char[len];
+			int oldPos = Pos;
+			Pos = beg;
+			for (int i = 0; i < len; i++) buf[i] = (char) Read();
+			Pos = oldPos;
+			return new String(buf);
 		}
 
-		public int Peek()
-		{
-			if (this.pos < this.bufLen) return this.buf[this.pos];
-			else if (this.Pos < this.fileLen)
-			{
-				this.Pos = this.Pos; // shift buffer start to Pos
-				return this.buf[this.pos];
-			}
-			else return EOF;
-		}
-
-		public string GetString( int beg, int end )
-		{
-			var len = end - beg;
-			var buf = new char[len];
-			var oldPos = this.Pos;
-			this.Pos = beg;
-			for (var i = 0; i < len; i++) buf[i] = (char)this.Read();
-			this.Pos = oldPos;
-			return new String( buf );
-		}
-
-		public int Pos
-		{
-			get { return this.pos + this.bufStart; }
-			set
-			{
-				if (value < 0) value = 0;
-				else if (value > this.fileLen) value = this.fileLen;
-				if (value >= this.bufStart && value < this.bufStart + this.bufLen)
-				{
-					// already in buffer
-					this.pos = value - this.bufStart;
+		public int Pos {
+			get { return pos + bufStart; }
+			set {
+				if (value < 0) value = 0; 
+				else if (value > fileLen) value = fileLen;
+				if (value >= bufStart && value < bufStart + bufLen) { // already in buffer
+					pos = value - bufStart;
+				} else if (stream != null) { // must be swapped in
+					stream.Seek(value, SeekOrigin.Begin);
+					bufLen = stream.Read(buf, 0, buf.Length);
+					bufStart = value; pos = 0;
+				} else {
+					pos = fileLen - bufStart; // make Pos return fileLen
 				}
-				else if (this.stream != null)
-				{
-					// must be swapped in
-					this.stream.Seek( value, SeekOrigin.Begin );
-					this.bufLen = this.stream.Read( this.buf, 0, this.buf.Length );
-					this.bufStart = value;
-					this.pos = 0;
-				}
-				else this.pos = this.fileLen - this.bufStart; // make Pos return fileLen
 			}
 		}
 	}
 
-	//-----------------------------------------------------------------------------------
-	// UTF8Buffer
-	//-----------------------------------------------------------------------------------
-	public class UTF8Buffer : Buffer
-	{
-		public UTF8Buffer( Buffer b ) : base( b ) {}
+//-----------------------------------------------------------------------------------
+// UTF8Buffer
+//-----------------------------------------------------------------------------------
+public class UTF8Buffer: Buffer {
+	public UTF8Buffer(Buffer b): base(b) {}
 
-		public override int Read()
-		{
-			int ch;
-			do
-			{
-				ch = base.Read();
-				// until we find a uft8 start (0xxxxxxx or 11xxxxxx)
-			} while ((ch >= 128) && ((ch & 0xC0) != 0xC0) && (ch != EOF));
-			if (ch < 128 || ch == EOF)
-			{
-				// nothing to do, first 127 chars are the same in ascii and utf8
-				// 0xxxxxxx or end of file character
-			}
-			else if ((ch & 0xF0) == 0xF0)
-			{
-				// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-				var c1 = ch & 0x07;
-				ch = base.Read();
-				var c2 = ch & 0x3F;
-				ch = base.Read();
-				var c3 = ch & 0x3F;
-				ch = base.Read();
-				var c4 = ch & 0x3F;
-				ch = (((((c1 << 6) | c2) << 6) | c3) << 6) | c4;
-			}
-			else if ((ch & 0xE0) == 0xE0)
-			{
-				// 1110xxxx 10xxxxxx 10xxxxxx
-				var c1 = ch & 0x0F;
-				ch = base.Read();
-				var c2 = ch & 0x3F;
-				ch = base.Read();
-				var c3 = ch & 0x3F;
-				ch = (((c1 << 6) | c2) << 6) | c3;
-			}
-			else if ((ch & 0xC0) == 0xC0)
-			{
-				// 110xxxxx 10xxxxxx
-				var c1 = ch & 0x1F;
-				ch = base.Read();
-				var c2 = ch & 0x3F;
-				ch = (c1 << 6) | c2;
-			}
-			return ch;
+	public override int Read() {
+		int ch;
+		do {
+			ch = base.Read();
+			// until we find a uft8 start (0xxxxxxx or 11xxxxxx)
+		} while ((ch >= 128) && ((ch & 0xC0) != 0xC0) && (ch != EOF));
+		if (ch < 128 || ch == EOF) {
+			// nothing to do, first 127 chars are the same in ascii and utf8
+			// 0xxxxxxx or end of file character
+		} else if ((ch & 0xF0) == 0xF0) {
+			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+			int c1 = ch & 0x07; ch = base.Read();
+			int c2 = ch & 0x3F; ch = base.Read();
+			int c3 = ch & 0x3F; ch = base.Read();
+			int c4 = ch & 0x3F;
+			ch = (((((c1 << 6) | c2) << 6) | c3) << 6) | c4;
+		} else if ((ch & 0xE0) == 0xE0) {
+			// 1110xxxx 10xxxxxx 10xxxxxx
+			int c1 = ch & 0x0F; ch = base.Read();
+			int c2 = ch & 0x3F; ch = base.Read();
+			int c3 = ch & 0x3F;
+			ch = (((c1 << 6) | c2) << 6) | c3;
+		} else if ((ch & 0xC0) == 0xC0) {
+			// 110xxxxx 10xxxxxx
+			int c1 = ch & 0x1F; ch = base.Read();
+			int c2 = ch & 0x3F;
+			ch = (c1 << 6) | c2;
 		}
+		return ch;
 	}
+}
 
 	public class Waiter
 	{
@@ -203,8 +171,8 @@ namespace WolfGenerator.Core
 		const char EOL = '\n';
 		const int eofSym = 0; /* pdt */
 	const int charSetSize = 256;
-	const int maxT = 29;
-	const int noSym = 29;
+	const int maxT = 32;
+	const int noSym = 32;
 	short[] start = {
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -320,6 +288,9 @@ namespace WolfGenerator.Core
 		void CheckLiteral() {
 		switch (t.val) {
 			case "from": t.kind = 16; break;
+			case "with": t.kind = 17; break;
+			case "Space": t.kind = 18; break;
+			case "Clone": t.kind = 19; break;
 			default: break;
 		}
 		}
@@ -398,7 +369,7 @@ namespace WolfGenerator.Core
 				else this.AddCh();
 			}
 
-			this.t.kind = 29;
+			this.t.kind = 32;
 			this.t.val = new String( this.tval, 0, this.tlen );
 			return this.t;
 		}
@@ -543,27 +514,27 @@ namespace WolfGenerator.Core
 			case 47:
 				{t.kind = 15; break;}
 			case 48:
-				{t.kind = 17; break;}
-			case 49:
-				{t.kind = 18; break;}
-			case 50:
 				{t.kind = 20; break;}
-			case 51:
+			case 49:
 				{t.kind = 21; break;}
+			case 50:
+				{t.kind = 23; break;}
+			case 51:
+				{t.kind = 24; break;}
 			case 52:
 				if (ch == ')') {AddCh(); goto case 53;}
 				else {t.kind = noSym; break;}
 			case 53:
-				{t.kind = 22; break;}
+				{t.kind = 25; break;}
 			case 54:
-				{t.kind = 24; break;}
+				{t.kind = 27; break;}
 			case 55:
 				if ((ch >= '0' && ch <= '9')) {AddCh(); goto case 55;}
-				else {t.kind = 25; break;}
+				else {t.kind = 28; break;}
 			case 56:
-				{t.kind = 26; break;}
+				{t.kind = 29; break;}
 			case 57:
-				{t.kind = 27; break;}
+				{t.kind = 30; break;}
 			case 58:
 				if ((ch <= 9 || ch >= 11 && ch <= 12 || ch >= 14 && ch <= '&' || ch >= '(' && ch <= '[' || ch >= ']' && ch <= 255)) {AddCh(); goto case 59;}
 				else if (ch == 92) {AddCh(); goto case 60;}
@@ -579,17 +550,17 @@ namespace WolfGenerator.Core
 				else if (ch == 39) {AddCh(); goto case 62;}
 				else {t.kind = noSym; break;}
 			case 62:
-				{t.kind = 28; break;}
+				{t.kind = 31; break;}
 			case 63:
 				if (ch == '%') {AddCh(); goto case 67;}
-				else {t.kind = 23; break;}
+				else {t.kind = 26; break;}
 			case 64:
 				if (ch == '%') {AddCh(); goto case 43;}
 				else if (ch == '-') {AddCh(); goto case 45;}
 				else {t.kind = noSym; break;}
 			case 65:
 				if (ch == '[') {AddCh(); goto case 51;}
-				else {t.kind = 19; break;}
+				else {t.kind = 22; break;}
 			case 66:
 				if ((ch <= 9 || ch >= 11 && ch <= 12 || ch >= 14 && ch <= '!' || ch >= '#' && ch <= '[' || ch >= ']' && ch <= 255)) {AddCh(); goto case 66;}
 				else if ((ch == 10 || ch == 13)) {AddCh(); goto case 57;}
@@ -660,4 +631,5 @@ namespace WolfGenerator.Core
 		public void ResetPeek () { pt = tokens; }
 
 	} // end Scanner
+
 }

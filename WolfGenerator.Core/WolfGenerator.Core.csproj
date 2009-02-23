@@ -103,8 +103,10 @@
       <DependentUpon>Gramma.atg</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Writer\AppendType.cs" />
     <Compile Include="Writer\CodeWriter.cs" />
     <Compile Include="Writer\EmptyLine.cs" />
+    <Compile Include="Writer\Exception\UnexpectedAppendTypeWriterException.cs" />
     <Compile Include="Writer\Exception\LineException.cs" />
     <Compile Include="Writer\Exception\MultyLineException.cs" />
     <Compile Include="Writer\Exception\WriterException.cs" />

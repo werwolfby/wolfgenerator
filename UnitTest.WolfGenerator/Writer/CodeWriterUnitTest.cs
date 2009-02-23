@@ -14,6 +14,7 @@
  *   21.02.2009 18:44 - Add some code optimization
  *   23.02.2009 00:17 - Finish MultyLineTest
  *   23.02.2009 00:44 - Finish CodeWriterExceptionTest.
+ *   23.02.2009 23:26 - Finish SpaceAppendTypeTest & CloneAppendTypeTest.
  *
  *******************************************************/
 
@@ -198,6 +199,70 @@ namespace UnitTest.WolfGenerator.Writer
 		{
 			var codeWriter = new CodeWriter();
 			codeWriter.Append( "new\r\nline" );
+		}
+
+		[TestMethod]
+		public void CloneAppendTypeTest()
+		{
+			var codeWriter = new CodeWriter();
+
+			var lines = new[]
+			            {
+			            	"private int val;",
+			            	"private string val;"
+			            };
+
+			var commentText = "// ";
+			codeWriter.Append( commentText );
+			codeWriter.AppendType = AppendType.CloneLastLine;
+			foreach (var line in lines)
+			{
+				codeWriter.AppendLine( line );
+			}
+			codeWriter.AppendType = AppendType.EmptyLastLine;
+
+			var expectedText = string.Join( "\r\n", lines.Select( s => commentText + s ).ToArray() );
+			var actualText = codeWriter.ToString();
+
+			Assert.AreEqual( expectedText, actualText );
+		}
+
+		[TestMethod]
+		public void SpaceAppendTypeTest()
+		{
+			var codeWriter = new CodeWriter();
+
+			var lines = new[]
+			            {
+			            	"int val",
+			            	"string val1",
+			            	"object val2",
+			            	"decimal val3",
+			            };
+
+			var startLineText = "Constructor( ";
+			var endLineText = " )";
+			codeWriter.Append( startLineText );
+			codeWriter.AppendType = AppendType.SpaceLastLine;
+			for (var i = 0; i < lines.Length; i++)
+			{
+				var line = lines[i];
+				codeWriter.Append( line );
+				if (i < lines.Length - 1) codeWriter.AppendLine( "," );
+			}
+			codeWriter.AppendLine( endLineText );
+			codeWriter.AppendType = AppendType.EmptyLastLine;
+
+			var expectedText = startLineText +
+			                   string.Join( ",\r\n", lines.Select(
+			                                         	( s, i ) =>
+			                                         	(i > 0
+			                                         	 	? new string( ' ', startLineText.Length )
+			                                         	 	: "") + s ).ToArray() ) +
+			                   endLineText;
+			var actualText = codeWriter.ToString();
+
+			Assert.AreEqual( expectedText, actualText );
 		}
 
 		private static string BuildText( IEnumerable<CodeWriterHelper> lines ) 

@@ -18,19 +18,23 @@
  *   27.01.2009 00:45 - BugFix: AppendLines - ufff... tired...
  *   23.02.2009 00:15 - Rewrite all Append method with help of InnerAppend method.
  *   23.02.2009 00:37 - BugFix: ToString - if line is empty, don't add indent string just break line.
+ *   23.02.2009 23:16 - Add AppendType property.
  *
  *******************************************************/
 
 using System.Collections.Generic;
 using System.Text;
 using WolfGenerator.Core.AST;
+using WolfGenerator.Core.Writer.Exception;
 
 namespace WolfGenerator.Core.Writer
 {
 	public class CodeWriter
 	{
 		#region Fields
-		private readonly List<Line> lines = new List<Line>();
+        private readonly List<Line> lines = new List<Line>();
+		private AppendType appendType = AppendType.EmptyLastLine;
+		private string appendString = "";
 		private Line lastLine;
 		#endregion
 
@@ -49,6 +53,29 @@ namespace WolfGenerator.Core.Writer
 
 		public IList<Line> Lines { get; private set; }
 		#endregion
+
+		public AppendType AppendType
+		{
+			get { return this.appendType; }
+			set
+			{
+				this.appendType = value;
+				switch (appendType)
+				{
+					case AppendType.EmptyLastLine:
+						appendString = "";
+						break;
+					case AppendType.CloneLastLine:
+						appendString = this.lastLine == null ? "" : this.lastLine.GetText();
+						break;
+					case AppendType.SpaceLastLine:
+						appendString = this.lastLine == null ? "" : new string( ' ', this.lastLine.GetText().Length );
+						break;
+					default:
+						throw new UnexpectedAppendTypeWriterException( appendType );
+				}
+			}
+		}
 
 		public void AppendText( string text )
 		{
@@ -95,7 +122,7 @@ namespace WolfGenerator.Core.Writer
 		{
 			if (lastLine == null)
 			{
-				lastLine = new Line( Indent );
+				lastLine = new Line( Indent, appendString );
 				this.lines.Add( lastLine );
 			}
 			lastLine.Append( lineSegment );

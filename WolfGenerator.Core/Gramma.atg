@@ -238,7 +238,7 @@ Join<out JoinStatement joinStatement>                                           
                     Call<out callStatement>                                        (. if (statements == null) statements = new List<RuleStatement>();
                                                                                    	  statements.Add( callStatement ); .)
                   }
-                  SYNC "<%end%>"                                                   (. joinStatement = new JoinStatement( @string, statements ); .)
+                  SYNC "<%end%>"                                                   (. joinStatement = new JoinStatement( @string, appendType, statements ); .)
                   .
                   
 Apply<out ApplyStatement applyStatement>                                           (. string methodName; string parameters = null; string from; .)

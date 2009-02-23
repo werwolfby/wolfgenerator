@@ -18,7 +18,7 @@ namespace Example.WolfGenerator
 
 			try
 			{
-				Console.WriteLine( mainClass.Main( new object[] { 1, "String" } ) );
+				Console.WriteLine( mainClass.Main( new object[] { "Id", "Name" } ) );
 			}
 			catch (Exception e)
 			{

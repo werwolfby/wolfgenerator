@@ -23,11 +23,10 @@ return field == "Id";
 <%end%>
 
 <%rule Main( IEnumerable value )%>
-<%join ", "%>
-	<%= "Temp" %>
-	<%call SetField( "Id" )%>
-	<%call SetField( "Name" )%>
-<%end%>
+SELECT <%join ",\r\n" with Space%>
+	<%call SetField( "Temp" )%>
+	<%apply SetField( item ) from value%>
+<%end%> FROM [Table]
 <%end%>
 
 <%rule Test( int value, object a )%>

@@ -21,6 +21,7 @@
 using System.Collections.Generic;
 using System.Text;
 using WolfGenerator.Core.AST.Exception;
+using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
@@ -30,11 +31,13 @@ namespace WolfGenerator.Core.AST
 	public class JoinStatement : RuleStatement
 	{
 		private readonly string @string;
+		private readonly AppendType appendType;
 		private readonly IList<RuleStatement> statements;
 
-		public JoinStatement( string @string, IList<RuleStatement> statements )
+		public JoinStatement( string @string, AppendType appendType, IList<RuleStatement> statements )
 		{
 			this.@string = @string;
+			this.appendType = appendType;
 			this.statements = statements ?? new RuleStatement[0];
 
 			foreach (var statement in this.statements)
@@ -49,6 +52,11 @@ namespace WolfGenerator.Core.AST
 		public string String
 		{
 			get { return this.@string; }
+		}
+
+		public AppendType AppendType
+		{
+			get { return this.appendType; }
 		}
 
 		public IList<RuleStatement> Statements
@@ -71,6 +79,9 @@ namespace WolfGenerator.Core.AST
 				writer.AppendLine();
 			}
 
+			writer.Append( "writer.AppendType = AppendType." );
+			writer.Append( appendType.ToString() );
+			writer.AppendLine( ";" );
 			writer.AppendLine( "for (var listI = 0; listI < list.Count; listI++)" );
 			writer.AppendLine( "{" );
 			writer.Indent++;
@@ -84,6 +95,7 @@ namespace WolfGenerator.Core.AST
 
 			writer.Indent--;
 			writer.AppendLine( "}" );
+			writer.AppendLine( "writer.AppendType = AppendType.EmptyLastLine;" );
 
 			writer.Indent--;
 			writer.AppendLine("}");

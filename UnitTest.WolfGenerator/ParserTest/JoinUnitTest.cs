@@ -14,6 +14,7 @@
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core.AST;
+using WolfGenerator.Core.Writer;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
@@ -22,13 +23,14 @@ namespace UnitTest.WolfGenerator.ParserTest
 	{
 		private static readonly JoinStatement[] statements = new[]
 		                                                     {
-		                                                     	new JoinStatement( @"\r\n", new RuleStatement[]
-		                                                     	                           {
-		                                                     	                           	ApplyUnitTest.simpleApply,
-		                                                     	                           	ApplyUnitTest.fromApply,
-		                                                     	                           	ApplyUnitTest.extendedApply,
-																							ValueUnitTest.values[0],
-		                                                     	                           } ),
+		                                                     	new JoinStatement( @"\r\n", AppendType.EmptyLastLine,
+		                                                     	                   new RuleStatement[]
+		                                                     	                   {
+		                                                     	                   	ApplyUnitTest.simpleApply,
+		                                                     	                   	ApplyUnitTest.fromApply,
+		                                                     	                   	ApplyUnitTest.extendedApply,
+		                                                     	                   	ValueUnitTest.values[0],
+		                                                     	                   } ),
 		                                                     };
 
 		[TestMethod]

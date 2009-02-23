@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 23.02.2009 23:43:27
+// Compiled by vsCoco on 23.02.2009 23:50:21
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -422,7 +422,7 @@ public RuleClassStatement ruleClassStatement;
 		}
 		while (!(la.kind == 0 || la.kind == 11)) {SynErr(37); Get();}
 		Expect(11);
-		joinStatement = new JoinStatement( @string, statements ); 
+		joinStatement = new JoinStatement( @string, appendType, statements ); 
 	}
 
 	void Code(out CodeStatement codeStatement, ref bool isStart) {

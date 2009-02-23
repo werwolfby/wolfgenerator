@@ -51,26 +51,32 @@ public partial class MainClass : GeneratorBase
 	{
 		var writer = new CodeWriter();
 
+		writer.Indent = 0;
+		writer.Append( "SELECT " );
 		{
 			var list = new List<CodeWriter>();
 			CodeWriter temp;
 
-			temp = new CodeWriter();
-			temp.AppendText( "Temp" );
-			list.Add( temp );
+			list.Add( this.Invoke( "SetField", "Temp" ) );
 
-			list.Add( this.Invoke( "SetField", "Id" ) );
+			foreach (var item in value)
+			{
+				temp = this.Invoke( "SetField", item );
+				list.Add( temp );
+			}
 
-			list.Add( this.Invoke( "SetField", "Name" ) );
-
+			writer.AppendType = AppendType.SpaceLastLine;
 			for (var listI = 0; listI < list.Count; listI++)
 			{
 				var codeWriter = list[listI];
 				writer.Append( codeWriter );
 				if (listI < list.Count - 1)
-					writer.AppendText( ", " );
+					writer.AppendText( ",\r\n" );
 			}
+			writer.AppendType = AppendType.EmptyLastLine;
 		}
+		writer.Indent = 0;
+		writer.Append( " FROM [Table]" );
 
 		return writer;
 	}

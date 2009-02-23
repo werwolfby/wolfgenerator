@@ -76,7 +76,30 @@ public partial class MainClass : GeneratorBase
 			writer.AppendType = AppendType.EmptyLastLine;
 		}
 		writer.Indent = 0;
-		writer.Append( " FROM [Table]" );
+		writer.AppendLine( " FROM [Table]" );
+		writer.Append( "// " );
+		{
+			var list = new List<CodeWriter>();
+			CodeWriter temp;
+
+			list.Add( this.Invoke( "SetField", "Temp" ) );
+
+			foreach (var item in value)
+			{
+				temp = this.Invoke( "SetField", item );
+				list.Add( temp );
+			}
+
+			writer.AppendType = AppendType.CloneLastLine;
+			for (var listI = 0; listI < list.Count; listI++)
+			{
+				var codeWriter = list[listI];
+				writer.Append( codeWriter );
+				if (listI < list.Count - 1)
+					writer.AppendText( ",\r\n" );
+			}
+			writer.AppendType = AppendType.EmptyLastLine;
+		}
 
 		return writer;
 	}

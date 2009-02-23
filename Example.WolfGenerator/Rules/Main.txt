@@ -27,6 +27,10 @@ SELECT <%join ",\r\n" with Space%>
 	<%call SetField( "Temp" )%>
 	<%apply SetField( item ) from value%>
 <%end%> FROM [Table]
+// <%join ",\r\n" with Clone%>
+	<%call SetField( "Temp" )%>
+	<%apply SetField( item ) from value%>
+<%end%>
 <%end%>
 
 <%rule Test( int value, object a )%>

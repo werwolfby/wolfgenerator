@@ -9,6 +9,7 @@
  * History:
  *   14.02.2009 21:52 - Create Wireframe
  *   14.02.2009 22:09 - Finish first implementation.
+ *   25.02.2009 20:14 - Finish ReserveVariableTest test and fix for it success.
  *
  *******************************************************/
 
@@ -24,6 +25,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 		public static readonly Variable listVariable       = new Variable( "simple", TypeUnitTest.listType );
 		public static readonly Variable dictionaryVariable = new Variable( "simple", TypeUnitTest.dictionaryType );
 		public static readonly Variable funcVariable       = new Variable( "simple", TypeUnitTest.funcType );
+		public static readonly Variable reservedVariable   = new Variable( "@class", TypeUnitTest.funcType );
 
 		[TestMethod]
 		public void SimpleVariableTest()
@@ -49,6 +51,12 @@ namespace UnitTest.WolfGenerator.ParserTest
 			MainParseTest( funcVariable );
 		}
 
+		[TestMethod]
+		public void ReserveVariableTest()
+		{
+			MainParseTest( reservedVariable );
+		}
+
 		public static string VariableToString( Variable variable, string ag, string sg, string eg )
 		{
 			return TypeUnitTest.TypeToString( variable.Type, ag, sg, eg ) + ' ' + variable.Name;
@@ -63,7 +71,8 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 		private static void MainTestMethod( Variable variable, string ag, string sg, string eg )
 		{
-			var actualVariable = ParserHelper.ParseVariable( VariableToString( variable, ag, sg, eg ) );
+			var expectedString = VariableToString( variable, ag, sg, eg );
+			var actualVariable = ParserHelper.ParseVariable( expectedString );
 			AssertHelper.AssertVariable( variable, actualVariable );
 		}
 	}

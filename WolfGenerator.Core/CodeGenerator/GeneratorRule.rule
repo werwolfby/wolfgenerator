@@ -1,0 +1,37 @@
+﻿<%ruleclass Generator%>
+<%using WolfGenerator.Core.AST%>
+
+<%rule Main( string ns, RuleClassStatement ruleClassStatement, string fileName )%>
+<%$
+if (ns != null)
+{
+$-%>
+namespace <%= ns %>
+{
+	<%call Class( ruleClassStatement, fileName )%>
+}
+<%$
+}
+else
+{
+$-%>
+<%call Class( ruleClassStatement, fileName )%>
+<%$
+}
+$-%>
+<%end%>
+
+<%rule Class( RuleClassStatement ruleClassStatement, string fileName )%>
+<%join "\r\n"%>
+<%end%>
+<%end%>
+
+<%rule Namespace( UsingStatement ns )%>
+<%call Namespace( ns.Namespace ) %>
+<%end%>
+
+<%rule Namespace( string ns )%>
+using <%= ns %>;
+<%end%>
+
+<%end%>

@@ -358,7 +358,7 @@ public class UTF8Buffer: Buffer {
 				else this.AddCh();
 			}
 
-			this.t.kind = 29;
+			this.t.kind = 32;
 			this.t.val = new String( this.tval, 0, this.tlen );
 			return this.t;
 		}

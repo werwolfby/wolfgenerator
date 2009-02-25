@@ -10,6 +10,7 @@
  *   25.01.2009 08:59 - Create Wireframe
  *   25.01.2009 09:02 - Override ToStringMethod.
  *   25.01.2009 09:06 - Fix: ToString - return <Type> <Name>
+ *   25.02.2009 20:17 - Update EBNF
  *
  *******************************************************/
 
@@ -17,6 +18,7 @@ namespace WolfGenerator.Core.AST
 {
 	/// <summary>
 	/// Var = Type ident.
+	/// ident = ['@'] letter { letter | digit }.
 	/// </summary>
 	public class Variable
 	{

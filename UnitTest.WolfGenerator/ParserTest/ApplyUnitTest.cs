@@ -9,6 +9,7 @@
  * History:
  *   15.02.2009 10:30 - Create Wireframe
  *   15.02.2009 10:56 - Finish first implemetation.
+ *   15.02.2009 10:56 - Create test ExtendedFromApplyTest and fix it.
  *
  *******************************************************/
 
@@ -21,9 +22,10 @@ namespace UnitTest.WolfGenerator.ParserTest
 	[TestClass]
 	public class ApplyUnitTest
 	{
-		public static readonly ApplyStatement simpleApply   = new ApplyStatement( "SetField", "item.Value, \"Test\"", "items" );
-		public static readonly ApplyStatement fromApply     = new ApplyStatement( "SetField", "item.Value, \"Test\"", "frim" );
-		public static readonly ApplyStatement extendedApply = new ApplyStatement( "SetField", "this.Method( item ), \"Test\"", "items" );
+		public static readonly ApplyStatement simpleApply       = new ApplyStatement( "SetField", "item.Value, \"Test\"", "items" );
+		public static readonly ApplyStatement fromApply         = new ApplyStatement( "SetField", "item.Value, \"Test\"", "frim" );
+		public static readonly ApplyStatement extendedApply     = new ApplyStatement( "SetField", "this.Method( item ), \"Test\"", "items" );
+		public static readonly ApplyStatement extendedFromApply = new ApplyStatement( "SetField", "this.Method( item ), \"Test\"", "item.Items" );
 
 		[TestMethod]
 		public void SimpleApplyTest()
@@ -41,6 +43,12 @@ namespace UnitTest.WolfGenerator.ParserTest
 		public void ExtendedApplyTest()
 		{
 			MainTestMethod2( extendedApply, true );
+		}
+
+		[TestMethod]
+		public void ExtendedFromApplyTest()
+		{
+			MainTestMethod2( extendedFromApply, true );
 		}
 
 		public static string ApplyToString( ApplyStatement applyStatement, string spaces, bool isExtended )

@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 23.02.2009 23:50:21
+// Compiled by vsCoco on 25.02.2009 20:36:09
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -536,8 +536,11 @@ public RuleClassStatement ruleClassStatement;
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
 		while (!(la.kind == 0 || la.kind == 16)) {SynErr(43); Get();}
 		Expect(16);
-		Expect(1);
-		from = t.val; 
+		int startFrom = la.pos; 
+		while (StartOf(4)) {
+			Get();
+		}
+		from = scanner.buffer.GetString( startFrom, la.pos ).Trim(); 
 		while (!(la.kind == 0 || la.kind == 10)) {SynErr(44); Get();}
 		Expect(10);
 		applyStatement = new ApplyStatement( methodName, parameters, from ); 

@@ -84,6 +84,11 @@
     <Compile Include="AST\UsingStatement.cs" />
     <Compile Include="AST\ValueStatement.cs" />
     <Compile Include="AST\Variable.cs" />
+    <Compile Include="CodeGenerator\GeneratorRule.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GeneratorRule.rule</DependentUpon>
+    </Compile>
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
     <Compile Include="MatchMethodAttribute.cs" />
@@ -114,6 +119,11 @@
     <Compile Include="Writer\Line.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeGenerator\Generator.ext.cs" />
+    <None Include="CodeGenerator\GeneratorRule.rule">
+      <Generator>TemplateCodeGenerator2</Generator>
+      <LastGenOutput>GeneratorRule.cs</LastGenOutput>
+    </None>
     <None Include="Generator.reg" />
     <None Include="Gramma.atg">
       <Generator>Coco</Generator>

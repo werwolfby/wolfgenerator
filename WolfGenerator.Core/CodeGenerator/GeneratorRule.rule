@@ -1,12 +1,13 @@
 ﻿<%ruleclass Generator%>
+<%using System.Linq%>
 <%using WolfGenerator.Core.AST%>
 
-<%rule Main( string ns, RuleClassStatement ruleClassStatement, string fileName )%>
+<%rule Generate( string @namespace, RuleClassStatement ruleClassStatement, string fileName )%>
 <%$
-if (ns != null)
+if (@namespace != null)
 {
 $-%>
-namespace <%= ns %>
+namespace <%= @namespace %>
 {
 	<%call Class( ruleClassStatement, fileName )%>
 }
@@ -23,15 +24,52 @@ $-%>
 
 <%rule Class( RuleClassStatement ruleClassStatement, string fileName )%>
 <%join "\r\n"%>
-<%end%>
-<%end%>
-
-<%rule Namespace( UsingStatement ns )%>
-<%call Namespace( ns.Namespace ) %>
+	<%apply Using( item ) from ruleClassStatement.UsingStatements.Select( u => u.Namespace ).Concat( defaultNamespaces ).Distinct() %>
 <%end%>
 
-<%rule Namespace( string ns )%>
-using <%= ns %>;
+public partial class <%= ruleClassStatement.Name %> : GeneratorBase
+{
+	<%join "\r\n\r\n"%>
+		<%apply Match( item, fileName ) from ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.MatchStatements )%>
+	<%end%>
+}
+<%end%>
+
+<%rule Match( MatchMethodStatement matchMethodStatement, string fileName )%>
+[MatchMethod( "<%= matchMethodStatement.RuleMethod.Name %>", "<%= matchMethodStatement.Name %>", "<%= fileName %>" ]
+private bool Match_<%= matchMethodStatement.RuleMethod.Name %>_<%= matchMethodStatement.Name %>(<%call MethodParamenters( matchMethodStatement.RuleMethod.Variables ) %>)
+{
+	<%= matchMethodStatement.Code %>
+}
+<%end%>
+
+<%rule Rule( RuleMethodStatement ruleMethodStatement, string fileName, bool isDefault, bool generateAttribute )%>
+<%$
+if (generateAttribute)
+{
+$-%>
+[RuleMethod( "<%= ruleMethodStatement.Name %>", "<%$ if (ruleMethodStatement.MatchMethodStatement != null){$%> <%= ruleMethodStatement.MatchMethodStatement.Name %> <%$}else{$%>null<%$}$%>" )]
+<%$
+}
+$-%>
+<%end%>
+
+<%rule Using( UsingStatement usingStatement )%>
+<%call Namespace( usingStatement.Namespace ) %>
+<%end%>
+
+<%rule Using( string @namespace )%>
+using <%= @namespace %>;
+<%end%>
+
+<%rule MethodParamenters( IEnumerable<Variable> variables )%>
+ <%join ", "%>
+	<%apply Parameter( item ) from variables %>
+<%end%> 
+<%end%>
+
+<%rule Parameter( Variable var )%>
+<%= var.ToString() %>
 <%end%>
 
 <%end%>

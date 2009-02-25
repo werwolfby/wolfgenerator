@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using WolfGenerator.Core;
-using Generator=WolfGenerator.Core.Writer.Generator;
 
 namespace Example.WolfGenerator
 {
@@ -24,7 +23,7 @@ namespace Example.WolfGenerator
 			{
 				Console.WriteLine( e );
 			}
-			var code = Generator.Generate( parser.ruleClassStatement, "test.rule" ).ToString();
+			var code = global::WolfGenerator.Core.Writer.Generator.Generate( parser.ruleClassStatement, "test.rule" ).ToString();
 
 			using (var stream = new StreamWriter( "../../GeneratedClass.cs" ))
 			{

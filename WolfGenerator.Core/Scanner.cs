@@ -336,7 +336,8 @@ public class UTF8Buffer: Buffer {
 			if (this.readTextToken)
 			{
 				this.readTextToken = false;
-				return this.GetTextToken();
+				var result = this.GetTextToken();
+				if (result != null) return result;
 			}
 
 			this.NextTokenDefault();
@@ -356,6 +357,8 @@ public class UTF8Buffer: Buffer {
 
 		private Token GetTextToken()
 		{
+			if (this.ch == '<' && this.buffer.Peek() == '%') return null;
+
 			this.tlen = 0;
 			this.AddCh();
 			var end = false;

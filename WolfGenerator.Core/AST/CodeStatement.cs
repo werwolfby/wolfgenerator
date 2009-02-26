@@ -6,16 +6,15 @@
  * File: CodeStatement.cs
  * Remarks:
  * 
- *   TODO: Add is start parse parameter to code implicity
+ *   TODO: Add is start parser parameter to code implicity
  * 
  * History:
  *   26.01.2009 23:25 - Create Wireframe
  *   30.01.2009 20:17 - Add EBNF comment.
  *   15.02.2009 11:22 - Add Value property.
+ *   26.02.2009 23:10 - Remove Generate & GenerateJoin methods.
  *
  *******************************************************/
-
-using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
@@ -34,16 +33,6 @@ namespace WolfGenerator.Core.AST
 		public string Value
 		{
 			get { return this.value; }
-		}
-
-		public override void Generate( CodeWriter writer, string innerWriter )
-		{
-			writer.AppendText( value + "\r\n" );
-		}
-
-		public override void GenerateJoin( CodeWriter writer, string innerWriter )
-		{
-			throw new System.NotSupportedException();
 		}
 	}
 }

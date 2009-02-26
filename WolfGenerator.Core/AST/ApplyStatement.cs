@@ -12,6 +12,7 @@
  *   26.01.2009 10:46 - Implement GenerateJoin method.
  *   26.01.2009 10:56 - Work on GeneateJoin method.
  *   04.02.2009 01:13 - Use `Invoke` method of `GeneratorBase` base class.
+ *   26.02.2009 23:10 - Remove Generate & GenerateJoin methods.
  *
  *******************************************************/
 
@@ -48,26 +49,6 @@ namespace WolfGenerator.Core.AST
 		public string From
 		{
 			get { return this.from; }
-		}
-
-		public override void Generate( Writer.CodeWriter writer, string innerWriter )
-		{
-			throw new System.NotSupportedException();
-		}
-
-		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
-		{
-			writer.AppendLine( "foreach (var item in " + from + ")" );
-			writer.AppendLine("{");
-
-			writer.Indent++;
-
-			writer.AppendLine( "temp = this.Invoke( \"" + applyMethod + "\", " + parameters + " );" );
-			writer.AppendLine( "list.Add( temp );" );
-
-			writer.Indent--;
-
-			writer.AppendLine("}");
 		}
 
 		public override string ToString()

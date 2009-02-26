@@ -25,14 +25,12 @@
  *   11.02.2009 21:59 - Add RuleMethod attribute generate supporting.
  *   11.02.2009 22:12 - Add to generate method boolean parameter to generate RuleMethod Attribute.
  *   15.02.2009 16:16 - Now Variables & Statements properti instead null return empty collection.
+ *   26.02.2009 23:14 - Remove Generate methods.
  *
  *******************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
@@ -104,60 +102,6 @@ namespace WolfGenerator.Core.AST
 
 				return builder.ToString();
 			}
-		}
-
-		public override void Generate( CodeWriter writer, string fileName )
-		{
-			Generate( writer, fileName, false, false );
-		}
-
-		public void Generate( CodeWriter writer, string fileName, bool isDefault, bool generateAttribute )
-		{
-			if (generateAttribute)
-			{
-				writer.Append( "[RuleMethod( \"" );
-				writer.Append( this.name );
-				writer.Append( "\", " );
-				writer.Append( this.matchMethodStatement != null ? '"' + this.matchMethodStatement.Name + '"' : "null" );
-				writer.Append( ", \"" );
-				writer.Append( fileName );
-				writer.AppendLine( "\" )]" );
-			}
-			writer.Append( "public CodeWriter " );
-			writer.Append( this.Name );
-			if (this.MatchMethodStatement != null)
-			{
-				writer.Append( "_" );
-				writer.Append( this.MatchMethodStatement.Name );
-			}
-			else if (isDefault) writer.Append( "_Default" );
-
-			if (this.variables == null || this.variables.Count == 0)
-			{
-				writer.AppendLine( "()" );
-			}
-			else
-			{
-				writer.Append( "( " );
-				writer.Append( string.Join( ", ", Array.ConvertAll( this.Variables.ToArray(), input => input.ToString() ) ) );
-				writer.AppendLine( " )" );
-			}
-			writer.AppendLine( "{" );
-			writer.Indent++;
-
-			writer.AppendLine( "var writer = new CodeWriter();" );
-			writer.AppendLine();
-
-			foreach (var statement in Statements)
-			{
-				statement.Generate( writer, "writer" );
-			}
-
-			writer.AppendLine();
-			writer.AppendLine( "return writer;" );
-
-			writer.Indent--;
-			writer.AppendLine( "}" );
 		}
 
 		public override string ToString()

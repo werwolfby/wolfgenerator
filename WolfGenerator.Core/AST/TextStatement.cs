@@ -17,6 +17,7 @@
  *   26.01.2009 10:11 - Some changes in Generate method.
  *   26.01.2009 10:30 - Extract method ExtractLines.
  *   27.01.2009 00:07 - ExtractLines: BugFix: now support empty line.
+ *   26.02.2009 23:14 - Remove Generate & GenerateJoin methods.
  *
  *******************************************************/
 
@@ -48,61 +49,6 @@ namespace WolfGenerator.Core.AST
 		public bool CropLastLine
 		{
 			get { return this.cropLastLine; }
-		}
-
-		public override void Generate( Writer.CodeWriter writer, string innerWriter )
-		{
-			if (this.lines.Count == 0) return;
-
-			var oldIndent = this.lines[0].Indent;
-			writer.Append( innerWriter );
-			writer.Append( ".Indent = " );
-			writer.Append( oldIndent.ToString() );
-			writer.AppendLine( ";" );
-
-			for (var i = 0; i < this.lines.Count; i++)
-			{
-				var line = this.lines[i];
-
-				if (oldIndent != line.Indent)
-				{
-					writer.Append( innerWriter );
-					writer.Append( ".Indent = " );
-					writer.Append( line.Indent.ToString() );
-					writer.AppendLine( ";" );
-
-					oldIndent = line.Indent;
-				}
-
-				var generatedText = line.GetText().Replace( "\"", "\\\"" );
-
-				if (i == this.lines.Count - 1 && !cropLastLine)
-				{
-					if (generatedText == "") continue;
-					writer.Append( innerWriter );
-					writer.Append( ".Append" );
-				}
-				else
-				{
-					writer.Append( innerWriter );
-					writer.Append( ".AppendLine" );
-				}
-				if (generatedText == "")
-				{
-					writer.AppendLine( "();" );
-				}
-				else
-				{
-					writer.Append( "( \"" );
-					writer.Append( generatedText );
-					writer.AppendLine( "\" );" );
-				}
-			}
-		}
-
-		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
-		{
-			throw new System.NotSupportedException();
 		}
 
 		public override string ToString()

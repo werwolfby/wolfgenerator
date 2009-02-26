@@ -14,6 +14,7 @@
  *   26.01.2009 11:03 - Fix: GenerateJoin.
  *   30.01.2009 20:10 - Add EBNF comment.
  *   24.02.2009 00:02 - Update EBNF comment.
+ *   26.02.2009 23:15 - Remove Generate & GenerateJoin methods.
  *
  *******************************************************/
 
@@ -39,24 +40,6 @@ namespace WolfGenerator.Core.AST
 		public override string ToString()
 		{
 			return "<%= " + value + " %>";
-		}
-
-		public override void Generate( Writer.CodeWriter writer, string innerWriter )
-		{
-			writer.Append( innerWriter );
-			writer.Append( ".AppendText( " );
-			writer.Append( value );
-			writer.AppendLine( " );" );
-		}
-
-		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
-		{
-			writer.AppendLine( "temp = new CodeWriter();" );
-			writer.Append( "temp.AppendText( " );
-			writer.Append( value );
-			writer.AppendLine( " );" );
-
-			writer.AppendLine( "list.Add( temp );" );
 		}
 	}
 }

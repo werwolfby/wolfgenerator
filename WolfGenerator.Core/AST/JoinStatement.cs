@@ -16,6 +16,7 @@
  *   15.02.2009 13:56 - Add check for type of inner statements (and throw exception in such way).
  *   21.02.2009 18:17 - Forget add check for CallStatement.
  *   23.02.2009 23:56 - Update EBNF & Add AppendType implementation.
+ *   26.02.2009 23:11 - Remove Generate & GenerateJoin methods.
  *
  *******************************************************/
 
@@ -63,48 +64,6 @@ namespace WolfGenerator.Core.AST
 		public IList<RuleStatement> Statements
 		{
 			get { return this.statements; }
-		}
-
-		public override void Generate( Writer.CodeWriter writer, string innerWriter )
-		{
-			writer.AppendLine("{");
-			writer.Indent++;
-
-			writer.AppendLine( "var list = new List<CodeWriter>();" );
-			writer.AppendLine( "CodeWriter temp;" );
-			writer.AppendLine();
-
-			foreach (var statement in statements)
-			{
-				statement.GenerateJoin( writer, innerWriter );
-				writer.AppendLine();
-			}
-
-			writer.Append( "writer.AppendType = AppendType." );
-			writer.Append( appendType.ToString() );
-			writer.AppendLine( ";" );
-			writer.AppendLine( "for (var listI = 0; listI < list.Count; listI++)" );
-			writer.AppendLine( "{" );
-			writer.Indent++;
-
-			writer.AppendLine( "var codeWriter = list[listI];" );
-			writer.AppendLine( "writer.Append( codeWriter );" );
-			writer.AppendLine( "if (listI < list.Count - 1)" );
-			writer.Indent++;
-			writer.AppendLine( "writer.AppendText( \"" + this.String + "\" );" );
-			writer.Indent--;
-
-			writer.Indent--;
-			writer.AppendLine( "}" );
-			writer.AppendLine( "writer.AppendType = AppendType.EmptyLastLine;" );
-
-			writer.Indent--;
-			writer.AppendLine("}");
-		}
-
-		public override void GenerateJoin( Writer.CodeWriter writer, string innerWriter )
-		{
-			throw new System.NotSupportedException();
 		}
 
 		public override string ToString()

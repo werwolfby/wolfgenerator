@@ -11,6 +11,7 @@
  *   27.01.2009 01:59 - Inhirit from RuleClassMethodStatement and implement method Generate.
  *   27.01.2009 02:15 - Fix: Generate - add space between return type and name.
  *   30.01.2009 20:14 - Add EBNF comment.
+ *   26.02.2009 23:12 - Remove Generate methods.
  *
  *******************************************************/
 
@@ -57,25 +58,6 @@ namespace WolfGenerator.Core.AST
 		public string Code
 		{
 			get { return this.code; }
-		}
-
-		public override void Generate( CodeWriter writer, string fileName )
-		{
-			writer.Append( "public " );
-			writer.Append( returnType.ToString() );
-			writer.Append( " " );
-			writer.Append( this.name );
-			writer.Append( "( " );
-			writer.Append( string.Join( ", ", Array.ConvertAll( this.Variables.ToArray(), input => input.ToString() ) ) );
-			writer.AppendLine( " )" );
-
-			writer.AppendLine( "{" );
-			//writer.Indent++;
-
-			writer.AppendText( code );
-
-			//writer.Indent--;
-			writer.AppendLine( "}" );
 		}
 	}
 }

@@ -10,10 +10,9 @@
  *   27.01.2009 01:30 - Create Wireframe
  *   30.01.2009 20:19 - Add EBNF Comment.
  *   04.02.2009 01:10 - Use `Invoke` method of `GeneratorBase` base class.
+ *   26.02.2009 23:10 - Remove Generate & GenerateJoin methods.
  *
  *******************************************************/
-
-using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
@@ -39,17 +38,6 @@ namespace WolfGenerator.Core.AST
 		public string Parameters
 		{
 			get { return this.parameters; }
-		}
-
-		public override void Generate( CodeWriter writer, string innerWriter )
-		{
-			writer.Append( innerWriter );
-			writer.AppendLine( ".Append( this.Invoke( \"" + name + "\", " + parameters + " ) );" );
-		}
-
-		public override void GenerateJoin( CodeWriter writer, string innerWriter )
-		{
-			writer.AppendLine( "list.Add( this.Invoke( \"" + name + "\", " + parameters + " ) );" );
 		}
 	}
 }

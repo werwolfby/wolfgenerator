@@ -12,12 +12,9 @@
  *   04.02.2009 02:12 - Fix: Generate method.
  *   10.02.2009 20:30 - Add support fileName of Generated method
  *   11.02.2009 21:54 - New MatchMethodAttribute code generating.
+ *   26.02.2009 23:12 - Remove Generate methods.
  *
  *******************************************************/
-
-using System;
-using System.Linq;
-using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
@@ -43,36 +40,5 @@ namespace WolfGenerator.Core.AST
 		}
 
 		internal RuleMethodStatement RuleMethod { get; set; }
-
-		public override void Generate( CodeWriter writer, string fileName )
-		{
-			writer.Append( "[MatchMethod( \"" );
-			writer.Append( RuleMethod.Name );
-			writer.Append( "\", \"" );
-			writer.Append( this.name );
-			writer.Append( "\", \"" );
-			writer.Append( fileName );
-			writer.AppendLine( "\" )]" );
-			writer.Append( "private bool Match_" );
-			writer.Append( RuleMethod.Name );
-			writer.Append( "_" );
-			writer.Append( name );
-			if (RuleMethod.Variables == null || RuleMethod.Variables.Count == 0)
-			{
-				writer.AppendLine( "()" );
-			}
-			else
-			{
-				writer.Append( "( " );
-				writer.Append( string.Join( ", ", Array.ConvertAll( RuleMethod.Variables.ToArray(), input => input.ToString() ) ) );
-				writer.AppendLine( " )" );
-			}
-			writer.AppendLine( "{" );
-			writer.Indent++;
-			writer.AppendText( Code );
-			writer.AppendLine();
-			writer.Indent--;
-			writer.AppendLine( "}" );
-		}
 	}
 }

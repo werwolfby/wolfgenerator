@@ -1,12 +1,12 @@
+using System.Linq;
+using WolfGenerator.Core.AST;
+using System;
+using System.Collections.Generic;
+using WolfGenerator.Core.Writer;
+using WolfGenerator.Core;
+
 namespace WolfGenerator.Core.CodeGenerator
 {
-	using System.Linq;
-	using WolfGenerator.Core.AST;
-	using System;
-	using System.Collections.Generic;
-	using WolfGenerator.Core.Writer;
-	using WolfGenerator.Core;
-
 	public partial class Generator : GeneratorBase
 	{
 		public CodeWriter JoinStatement( ApplyStatement statement, string tempWriter, string list )

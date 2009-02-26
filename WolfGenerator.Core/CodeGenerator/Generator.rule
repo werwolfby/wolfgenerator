@@ -3,6 +3,10 @@
 <%using WolfGenerator.Core.AST%>
 
 <%rule Generate( string @namespace, RuleClassStatement ruleClassStatement, string fileName )%>
+<%join "\r\n"%>
+	<%apply Using( item ) from ruleClassStatement.UsingStatements.Select( u => u.Namespace ).Concat( defaultNamespaces ).Distinct() %>
+<%end%>
+
 <%$
 if (@namespace != null)
 {
@@ -23,10 +27,6 @@ $-%>
 <%end%>
 
 <%rule Class( RuleClassStatement ruleClassStatement, string fileName )%>
-<%join "\r\n"%>
-	<%apply Using( item ) from ruleClassStatement.UsingStatements.Select( u => u.Namespace ).Concat( defaultNamespaces ).Distinct() %>
-<%end%>
-
 public partial class <%= ruleClassStatement.Name %> : GeneratorBase
 {
 	<%join "\r\n\r\n"%>

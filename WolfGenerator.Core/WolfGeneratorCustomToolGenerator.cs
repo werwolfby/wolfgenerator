@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using CustomToolGenerator;
 using EnvDTE;
-using WolfGenerator.Core.Writer;
+using WolfGenerator.Core.CodeGenerator;
 
 namespace WolfGenerator.Core
 {

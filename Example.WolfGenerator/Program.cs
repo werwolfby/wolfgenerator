@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using WolfGenerator.Core;
+using WolfGenerator.Core.CodeGenerator;
 
 namespace Example.WolfGenerator
 {

@@ -11,8 +11,10 @@
  *
  *******************************************************/
 
-public partial class Generator 
+namespace WolfGenerator.Core.CodeGenerator
 {
+	public partial class Generator
+	{
 		private static readonly string[] defaultNamespaces = new[]
 		                                                     {
 		                                                     	"System",
@@ -20,4 +22,5 @@ public partial class Generator
 		                                                     	"WolfGenerator.Core.Writer",
 		                                                     	"WolfGenerator.Core",
 		                                                     };
+	}
 }

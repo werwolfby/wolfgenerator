@@ -64,7 +64,7 @@ namespace WolfGenerator.Core
 				parser.Parse();
 
 				if (parser.errors.count == 0)
-					programCode = Writer.Generator.Generate( parser.ruleClassStatement, inputFileName ).ToString();
+					programCode = new Generator().Generate( FileNameSpace, parser.ruleClassStatement, inputFileName ).ToString();
 				else
 					programCode = "parser errors: " + parser.errors.count;
 			}

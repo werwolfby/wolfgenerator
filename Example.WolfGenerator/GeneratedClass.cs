@@ -1,29 +1,21 @@
+using System.Text;
+using System.Collections;
+using Example.WolfGenerator;
 using System;
 using System.Collections.Generic;
 using WolfGenerator.Core.Writer;
 using WolfGenerator.Core;
-using System.Text;
-using System.Collections;
-using Example.WolfGenerator;
 
 public partial class MainClass : GeneratorBase
 {
-	public CodeWriter TempRule()
-	{
-		var writer = new CodeWriter();
-
-		writer.Indent = 0;
-		writer.Append( "Test text" );
-
-		return writer;
-	}
 	[MatchMethod( "SetField", "IsId", "test.rule" )]
 	private bool Match_SetField_IsId( string field )
 	{
 		return field == "Id";
 	}
+
 	[RuleMethod( "SetField", "IsId", "test.rule" )]
-	public CodeWriter SetField_IsId( string field )
+	public CodeWriter SetField_SetField( string field )
 	{
 		var writer = new CodeWriter();
 
@@ -33,6 +25,7 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+
 	[RuleMethod( "SetField", null, "test.rule" )]
 	public CodeWriter SetField_Default( string field )
 	{
@@ -47,6 +40,17 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+
+	public CodeWriter TempRule(  )
+	{
+		var writer = new CodeWriter();
+
+		writer.Indent = 0;
+		writer.Append( "Test text" );
+
+		return writer;
+	}
+
 	public CodeWriter Main( IEnumerable value )
 	{
 		var writer = new CodeWriter();
@@ -58,7 +62,6 @@ public partial class MainClass : GeneratorBase
 			CodeWriter temp;
 
 			list.Add( this.Invoke( "SetField", "Temp" ) );
-
 			foreach (var item in value)
 			{
 				temp = this.Invoke( "SetField", item );
@@ -83,7 +86,6 @@ public partial class MainClass : GeneratorBase
 			CodeWriter temp;
 
 			list.Add( this.Invoke( "SetField", "Temp" ) );
-
 			foreach (var item in value)
 			{
 				temp = this.Invoke( "SetField", item );
@@ -103,6 +105,7 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+
 	public CodeWriter Test( int value, object a )
 	{
 		var writer = new CodeWriter();
@@ -123,6 +126,7 @@ public partial class MainClass : GeneratorBase
 
 		return writer;
 	}
+
 	public CodeWriter Test( string value, object a )
 	{
 		var writer = new CodeWriter();

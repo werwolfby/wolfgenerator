@@ -44,7 +44,7 @@ public partial class Generator : GeneratorBase
 
 		writer.AppendText( list );
 		writer.Indent = 0;
-		writer.Append( ".Append( this.Invoke( \"" );
+		writer.Append( ".Add( this.Invoke( \"" );
 		writer.AppendText( statement.Name );
 		writer.Indent = 0;
 		writer.Append( "\", " );

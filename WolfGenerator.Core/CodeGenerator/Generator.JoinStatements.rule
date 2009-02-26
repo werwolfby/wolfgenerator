@@ -11,7 +11,7 @@ foreach (var item in <%= statement.From %>)
 <%end%>
 
 <%rule JoinStatement( CallStatement statement, string tempWriter, string list )%>
-<%= list %>.Append( this.Invoke( "<%= statement.Name %>", <%= statement.Parameters %> ) );
+<%= list %>.Add( this.Invoke( "<%= statement.Name %>", <%= statement.Parameters %> ) );
 <%end%>
 
 <%rule JoinStatement( ValueStatement statement, string tempWriter, string list )%>

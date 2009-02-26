@@ -71,9 +71,27 @@ public partial class Generator : GeneratorBase
 			var list = new List<CodeWriter>();
 			CodeWriter temp;
 
-			foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.MatchStatements ))
+			foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.RuleMethodStatements ).Select( ms => ms.MatchMethodStatement ))
 			{
 				temp = this.Invoke( "Match", item, fileName );
+				list.Add( temp );
+			}
+
+			foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.RuleMethodStatements ))
+			{
+				temp = this.Invoke( "Rule", item, fileName, false, true );
+				list.Add( temp );
+			}
+
+			foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched && mmg.DefaultStatement != null ).Select( mmg => mmg.DefaultStatement ))
+			{
+				temp = this.Invoke( "Rule", item, fileName, true,  true );
+				list.Add( temp );
+			}
+
+			foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => !mmg.IsMatched ).Select( mmg => mmg.DefaultStatement ))
+			{
+				temp = this.Invoke( "Rule", item, fileName, false, false );
 				list.Add( temp );
 			}
 
@@ -107,7 +125,7 @@ public partial class Generator : GeneratorBase
 		writer.Append( "\", \"" );
 		writer.AppendText( fileName );
 		writer.Indent = 0;
-		writer.AppendLine( "\" ]" );
+		writer.AppendLine( "\" )]" );
 		writer.Append( "private bool Match_" );
 		writer.AppendText( matchMethodStatement.RuleMethod.Name );
 		writer.Indent = 0;
@@ -137,15 +155,19 @@ public partial class Generator : GeneratorBase
 		writer.Append( "[RuleMethod( \"" );
 		writer.AppendText( ruleMethodStatement.Name );
 		writer.Indent = 0;
-		writer.Append( "\", \"" );
+		writer.Append( "\", " );
 		if (ruleMethodStatement.MatchMethodStatement != null){
+		writer.Indent = 0;
+		writer.Append( "\"" );
 		writer.AppendText( ruleMethodStatement.MatchMethodStatement.Name );
+		writer.Indent = 0;
+		writer.Append( "\"" );
 		}else{
 		writer.Indent = 0;
 		writer.Append( "null" );
 		}
 		writer.Indent = 0;
-		writer.Append( "\", \"" );
+		writer.Append( ", \"" );
 		writer.AppendText( fileName );
 		writer.Indent = 0;
 		writer.AppendLine( "\" )]" );

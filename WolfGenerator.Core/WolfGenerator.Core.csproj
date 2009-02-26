@@ -115,7 +115,6 @@
     <Compile Include="Writer\Exception\LineException.cs" />
     <Compile Include="Writer\Exception\MultyLineException.cs" />
     <Compile Include="Writer\Exception\WriterException.cs" />
-    <Compile Include="Writer\Generator.cs" />
     <Compile Include="Writer\Line.cs" />
   </ItemGroup>
   <ItemGroup>

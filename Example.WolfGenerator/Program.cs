@@ -23,7 +23,7 @@ namespace Example.WolfGenerator
 			{
 				Console.WriteLine( e );
 			}
-			var code = global::WolfGenerator.Core.Writer.Generator.Generate( parser.ruleClassStatement, "test.rule" ).ToString();
+			var code = new Generator().Generate( null, parser.ruleClassStatement, "test.rule" ).ToString();
 
 			using (var stream = new StreamWriter( "../../GeneratedClass.cs" ))
 			{

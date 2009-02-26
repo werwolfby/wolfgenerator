@@ -84,10 +84,10 @@
     <Compile Include="AST\UsingStatement.cs" />
     <Compile Include="AST\ValueStatement.cs" />
     <Compile Include="AST\Variable.cs" />
-    <Compile Include="CodeGenerator\GeneratorRule.cs">
+    <Compile Include="CodeGenerator\Generator.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>GeneratorRule.rule</DependentUpon>
+      <DependentUpon>Generator.rule</DependentUpon>
     </Compile>
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
@@ -120,9 +120,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGenerator\Generator.ext.cs" />
-    <None Include="CodeGenerator\GeneratorRule.rule">
+    <Compile Include="CodeGenerator\Generator.JoinStatements1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Generator.JoinStatements.rule</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGenerator\Generator.Statements.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Generator.Statements.rule</DependentUpon>
+    </Compile>
+    <None Include="CodeGenerator\Generator.rule">
       <Generator>TemplateCodeGenerator2</Generator>
-      <LastGenOutput>GeneratorRule.cs</LastGenOutput>
+      <LastGenOutput>Generator.cs</LastGenOutput>
     </None>
     <None Include="Generator.reg" />
     <None Include="Gramma.atg">
@@ -149,6 +159,18 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CodeGenerator\Generator.Statements.rule">
+      <Generator>TemplateCodeGenerator2</Generator>
+      <LastGenOutput>Generator.Statements.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CodeGenerator\Generator.JoinStatements.rule">
+      <Generator>TemplateCodeGenerator2</Generator>
+      <LastGenOutput>Generator.JoinStatements1.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,23 @@
+﻿<%ruleclass Generator%>
+<%using System.Linq%>
+<%using WolfGenerator.Core.AST%>
+
+<%rule JoinStatement( ApplyStatement statement, string tempWriter, string list )%>
+foreach (var item in <%= statement.From %>)
+{
+	<%= tempWriter %> = this.Invoke( "<%= statement.ApplyMethod %>", <%= statement.Parameters %> );
+	<%= list %>.Add( <%= tempWriter %> );
+}
+<%end%>
+
+<%rule JoinStatement( CallStatement statement, string tempWriter, string list )%>
+<%= list %>.Append( this.Invoke( "<%= statement.Name %>", <%= statement.Parameters %> ) );
+<%end%>
+
+<%rule JoinStatement( ValueStatement statement, string tempWriter, string list )%>
+<%= tempWriter %> = new CodeWriter();
+<%= tempWriter %>.AppendText( <%= statement.Value %> );
+<%= list %>.Add( <%= tempWriter %> );
+<%end%>
+
+<%end%>

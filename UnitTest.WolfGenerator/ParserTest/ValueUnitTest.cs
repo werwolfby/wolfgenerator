@@ -23,9 +23,9 @@ namespace UnitTest.WolfGenerator.ParserTest
 	{
 		public static ValueStatement[] values = new[]
 		                                        {
-		                                        	new ValueStatement( "var" ),
-		                                        	new ValueStatement( "codeWriter.ToString()" ),
-		                                        	new ValueStatement( "\"String\"" ),
+		                                        	new ValueStatement( Helper.EmptyPosition, "var" ),
+		                                        	new ValueStatement( Helper.EmptyPosition, "codeWriter.ToString()" ),
+		                                        	new ValueStatement( Helper.EmptyPosition, "\"String\"" ),
 		                                        };
 
 		[TestMethod]

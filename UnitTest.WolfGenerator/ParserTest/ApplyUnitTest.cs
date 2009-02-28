@@ -22,10 +22,10 @@ namespace UnitTest.WolfGenerator.ParserTest
 	[TestClass]
 	public class ApplyUnitTest
 	{
-		public static readonly ApplyStatement simpleApply       = new ApplyStatement( "SetField", "item.Value, \"Test\"", "items" );
-		public static readonly ApplyStatement fromApply         = new ApplyStatement( "SetField", "item.Value, \"Test\"", "frim" );
-		public static readonly ApplyStatement extendedApply     = new ApplyStatement( "SetField", "this.Method( item ), \"Test\"", "items" );
-		public static readonly ApplyStatement extendedFromApply = new ApplyStatement( "SetField", "this.Method( item ), \"Test\"", "item.Items" );
+		public static readonly ApplyStatement simpleApply       = new ApplyStatement( Helper.EmptyPosition, "SetField", "item.Value, \"Test\"", "items" );
+		public static readonly ApplyStatement fromApply         = new ApplyStatement( Helper.EmptyPosition, "SetField", "item.Value, \"Test\"", "frim" );
+		public static readonly ApplyStatement extendedApply     = new ApplyStatement( Helper.EmptyPosition, "SetField", "this.Method( item ), \"Test\"", "items" );
+		public static readonly ApplyStatement extendedFromApply = new ApplyStatement( Helper.EmptyPosition, "SetField", "this.Method( item ), \"Test\"", "item.Items" );
 
 		[TestMethod]
 		public void SimpleApplyTest()

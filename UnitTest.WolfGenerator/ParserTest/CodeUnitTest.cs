@@ -24,7 +24,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 	{
 		public static readonly CodeStatement[] statements = new[]
 		                                                     {
-		                                                     	new CodeStatement( "if (true) return;" ),
+		                                                     	new CodeStatement( Helper.EmptyPosition, "if (true) return;" ),
 		                                                     };
 
 		[TestMethod]

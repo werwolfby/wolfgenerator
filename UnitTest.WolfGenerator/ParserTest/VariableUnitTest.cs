@@ -21,11 +21,11 @@ namespace UnitTest.WolfGenerator.ParserTest
 	[TestClass]
 	public class VariableUnitTest
 	{
-		public static readonly Variable simpleVariable     = new Variable( "simple", TypeUnitTest.simpleType );
-		public static readonly Variable listVariable       = new Variable( "simple", TypeUnitTest.listType );
-		public static readonly Variable dictionaryVariable = new Variable( "simple", TypeUnitTest.dictionaryType );
-		public static readonly Variable funcVariable       = new Variable( "simple", TypeUnitTest.funcType );
-		public static readonly Variable reservedVariable   = new Variable( "@class", TypeUnitTest.funcType );
+		public static readonly Variable simpleVariable     = new Variable( Helper.EmptyPosition, "simple", TypeUnitTest.simpleType );
+		public static readonly Variable listVariable       = new Variable( Helper.EmptyPosition, "simple", TypeUnitTest.listType );
+		public static readonly Variable dictionaryVariable = new Variable( Helper.EmptyPosition, "simple", TypeUnitTest.dictionaryType );
+		public static readonly Variable funcVariable       = new Variable( Helper.EmptyPosition, "simple", TypeUnitTest.funcType );
+		public static readonly Variable reservedVariable   = new Variable( Helper.EmptyPosition, "@class", TypeUnitTest.funcType );
 
 		[TestMethod]
 		public void SimpleVariableTest()

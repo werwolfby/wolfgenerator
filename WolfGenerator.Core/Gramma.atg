@@ -16,10 +16,17 @@ COMPILER WolfGenerator
 	
 	string ExtractString( bool isStart, bool ifEnd, string text )
 	{
+		int startIndex = 0;
+		int endIndex = 0;
+		return ExtractString( isStart, ifEnd, text, ref startIndex, ref endIndex );
+	}
+	
+	string ExtractString( bool isStart, bool ifEnd, string text, ref int startIndex, ref int endIndex )
+	{
 		if (!string.IsNullOrEmpty( text ))
 		{
-			int startIndex = 0;
-			int endIndex = 0;
+			startIndex = 0;
+			endIndex = 0;
 			if (isStart)
 			{
 				if (text.StartsWith( "\r\n" )) startIndex = 2;
@@ -39,17 +46,10 @@ COMPILER WolfGenerator
 		return "";
 	}
 	
-	int AddStatement( bool isStart, int startPos, List<RuleStatement> statements, bool ifEnd )
-	{
-		string text = ExtractString( isStart, ifEnd, startPos, la.pos );
-		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
-		return la.pos;
-	}
-	
 	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, string text )
 	{
 		text = ExtractString( isStart, ifEnd, text );
-		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
+		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( new StatementPosition( t.line, t.col, t.pos, la.line, la.col, la.pos ), text ) );
 		return la.pos;
 	}
 
@@ -109,7 +109,8 @@ IGNORE cr + lf + tab
 
 PRODUCTIONS
 
-WolfGenerator =                                                                    (. List<UsingStatement> usingStatementList = null; 
+WolfGenerator =                                                                    (. Token start = t;
+                                                                                      List<UsingStatement> usingStatementList = null; 
                                                                                       List<RuleClassMethodStatement> ruleMethodStatementList = null; 
                                                                                       string name; .) 
                 RuleClassStart<out name> 
@@ -126,7 +127,7 @@ WolfGenerator =                                                                 
                                                                                           ruleMethodStatementList = new List<RuleClassMethodStatement>();
                                                                                       ruleMethodStatementList.Add( method ); .)
                 } 
-                RuleClassEnd                                                       (. ruleClassStatement = new RuleClassStatement( name, usingStatementList, ruleMethodStatementList ); .)
+                RuleClassEnd                                                       (. ruleClassStatement = new RuleClassStatement( new StatementPosition( start, t ), name, usingStatementList, ruleMethodStatementList ); .)
                 .
 
 RuleClassStart<out string name> = "<%ruleclass" ident                              (. name = t.val; .)
@@ -135,17 +136,20 @@ RuleClassEnd   = "<%end%>".
 
 Using<out UsingStatement usingStatement>                                           (. List<string> namespaceList = new List<string>(); .) 
 =
-	"<%using" ident                                                                (. namespaceList.Add( t.val ); .)
+	"<%using" 	                                                                   (. Token start = t; .)
+	ident                                                                          (. namespaceList.Add( t.val ); .)
 	{ "."  ident                                                                   (. namespaceList.Add( t.val ); .)
 	}                                                                              (. string namespaceName = string.Join( ".", namespaceList.ToArray() );
-	                                                                                  usingStatement = new UsingStatement( namespaceName ); .)
+	                                                                                  usingStatement = new UsingStatement( new StatementPosition( start, t ), namespaceName ); .)
 	"%>".
 	
 MatchMethod<out MatchMethodStatement statement>                                    (. string name; string code; .)
-                   = "<%match" ident                                               (. name = t.val; .)
+                   =
+                     "<%match"                                                     (. Token start = t; .)
+                     ident                                                         (. name = t.val; .)
                      "%>"                                                          (. int startPos = t.pos + t.val.Length; .)
                      {ANY}                                                         (. code = ExtractString( true, true, startPos, la.pos ); .)
-                     "<%end%>"                                                     (. statement = new MatchMethodStatement( name, code ); .)
+                     "<%end%>"                                                     (. statement = new MatchMethodStatement( new StatementPosition( start, t ), name, code ); .)
                      .
 
 RuleMethod<out RuleMethodStatement statement>                                      (. string methodName; IList<Variable> variables;
@@ -156,7 +160,8 @@ RuleMethod<out RuleMethodStatement statement>                                   
                                                                                       CodeStatement codeStatement;
                                                                                       CallStatement callStatement;
                                                                                       MatchMethodStatement matchStatement = null; .)
-                    = [ MatchMethod<out matchStatement> ]
+                    = 	                                                           (. Token start = t; .)
+                     [ MatchMethod<out matchStatement> ]
                      RuleMethodStart<out methodName, out variables>                (. int startPos = t.pos + t.val.Length; .)
                      { 
                       text                                                         (. AddStatement( isStart, statements, la.kind == _end, t.val ); .)
@@ -174,7 +179,7 @@ RuleMethod<out RuleMethodStatement statement>                                   
                       Call<out callStatement>                                      (. statements.Add( callStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       } 
                                                                                    
-                      RuleMethodEnd                                                (. statement = new RuleMethodStatement( matchStatement, methodName, variables, statements ); .)
+                      RuleMethodEnd                                                (. statement = new RuleMethodStatement( new StatementPosition( start, t ), matchStatement, methodName, variables, statements ); .)
                       .
 
 RuleMethodStart <. out string name, out IList<Variable> variables .>               (. Variable var = null; 
@@ -191,7 +196,8 @@ Method <out MethodStatement methodStatement>                                    
                                                                                       List<Variable> variables = null;
                                                                                       int startPos = -1; string name; .)
                 =
-                  "<%method" Type<out returnType>
+                  "<%method"                                                       (. Token start = t; .)
+                  Type<out returnType>
                   ident                                                            (. name = t.val; .)
                   "("                                                              (. Variable currentVariable; .)
                   [ Var<out currentVariable>                                       (. if (variables == null) variables = new List<Variable>();
@@ -201,16 +207,16 @@ Method <out MethodStatement methodStatement>                                    
                     }
                   ] ")" "%>"                                                       (. startPos = t.pos + t.val.Length; .)
                   {ANY}
-                  "<%end%>"                                                        (. methodStatement = new MethodStatement( returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); .)
+                  "<%end%>"                                                        (. methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); .)
                   .
 
 Value<out ValueStatement valueStatement>
                 = 
-                  "<%="                                                            (. int pos = t.pos + t.val.Length; .)
+                  "<%="                                                            (. Token start = t; int pos = t.pos + t.val.Length; .)
                   {ANY}
                   SYNC "%>"                                                        (. int endPos = t.pos;
                                                                                       string value = scanner.buffer.GetString( pos, endPos );
-                                                                                      valueStatement = new ValueStatement( value.Trim() );  .)
+                                                                                      valueStatement = new ValueStatement( new StatementPosition( start, t ), value.Trim() );  .)
                   .
 
 Join<out JoinStatement joinStatement>                                              (. string @string;
@@ -220,7 +226,8 @@ Join<out JoinStatement joinStatement>                                           
                                                                                       CallStatement callStatement; 
                                                                                       AppendType appendType = AppendType.EmptyLastLine; .)
                 = 
-                  "<%join" string                                                  (. @string = t.val.Substring( 1, t.val.Length - 2 ); .)
+                  "<%join" 	                                                       (. Token start = t; .)
+                  string                                                           (. @string = t.val.Substring( 1, t.val.Length - 2 ); .)
                   ["with"
                    ("Space"                                                        (. appendType = AppendType.SpaceLastLine; .)
                     | 
@@ -238,12 +245,13 @@ Join<out JoinStatement joinStatement>                                           
                     Call<out callStatement>                                        (. if (statements == null) statements = new List<RuleStatement>();
                                                                                    	  statements.Add( callStatement ); .)
                   }
-                  SYNC "<%end%>"                                                   (. joinStatement = new JoinStatement( @string, appendType, statements ); .)
+                  SYNC "<%end%>"                                                   (. joinStatement = new JoinStatement( new StatementPosition( start, t ), @string, appendType, statements ); .)
                   .
                   
 Apply<out ApplyStatement applyStatement>                                           (. string methodName; string parameters = null; string from; .)
                 =
-                  "<%apply" ident                                                  (. methodName = t.val; .)
+                  "<%apply" 	                                                   (. Token start = t; .)
+                  ident                                                            (. methodName = t.val; .)
                    (                                                               (. int startPos = -1; int endPos = -1; .)
                      (
                       "(["                                                         (. startPos = t.pos + t.val.Length; .)
@@ -258,21 +266,22 @@ Apply<out ApplyStatement applyStatement>                                        
                    )                                                              
                    SYNC "from"                                                     (. int startFrom = la.pos; .)
                    {ANY}                                                           (. from = scanner.buffer.GetString( startFrom, la.pos ).Trim(); .)
-                   SYNC "%>"                                                       (. applyStatement = new ApplyStatement( methodName, parameters, from ); .)
+                   SYNC "%>"                                                       (. applyStatement = new ApplyStatement( new StatementPosition( start, t ), methodName, parameters, from ); .)
                    .
 Code<out CodeStatement codeStatement, ref bool isStart>
                 =
-                  "<%$"                                                            (. int startPos = t.pos + t.val.Length; .)
+                  "<%$"                                                            (. Token start = t; int startPos = t.pos + t.val.Length; .)
                    {ANY}                                                           (. string value = scanner.buffer.GetString( startPos, la.pos ); .) 
                   ("$%>"
                    | "$-%>"                                                        (. isStart = true; .)
                   )
-                                                                                   (. codeStatement = new CodeStatement( value.Trim() ); .)
+                                                                                   (. codeStatement = new CodeStatement( new StatementPosition( start, t ), value.Trim() ); .)
                   .
                   
 Call<out CallStatement callStatement>                                              (. string methodName; string parameters = null; .)
                 =
-                  "<%call" ident                                                   (. methodName = t.val; .)
+                  "<%call" 	                                                       (. Token start = t; .)
+                  ident                                                            (. methodName = t.val; .)
                    (                                                               (. int startPos = -1; int endPos = -1; .)
                      (
                       "(["                                                         (. startPos = t.pos + t.val.Length; .)
@@ -285,24 +294,24 @@ Call<out CallStatement callStatement>                                           
                      )                                                             (. if (startPos > 0 && endPos > 0)
                                                                                           parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); .)
                    )                                                              
-                   SYNC "%>"                                                       (. callStatement = new CallStatement( methodName, parameters ); .)
+                   SYNC "%>"                                                       (. callStatement = new CallStatement( new StatementPosition( start, t ), methodName, parameters ); .)
                    .
 
 
 Type<out WolfGenerator.Core.AST.Type type> =                                       (. StringBuilder name = new StringBuilder(); 
                                                                                       List<WolfGenerator.Core.AST.Type> genericParameters = null; .)
-       ident                                                                       (. name.Append( t.val ); .)
+       ident                                                                       (. Token start = t; name.Append( t.val ); .)
         { "." 
         ident                                                                      (. name.Append( '.' ); name.Append( t.val ); .)
         } [                                                                        (. genericParameters = new List<WolfGenerator.Core.AST.Type>();
                                                                                       WolfGenerator.Core.AST.Type generic; .)
         "<" Type<out generic>                                                      (. genericParameters.Add( generic ); .)
         { "," Type<out generic>                                                    (. genericParameters.Add( generic ); .)
-        } ">" ]                                                                    (. type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); .)
+        } ">" ]                                                                    (. type = new WolfGenerator.Core.AST.Type( new StatementPosition( start, t ), name.ToString(), genericParameters ); .)
         .
 
-Var<out Variable var> =                                                            (. WolfGenerator.Core.AST.Type type; .)
-      Type<out type> ident                                                         (. var = new Variable( t.val, type ); .)
+Var<out Variable var> =                                                            (. WolfGenerator.Core.AST.Type type; Token start = t; .)
+      Type<out type> ident                                                         (. var = new Variable( new StatementPosition( start, t ), t.val, type ); .)
       .
 
 END WolfGenerator.

@@ -23,7 +23,8 @@ namespace UnitTest.WolfGenerator.ParserTest
 	{
 		private static readonly JoinStatement[] statements = new[]
 		                                                     {
-		                                                     	new JoinStatement( @"\r\n", AppendType.EmptyLastLine,
+		                                                     	new JoinStatement( Helper.EmptyPosition, @"\r\n",
+		                                                     	                   AppendType.EmptyLastLine,
 		                                                     	                   new RuleStatement[]
 		                                                     	                   {
 		                                                     	                   	ApplyUnitTest.simpleApply,

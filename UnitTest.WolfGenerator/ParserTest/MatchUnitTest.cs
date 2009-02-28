@@ -22,7 +22,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 	{
 		public static readonly MatchMethodStatement[] statements = new[]
 		                                                           {
-		                                                           	new MatchMethodStatement( "IsId", "return field == \"Id\"" )
+		                                                           	new MatchMethodStatement( Helper.EmptyPosition, "IsId", "return field == \"Id\"" )
 		                                                           };
 
 		[TestMethod]

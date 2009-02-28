@@ -33,10 +33,10 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 		static TypeUnitTest()
 		{
-			simpleType     = new Type( "int", null );
-			listType       = new Type( "List", simpleType );
-			dictionaryType = new Type( "Dictionary", new Type( "string", null ), listType );
-			funcType       = new Type( "Func", listType, dictionaryType, listType, simpleType );
+			simpleType     = new Type( Helper.EmptyPosition, "int", null );
+			listType       = new Type( Helper.EmptyPosition, "List", simpleType );
+			dictionaryType = new Type( Helper.EmptyPosition, "Dictionary", new Type( Helper.EmptyPosition, "string", null ), listType );
+			funcType       = new Type( Helper.EmptyPosition, "Func", listType, dictionaryType, listType, simpleType );
 		}
 
 		[TestMethod]

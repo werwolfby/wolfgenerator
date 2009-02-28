@@ -51,6 +51,7 @@
     <Compile Include="ParserHelper.cs" />
     <Compile Include="ParserTest\ApplyUnitTest.cs" />
     <Compile Include="ParserTest\CodeUnitTest.cs" />
+    <Compile Include="ParserTest\Helper.cs" />
     <Compile Include="ParserTest\JoinUnitTest.cs" />
     <Compile Include="ParserTest\MatchUnitTest.cs" />
     <Compile Include="ParserTest\RuleClassUnitTest.cs" />

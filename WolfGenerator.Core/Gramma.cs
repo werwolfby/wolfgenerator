@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 25.02.2009 20:36:09
+// Compiled by vsCoco on 28.02.2009 11:46:18
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -103,10 +103,17 @@ public RuleClassStatement ruleClassStatement;
 	
 	string ExtractString( bool isStart, bool ifEnd, string text )
 	{
+		int startIndex = 0;
+		int endIndex = 0;
+		return ExtractString( isStart, ifEnd, text, ref startIndex, ref endIndex );
+	}
+	
+	string ExtractString( bool isStart, bool ifEnd, string text, ref int startIndex, ref int endIndex )
+	{
 		if (!string.IsNullOrEmpty( text ))
 		{
-			int startIndex = 0;
-			int endIndex = 0;
+			startIndex = 0;
+			endIndex = 0;
 			if (isStart)
 			{
 				if (text.StartsWith( "\r\n" )) startIndex = 2;
@@ -126,17 +133,10 @@ public RuleClassStatement ruleClassStatement;
 		return "";
 	}
 	
-	int AddStatement( bool isStart, int startPos, List<RuleStatement> statements, bool ifEnd )
-	{
-		string text = ExtractString( isStart, ifEnd, startPos, la.pos );
-		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
-		return la.pos;
-	}
-	
 	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, string text )
 	{
 		text = ExtractString( isStart, ifEnd, text );
-		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( text ) );
+		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( new StatementPosition( t.line, t.col, t.pos, la.line, la.col, la.pos ), text ) );
 		return la.pos;
 	}
 
@@ -211,6 +211,7 @@ public RuleClassStatement ruleClassStatement;
 		}
 		
 	void WolfGenerator() {
+		Token start = t;
 		List<UsingStatement> usingStatementList = null; 
 		List<RuleClassMethodStatement> ruleMethodStatementList = null; 
 		string name; 
@@ -237,7 +238,7 @@ public RuleClassStatement ruleClassStatement;
 			}
 		}
 		RuleClassEnd();
-		ruleClassStatement = new RuleClassStatement( name, usingStatementList, ruleMethodStatementList ); 
+		ruleClassStatement = new RuleClassStatement( new StatementPosition( start, t ), name, usingStatementList, ruleMethodStatementList ); 
 	}
 
 	void RuleClassStart(out string name) {
@@ -250,6 +251,7 @@ public RuleClassStatement ruleClassStatement;
 	void Using(out UsingStatement usingStatement) {
 		List<string> namespaceList = new List<string>(); 
 		Expect(9);
+		Token start = t; 
 		Expect(1);
 		namespaceList.Add( t.val ); 
 		while (la.kind == 20) {
@@ -258,7 +260,7 @@ public RuleClassStatement ruleClassStatement;
 			namespaceList.Add( t.val ); 
 		}
 		string namespaceName = string.Join( ".", namespaceList.ToArray() );
-		usingStatement = new UsingStatement( namespaceName ); 
+		usingStatement = new UsingStatement( new StatementPosition( start, t ), namespaceName ); 
 		Expect(10);
 	}
 
@@ -271,6 +273,7 @@ public RuleClassStatement ruleClassStatement;
 		CodeStatement codeStatement;
 		CallStatement callStatement;
 		MatchMethodStatement matchStatement = null; 
+		Token start = t; 
 		if (la.kind == 8) {
 			MatchMethod(out matchStatement);
 		}
@@ -296,7 +299,7 @@ public RuleClassStatement ruleClassStatement;
 			}
 		}
 		RuleMethodEnd();
-		statement = new RuleMethodStatement( matchStatement, methodName, variables, statements ); 
+		statement = new RuleMethodStatement( new StatementPosition( start, t ), matchStatement, methodName, variables, statements ); 
 	}
 
 	void Method(out MethodStatement methodStatement) {
@@ -304,6 +307,7 @@ public RuleClassStatement ruleClassStatement;
 		List<Variable> variables = null;
 		int startPos = -1; string name; 
 		Expect(7);
+		Token start = t; 
 		Type(out returnType);
 		Expect(1);
 		name = t.val; 
@@ -326,7 +330,7 @@ public RuleClassStatement ruleClassStatement;
 			Get();
 		}
 		Expect(11);
-		methodStatement = new MethodStatement( returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); 
+		methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); 
 	}
 
 	void RuleClassEnd() {
@@ -336,6 +340,7 @@ public RuleClassStatement ruleClassStatement;
 	void MatchMethod(out MatchMethodStatement statement) {
 		string name; string code; 
 		Expect(8);
+		Token start = t; 
 		Expect(1);
 		name = t.val; 
 		Expect(10);
@@ -345,7 +350,7 @@ public RuleClassStatement ruleClassStatement;
 		}
 		code = ExtractString( true, true, startPos, la.pos ); 
 		Expect(11);
-		statement = new MatchMethodStatement( name, code ); 
+		statement = new MatchMethodStatement( new StatementPosition( start, t ), name, code ); 
 	}
 
 	void RuleMethodStart(out string name, out IList<Variable> variables ) {
@@ -373,7 +378,7 @@ public RuleClassStatement ruleClassStatement;
 
 	void Value(out ValueStatement valueStatement) {
 		Expect(12);
-		int pos = t.pos + t.val.Length; 
+		Token start = t; int pos = t.pos + t.val.Length; 
 		while (StartOf(4)) {
 			Get();
 		}
@@ -381,7 +386,7 @@ public RuleClassStatement ruleClassStatement;
 		Expect(10);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
-		valueStatement = new ValueStatement( value.Trim() );  
+		valueStatement = new ValueStatement( new StatementPosition( start, t ), value.Trim() );  
 	}
 
 	void Join(out JoinStatement joinStatement) {
@@ -392,6 +397,7 @@ public RuleClassStatement ruleClassStatement;
 		CallStatement callStatement; 
 		AppendType appendType = AppendType.EmptyLastLine; 
 		Expect(4);
+		Token start = t; 
 		Expect(29);
 		@string = t.val.Substring( 1, t.val.Length - 2 ); 
 		if (la.kind == 17) {
@@ -422,12 +428,12 @@ public RuleClassStatement ruleClassStatement;
 		}
 		while (!(la.kind == 0 || la.kind == 11)) {SynErr(37); Get();}
 		Expect(11);
-		joinStatement = new JoinStatement( @string, appendType, statements ); 
+		joinStatement = new JoinStatement( new StatementPosition( start, t ), @string, appendType, statements ); 
 	}
 
 	void Code(out CodeStatement codeStatement, ref bool isStart) {
 		Expect(13);
-		int startPos = t.pos + t.val.Length; 
+		Token start = t; int startPos = t.pos + t.val.Length; 
 		while (StartOf(5)) {
 			Get();
 		}
@@ -438,12 +444,13 @@ public RuleClassStatement ruleClassStatement;
 			Get();
 			isStart = true; 
 		} else SynErr(38);
-		codeStatement = new CodeStatement( value.Trim() ); 
+		codeStatement = new CodeStatement( new StatementPosition( start, t ), value.Trim() ); 
 	}
 
 	void Call(out CallStatement callStatement) {
 		string methodName; string parameters = null; 
 		Expect(6);
+		Token start = t; 
 		Expect(1);
 		methodName = t.val; 
 		int startPos = -1; int endPos = -1; 
@@ -468,7 +475,7 @@ public RuleClassStatement ruleClassStatement;
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
 		while (!(la.kind == 0 || la.kind == 10)) {SynErr(40); Get();}
 		Expect(10);
-		callStatement = new CallStatement( methodName, parameters ); 
+		callStatement = new CallStatement( new StatementPosition( start, t ), methodName, parameters ); 
 	}
 
 	void RuleMethodEnd() {
@@ -477,17 +484,17 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 	void Var(out Variable var) {
-		WolfGenerator.Core.AST.Type type; 
+		WolfGenerator.Core.AST.Type type; Token start = t; 
 		Type(out type);
 		Expect(1);
-		var = new Variable( t.val, type ); 
+		var = new Variable( new StatementPosition( start, t ), t.val, type ); 
 	}
 
 	void Type(out WolfGenerator.Core.AST.Type type) {
 		StringBuilder name = new StringBuilder(); 
 		List<WolfGenerator.Core.AST.Type> genericParameters = null; 
 		Expect(1);
-		name.Append( t.val ); 
+		Token start = t; name.Append( t.val ); 
 		while (la.kind == 20) {
 			Get();
 			Expect(1);
@@ -506,12 +513,13 @@ public RuleClassStatement ruleClassStatement;
 			}
 			Expect(27);
 		}
-		type = new WolfGenerator.Core.AST.Type( name.ToString(), genericParameters ); 
+		type = new WolfGenerator.Core.AST.Type( new StatementPosition( start, t ), name.ToString(), genericParameters ); 
 	}
 
 	void Apply(out ApplyStatement applyStatement) {
 		string methodName; string parameters = null; string from; 
 		Expect(5);
+		Token start = t; 
 		Expect(1);
 		methodName = t.val; 
 		int startPos = -1; int endPos = -1; 
@@ -543,7 +551,7 @@ public RuleClassStatement ruleClassStatement;
 		from = scanner.buffer.GetString( startFrom, la.pos ).Trim(); 
 		while (!(la.kind == 0 || la.kind == 10)) {SynErr(44); Get();}
 		Expect(10);
-		applyStatement = new ApplyStatement( methodName, parameters, from ); 
+		applyStatement = new ApplyStatement( new StatementPosition( start, t ), methodName, parameters, from ); 
 	}
 
 

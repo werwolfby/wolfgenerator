@@ -25,6 +25,16 @@ namespace WolfGenerator.Core.AST
 			this.EndPos = endPos;
 		}
 
+		public StatementPosition( Token startToken, Token endToken ) : this()
+		{
+			this.StartLine = startToken.line;
+			this.EndLine = endToken.line;
+			this.StartColumn = startToken.col;
+			this.EndColumn = endToken.col;
+			this.StartPos = startToken.pos;
+			this.EndPos = endToken.pos;
+		}
+
 		public int StartLine { get; private set; }
 
 		public int EndLine { get; private set; }

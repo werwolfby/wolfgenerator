@@ -21,9 +21,9 @@ namespace UnitTest.WolfGenerator.ParserTest
 	{
 		public static readonly UsingStatement[] statements = new[]
 		                                                     {
-		                                                     	new UsingStatement( "System" ),
-		                                                     	new UsingStatement( "System.Collection" ),
-		                                                     	new UsingStatement( "System.Collection.Generic" ),
+		                                                     	new UsingStatement( Helper.EmptyPosition, "System" ),
+		                                                     	new UsingStatement( Helper.EmptyPosition, "System.Collection" ),
+		                                                     	new UsingStatement( Helper.EmptyPosition, "System.Collection.Generic" ),
 		                                                     };
 
 		[TestMethod]

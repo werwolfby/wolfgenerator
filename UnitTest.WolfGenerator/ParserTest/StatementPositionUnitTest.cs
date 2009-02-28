@@ -23,7 +23,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 		[TestMethod]
 		public void StatementPositionTest()
 		{
-			var temp = "Test ";
+			var temp = "Test 123123123 ";
 			var strings = new[]
 			              {
 			              	"<%ruleclass Test%>",   // 0
@@ -47,6 +47,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 			AssertHelper.AssertStatementPosition( textStatement1StartPos, textStatement1EndPos,
 			                                      ruleMethodStatement.Statements[0].StatementPosition );
 
+			// Извратный подсчёт, для UnitTest'а плохой вариант, но так впадлу вручную считать
 			AssertHelper.AssertStatementPosition( 3, 3, temp.Length + 1, strings[2].Length, textStatement1EndPos + 1,
 			                                      textStatement1EndPos + strings[2].Length - temp.Length,
 			                                      ruleMethodStatement.Statements[1].StatementPosition );

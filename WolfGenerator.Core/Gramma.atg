@@ -191,7 +191,7 @@ Method <out MethodStatement methodStatement>                                    
                 = SYNC "<%method"                                                  (. Token start = t; .)
                   Type<out returnType>
                   ident                                                            (. name = t.val; .)
-                  "(" Variables<out variables> ")" "%>"                            (. startPos = t.pos + t.val.Length; .)
+                  "(" Variables<out variables> WEAK ")" SYNC "%>"                  (. startPos = t.pos + t.val.Length; .)
                   {ANY}
                   SYNC "<%end%>"                                                   (. methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); .)
                   .
@@ -206,7 +206,7 @@ Variables <. out List<Variable> variableList .>                                 
 
 Value<out ValueStatement valueStatement>
                 = 
-                  "<%="                                                            (. Token start = t; int pos = t.pos + t.val.Length; .)
+                  SYNC "<%="                                                       (. Token start = t; int pos = t.pos + t.val.Length; .)
                   {ANY}
                   SYNC "%>"                                                        (. int endPos = t.pos;
                                                                                       string value = scanner.buffer.GetString( pos, endPos );
@@ -220,15 +220,17 @@ Join<out JoinStatement joinStatement>                                           
                                                                                       CallStatement callStatement; 
                                                                                       AppendType appendType = AppendType.EmptyLastLine; .)
                 = 
-                  "<%join" 	                                                       (. Token start = t; .)
+                  SYNC "<%join"                                                    (. Token start = t; .)
                   string                                                           (. @string = t.val.Substring( 1, t.val.Length - 2 ); .)
                   ["with"
                    ("Space"                                                        (. appendType = AppendType.SpaceLastLine; .)
                     | 
                     "Clone"                                                        (. appendType = AppendType.CloneLastLine; .)
+                    |
+                    {ANY}                                                          (. /* TODO: Add cutom error */ .)
                    )
                   ]
-                  "%>" 
+                  SYNC "%>" 
                   {                    
                     Value<out valueStatement>                                      (. if (statements == null) statements = new List<RuleStatement>();
                                                                                    	  statements.Add( valueStatement ); .)
@@ -244,7 +246,7 @@ Join<out JoinStatement joinStatement>                                           
                   
 Apply<out ApplyStatement applyStatement>                                           (. string methodName; string parameters = null; string from; .)
                 =
-                  "<%apply" 	                                                   (. Token start = t; .)
+                  SYNC "<%apply" 	                                               (. Token start = t; .)
                   ident                                                            (. methodName = t.val; .)
                    (                                                               (. int startPos = -1; int endPos = -1; .)
                      (
@@ -264,7 +266,7 @@ Apply<out ApplyStatement applyStatement>                                        
                    .
 Code<out CodeStatement codeStatement, ref bool isStart>
                 =
-                  "<%$"                                                            (. Token start = t; int startPos = t.pos + t.val.Length; .)
+                  SYNC "<%$"                                                       (. Token start = t; int startPos = t.pos + t.val.Length; .)
                    {ANY}                                                           (. string value = scanner.buffer.GetString( startPos, la.pos ); .) 
                   ("$%>"
                    | "$-%>"                                                        (. isStart = true; .)
@@ -274,14 +276,14 @@ Code<out CodeStatement codeStatement, ref bool isStart>
                   
 Call<out CallStatement callStatement>                                              (. string methodName; string parameters = null; .)
                 =
-                  "<%call" 	                                                       (. Token start = t; .)
+                  SYNC "<%call"                                                    (. Token start = t; .)
                   ident                                                            (. methodName = t.val; .)
                    (                                                               (. int startPos = -1; int endPos = -1; .)
                      (
                       "(["                                                         (. startPos = t.pos + t.val.Length; .)
-						{ ANY }                                                    (. endPos = la.pos; .)
-					  "])" 
-					  |
+                        { ANY }                                                    (. endPos = la.pos; .)
+                      "])" 
+                      |
                       "("                                                          (. startPos = t.pos + t.val.Length; .)
                         { ANY }                                                    (. endPos = la.pos; .)
                       ")"
@@ -300,7 +302,7 @@ Type<out WolfGenerator.Core.AST.Type type> =                                    
         } [                                                                        (. genericParameters = new List<WolfGenerator.Core.AST.Type>();
                                                                                       WolfGenerator.Core.AST.Type generic; .)
         "<" Type<out generic>                                                      (. genericParameters.Add( generic ); .)
-        { "," Type<out generic>                                                    (. genericParameters.Add( generic ); .)
+        { WEAK "," Type<out generic>                                               (. genericParameters.Add( generic ); .)
         } ">" ]                                                                    (. type = new WolfGenerator.Core.AST.Type( new StatementPosition( start, t ), name.ToString(), genericParameters ); .)
         .
 

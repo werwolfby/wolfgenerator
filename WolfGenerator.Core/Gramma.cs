@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 28.02.2009 14:59:55
+// Compiled by vsCoco on 28.02.2009 15:06:54
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -323,13 +323,14 @@ public RuleClassStatement ruleClassStatement;
 		name = t.val; 
 		Expect(22);
 		Variables(out variables);
-		Expect(23);
+		ExpectWeak(23, 1);
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(38); Get();}
 		Expect(10);
 		startPos = t.pos + t.val.Length; 
 		while (StartOf(3)) {
 			Get();
 		}
-		while (!(la.kind == 0 || la.kind == 11)) {SynErr(38); Get();}
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(39); Get();}
 		Expect(11);
 		methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); 
 	}
@@ -364,12 +365,13 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 	void Value(out ValueStatement valueStatement) {
+		while (!(la.kind == 0 || la.kind == 12)) {SynErr(40); Get();}
 		Expect(12);
 		Token start = t; int pos = t.pos + t.val.Length; 
 		while (StartOf(6)) {
 			Get();
 		}
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(39); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(41); Get();}
 		Expect(10);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
@@ -383,6 +385,7 @@ public RuleClassStatement ruleClassStatement;
 		ApplyStatement applyStatement;
 		CallStatement callStatement; 
 		AppendType appendType = AppendType.EmptyLastLine; 
+		while (!(la.kind == 0 || la.kind == 4)) {SynErr(42); Get();}
 		Expect(4);
 		Token start = t; 
 		Expect(29);
@@ -395,8 +398,14 @@ public RuleClassStatement ruleClassStatement;
 			} else if (la.kind == 19) {
 				Get();
 				appendType = AppendType.CloneLastLine; 
-			} else SynErr(40);
+			} else if (StartOf(7)) {
+				while (StartOf(8)) {
+					Get();
+				}
+				
+			} else SynErr(43);
 		}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(44); Get();}
 		Expect(10);
 		while (la.kind == 5 || la.kind == 6 || la.kind == 12) {
 			if (la.kind == 12) {
@@ -413,15 +422,16 @@ public RuleClassStatement ruleClassStatement;
 				statements.Add( callStatement ); 
 			}
 		}
-		while (!(la.kind == 0 || la.kind == 11)) {SynErr(41); Get();}
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(45); Get();}
 		Expect(11);
 		joinStatement = new JoinStatement( new StatementPosition( start, t ), @string, appendType, statements ); 
 	}
 
 	void Code(out CodeStatement codeStatement, ref bool isStart) {
+		while (!(la.kind == 0 || la.kind == 13)) {SynErr(46); Get();}
 		Expect(13);
 		Token start = t; int startPos = t.pos + t.val.Length; 
-		while (StartOf(7)) {
+		while (StartOf(9)) {
 			Get();
 		}
 		string value = scanner.buffer.GetString( startPos, la.pos ); 
@@ -430,12 +440,13 @@ public RuleClassStatement ruleClassStatement;
 		} else if (la.kind == 15) {
 			Get();
 			isStart = true; 
-		} else SynErr(42);
+		} else SynErr(47);
 		codeStatement = new CodeStatement( new StatementPosition( start, t ), value.Trim() ); 
 	}
 
 	void Call(out CallStatement callStatement) {
 		string methodName; string parameters = null; 
+		while (!(la.kind == 0 || la.kind == 6)) {SynErr(48); Get();}
 		Expect(6);
 		Token start = t; 
 		Expect(1);
@@ -444,7 +455,7 @@ public RuleClassStatement ruleClassStatement;
 		if (la.kind == 24) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(8)) {
+			while (StartOf(10)) {
 				Get();
 			}
 			endPos = la.pos; 
@@ -452,15 +463,15 @@ public RuleClassStatement ruleClassStatement;
 		} else if (la.kind == 22) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(9)) {
+			while (StartOf(11)) {
 				Get();
 			}
 			endPos = la.pos; 
 			Expect(23);
-		} else SynErr(43);
+		} else SynErr(49);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(44); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(50); Get();}
 		Expect(10);
 		callStatement = new CallStatement( new StatementPosition( start, t ), methodName, parameters ); 
 	}
@@ -481,8 +492,7 @@ public RuleClassStatement ruleClassStatement;
 			Get();
 			Type(out generic);
 			genericParameters.Add( generic ); 
-			while (la.kind == 21) {
-				Get();
+			while (WeakSeparator(21,4,12) ) {
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
@@ -500,6 +510,7 @@ public RuleClassStatement ruleClassStatement;
 
 	void Apply(out ApplyStatement applyStatement) {
 		string methodName; string parameters = null; string from; 
+		while (!(la.kind == 0 || la.kind == 5)) {SynErr(51); Get();}
 		Expect(5);
 		Token start = t; 
 		Expect(1);
@@ -508,7 +519,7 @@ public RuleClassStatement ruleClassStatement;
 		if (la.kind == 24) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(8)) {
+			while (StartOf(10)) {
 				Get();
 			}
 			endPos = la.pos; 
@@ -516,22 +527,22 @@ public RuleClassStatement ruleClassStatement;
 		} else if (la.kind == 22) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(9)) {
+			while (StartOf(11)) {
 				Get();
 			}
 			endPos = la.pos; 
 			Expect(23);
-		} else SynErr(45);
+		} else SynErr(52);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 16)) {SynErr(46); Get();}
+		while (!(la.kind == 0 || la.kind == 16)) {SynErr(53); Get();}
 		Expect(16);
 		int startFrom = la.pos; 
 		while (StartOf(6)) {
 			Get();
 		}
 		from = scanner.buffer.GetString( startFrom, la.pos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(47); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(54); Get();}
 		Expect(10);
 		applyStatement = new ApplyStatement( new StatementPosition( start, t ), methodName, parameters, from ); 
 	}
@@ -553,16 +564,19 @@ public RuleClassStatement ruleClassStatement;
 		}
 		
 		bool[,] set = {
-		{T,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		{T,x,x,T, x,x,x,T, x,x,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{T,x,x,T, T,T,T,T, x,x,T,T, T,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{T,x,x,T, T,T,T,T, x,x,T,T, T,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
 		{x,x,x,x, T,x,T,x, x,x,x,x, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x},
 		{x,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
 		{x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x},
 		{x,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
+		{x,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
 		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
 		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x}
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x}
 
 		};
 	} // end Parser
@@ -620,15 +634,22 @@ public RuleClassStatement ruleClassStatement;
 			case 36: s = "this symbol not expected in RuleMethod"; break;
 			case 37: s = "this symbol not expected in Method"; break;
 			case 38: s = "this symbol not expected in Method"; break;
-			case 39: s = "this symbol not expected in Value"; break;
-			case 40: s = "invalid Join"; break;
-			case 41: s = "this symbol not expected in Join"; break;
-			case 42: s = "invalid Code"; break;
-			case 43: s = "invalid Call"; break;
-			case 44: s = "this symbol not expected in Call"; break;
-			case 45: s = "invalid Apply"; break;
-			case 46: s = "this symbol not expected in Apply"; break;
-			case 47: s = "this symbol not expected in Apply"; break;
+			case 39: s = "this symbol not expected in Method"; break;
+			case 40: s = "this symbol not expected in Value"; break;
+			case 41: s = "this symbol not expected in Value"; break;
+			case 42: s = "this symbol not expected in Join"; break;
+			case 43: s = "invalid Join"; break;
+			case 44: s = "this symbol not expected in Join"; break;
+			case 45: s = "this symbol not expected in Join"; break;
+			case 46: s = "this symbol not expected in Code"; break;
+			case 47: s = "invalid Code"; break;
+			case 48: s = "this symbol not expected in Call"; break;
+			case 49: s = "invalid Call"; break;
+			case 50: s = "this symbol not expected in Call"; break;
+			case 51: s = "this symbol not expected in Apply"; break;
+			case 52: s = "invalid Apply"; break;
+			case 53: s = "this symbol not expected in Apply"; break;
+			case 54: s = "this symbol not expected in Apply"; break;
 
 				default: s = "error " + n; break;
 			}

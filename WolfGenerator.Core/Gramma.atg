@@ -112,11 +112,12 @@ IGNORE cr + lf + tab
 
 PRODUCTIONS
 
-WolfGenerator =                                                                    (. Token start = t;
-                                                                                      List<UsingStatement> usingStatementList = null; 
+WolfGenerator =                                                                    (. List<UsingStatement> usingStatementList = null; 
                                                                                       List<RuleClassMethodStatement> ruleMethodStatementList = null; 
                                                                                       string name; .) 
-                RuleClassStart<out name> 
+                "<%ruleclass"                                                      (. Token start = t; .)
+                ident                                                              (. name = t.val; .)
+                "%>"
                 {                                                                  (. UsingStatement usingStatement; .)
                  Using<out usingStatement>                                         (. if (usingStatementList == null) usingStatementList = new List<UsingStatement>();
                                                                                       usingStatementList.Add( usingStatement ); .)
@@ -130,12 +131,8 @@ WolfGenerator =                                                                 
                                                                                           ruleMethodStatementList = new List<RuleClassMethodStatement>();
                                                                                       ruleMethodStatementList.Add( method ); .)
                 } 
-                RuleClassEnd                                                       (. ruleClassStatement = new RuleClassStatement( new StatementPosition( start, t ), name, usingStatementList, ruleMethodStatementList ); .)
+                "<%end%>"                                                          (. ruleClassStatement = new RuleClassStatement( new StatementPosition( start, t ), name, usingStatementList, ruleMethodStatementList ); .)
                 .
-
-RuleClassStart<out string name> = "<%ruleclass" ident                              (. name = t.val; .)
-                                   "%>".
-RuleClassEnd   = "<%end%>".
 
 Using<out UsingStatement usingStatement>                                           (. List<string> namespaceList = new List<string>(); .) 
 =
@@ -182,36 +179,35 @@ RuleMethod<out RuleMethodStatement statement>                                   
                       Call<out callStatement>                                      (. statements.Add( callStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       } 
                                                                                    
-                      RuleMethodEnd                                                (. statement = new RuleMethodStatement( new StatementPosition( start, t ), matchStatement, methodName, variables, statements ); .)
+                      SYNC "<%end%>"                                               (. statement = new RuleMethodStatement( new StatementPosition( start, t ), matchStatement, methodName, variables, statements ); .)
                       .
 
 RuleMethodStart <. out string name, out IList<Variable> variables .>               (. Variable var = null; 
-                                                                                      List<Variable> variableList = null; .)
-                = "<%rule" ident                                                   (. name = t.val; .) 
-                  "(" [ Var<out var>                                               (. if (variableList == null) variableList = new List<Variable>();
-                                                                                      variableList.Add( var ); .)
-                        { "," Var<out var>                                         (. variableList.Add( var ); .)
-                        } ] WEAK ")" SYNC "%>"                                     (. variables = variableList == null ? null : variableList.AsReadOnly(); .)
+                                                                                      List<Variable> variableList; .)
+                = SYNC "<%rule" ident                                              (. name = t.val; .) 
+                  "(" Variables<out variableList> WEAK ")" 
+                  SYNC "%>"                                                        (. variables = variableList == null ? null : variableList.AsReadOnly(); .)
                   .
-RuleMethodEnd   = SYNC "<%end%>".
 
 Method <out MethodStatement methodStatement>                                       (. WolfGenerator.Core.AST.Type returnType;
                                                                                       List<Variable> variables = null;
                                                                                       int startPos = -1; string name; .)
                 =
-                  "<%method"                                                       (. Token start = t; .)
+                  SYNC "<%method"                                                  (. Token start = t; .)
                   Type<out returnType>
                   ident                                                            (. name = t.val; .)
-                  "("                                                              (. Variable currentVariable; .)
-                  [ Var<out currentVariable>                                       (. if (variables == null) variables = new List<Variable>();
-                                                                                          variables.Add( currentVariable ); .)
-                    { "," 
-                     Var<out currentVariable>                                      (. variables.Add( currentVariable ); .)
-                    }
-                  ] ")" "%>"                                                       (. startPos = t.pos + t.val.Length; .)
+                  "(" Variables<out variables> ")" "%>"                            (. startPos = t.pos + t.val.Length; .)
                   {ANY}
-                  "<%end%>"                                                        (. methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); .)
+                  SYNC "<%end%>"                                                    (. methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); .)
                   .
+Variables <. out List<Variable> variableList .>                                    (. variableList = null; Variable var; .)
+                =
+                [ Var<out var>                                                     (. if (variableList == null) variableList = new List<Variable>();
+                                                                                      variableList.Add( var ); .)
+                        { "," Var<out var>                                         (. variableList.Add( var ); .)
+                        } ]
+                .
+
 
 Value<out ValueStatement valueStatement>
                 = 

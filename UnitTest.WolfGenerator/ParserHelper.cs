@@ -70,19 +70,6 @@ namespace UnitTest.WolfGenerator
 			return Parse( statementText, ( Parser_Accessor p, out JoinStatement t ) => p.Join( out t ) );
 		}
 
-		public static void ParseRuleMethodStart( string statement, out string name, out IList<Variable> variables )
-		{
-			string n = null;
-			IList<Variable> var = null;
-			Parse( statement, delegate( Parser_Accessor p, out RuleStatement s )
-			                  {
-			                  	s = null;
-			                  	p.RuleMethodStart( out n, out var );
-			                  } );
-			name = n;
-			variables = var;
-		}
-
 		public static RuleMethodStatement ParseRuleMethod( string statement )
 		{
 			return Parse( statement, ( Parser_Accessor p, out RuleMethodStatement t ) => p.RuleMethod( out t ) );

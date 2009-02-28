@@ -79,21 +79,6 @@ namespace UnitTest.WolfGenerator.ParserTest
 		}
 
 		[TestMethod]
-		public void SimpleRuleMethodStartTest()
-		{
-			var expectedName = "Test";
-			var expectedVariables = new[] { VariableUnitTest.simpleVariable, VariableUnitTest.listVariable };
-			var ruleMethodStartStatementText = RuleMethodStartToString( expectedName, expectedVariables, ",", "<", ">" );
-
-			string name;
-			IList<Variable> variables;
-			ParserHelper.ParseRuleMethodStart( ruleMethodStartStatementText, out name, out variables );
-
-			Assert.AreEqual( expectedName, name, "Rule name dismatch" );
-			AssertHelper.AssertVariables( expectedVariables, variables );
-		}
-
-		[TestMethod]
 		public void RuleMethodTest()
 		{
 			var expectedName = "Test";

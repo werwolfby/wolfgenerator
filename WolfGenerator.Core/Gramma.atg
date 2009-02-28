@@ -153,6 +153,7 @@ MatchMethod<out MatchMethodStatement statement>                                 
                      .
 
 RuleMethod<out RuleMethodStatement statement>                                      (. string methodName; IList<Variable> variables;
+                                                                                      List<Variable> variableList;
                                                                                       List<RuleStatement> statements = new List<RuleStatement>();
                                                                                       bool isStart = true;
                                                                                       ValueStatement valueStatement;
@@ -162,49 +163,43 @@ RuleMethod<out RuleMethodStatement statement>                                   
                                                                                       MatchMethodStatement matchStatement = null; .)
                     = 	                                                           (. Token start = la; .)
                      [ MatchMethod<out matchStatement> ]
-                     RuleMethodStart<out methodName, out variables>                (. int startPos = t.pos + t.val.Length; .)
+                     SYNC "<%rule" ident                                           (. methodName = t.val; .) 
+                     "(" Variables<out variableList> WEAK ")" 
+                     SYNC "%>"                                                     (. variables = variableList == null ? null : variableList.AsReadOnly(); .)
                      { 
                       text                                                         (. AddStatement( isStart, statements, la.kind == _end, t ); .)
                       |
-                      Value<out valueStatement>                                    (. statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                      Value<out valueStatement>                                    (. statements.Add( valueStatement ); isStart = false; .)
                       
                       |                                                            
-                      Join<out joinStatement>                                      (. statements.Add( joinStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                      Join<out joinStatement>                                      (. statements.Add( joinStatement ); isStart = false; .)
                       
                       |                                                            
                                                                                    (. isStart = false; .)
-                      Code<out codeStatement, ref isStart>                         (. statements.Add( codeStatement ); startPos = t.pos + t.val.Length; .)
+                      Code<out codeStatement, ref isStart>                         (. statements.Add( codeStatement ); .)
                       
                       |                                                            
-                      Call<out callStatement>                                      (. statements.Add( callStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
+                      Call<out callStatement>                                      (. statements.Add( callStatement ); isStart = false; .)
                       } 
                                                                                    
                       SYNC "<%end%>"                                               (. statement = new RuleMethodStatement( new StatementPosition( start, t ), matchStatement, methodName, variables, statements ); .)
                       .
 
-RuleMethodStart <. out string name, out IList<Variable> variables .>               (. Variable var = null; 
-                                                                                      List<Variable> variableList; .)
-                = SYNC "<%rule" ident                                              (. name = t.val; .) 
-                  "(" Variables<out variableList> WEAK ")" 
-                  SYNC "%>"                                                        (. variables = variableList == null ? null : variableList.AsReadOnly(); .)
-                  .
-
 Method <out MethodStatement methodStatement>                                       (. WolfGenerator.Core.AST.Type returnType;
                                                                                       List<Variable> variables = null;
                                                                                       int startPos = -1; string name; .)
-                =
-                  SYNC "<%method"                                                  (. Token start = t; .)
+                = SYNC "<%method"                                                  (. Token start = t; .)
                   Type<out returnType>
                   ident                                                            (. name = t.val; .)
                   "(" Variables<out variables> ")" "%>"                            (. startPos = t.pos + t.val.Length; .)
                   {ANY}
-                  SYNC "<%end%>"                                                    (. methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); .)
+                  SYNC "<%end%>"                                                   (. methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); .)
                   .
 Variables <. out List<Variable> variableList .>                                    (. variableList = null; Variable var; .)
                 =
                 [ Var<out var>                                                     (. if (variableList == null) variableList = new List<Variable>();
                                                                                       variableList.Add( var ); .)
-                        { "," Var<out var>                                         (. variableList.Add( var ); .)
+                        { WEAK "," Var<out var>                                    (. variableList.Add( var ); .)
                         } ]
                 .
 

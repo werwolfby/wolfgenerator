@@ -18,6 +18,7 @@
  *   15.02.2009 14:07 - Fix: again forget return type of AssertJoin method.
  *   15.02.2009 15:56 - Add AssertVariables.
  *   28.02.2009 15:43 - Add AssertError.
+ *   28.02.2009 16:38 - Add AssertStatementPosition.
  *
  *******************************************************/
 
@@ -78,9 +79,7 @@ namespace UnitTest.WolfGenerator
 				}
 			}
 			else
-			{
 				Assert.AreEqual( 0, expected.GenericParameters.Count, "Expected type contains generic parameters" );
-			}
 
 			return 0;
 		}
@@ -94,7 +93,7 @@ namespace UnitTest.WolfGenerator
 			return 0;
 		}
 
-		public static int AssertValue( ValueStatement expected, ValueStatement actual ) 
+		public static int AssertValue( ValueStatement expected, ValueStatement actual )
 		{
 			Assert.IsNotNull( actual.Value, "Value can't be null" );
 			Assert.AreEqual( expected.Value.Trim(), actual.Value.Trim() );
@@ -152,7 +151,7 @@ namespace UnitTest.WolfGenerator
 			return 0;
 		}
 
-		public static void AssertVariables( Variable[] expectedVariables, IList<Variable> variables ) 
+		public static void AssertVariables( Variable[] expectedVariables, IList<Variable> variables )
 		{
 			Assert.AreEqual( expectedVariables.Length, variables.Count, "Variables count dismatch" );
 			for (var i = 0; i < expectedVariables.Length; i++)
@@ -164,7 +163,8 @@ namespace UnitTest.WolfGenerator
 			Assert.AreEqual( expected.Namespace, actual.Namespace );
 		}
 
-		private static void AssertJoinInnerStatementHelper<T>( RuleStatement expected, RuleStatement actual, Func<T,T,int> assertFunc )
+		private static void AssertJoinInnerStatementHelper<T>( RuleStatement expected, RuleStatement actual,
+		                                                       Func<T, T, int> assertFunc )
 			where T : RuleStatement
 		{
 			var expectedValueStatement = (T)expected;
@@ -178,6 +178,23 @@ namespace UnitTest.WolfGenerator
 			if (line.HasValue) Assert.AreEqual( line.Value, errorData.line, "Error line wrong" );
 			if (column.HasValue) Assert.AreEqual( column.Value, errorData.column, "Error column wrong" );
 			if (!string.IsNullOrEmpty( message )) Assert.AreEqual( message, errorData.message, "Error message wrong" );
+		}
+
+		public static void AssertStatementPosition( int startPos, int endPos, StatementPosition actualPosition )
+		{
+			Assert.AreEqual( startPos, actualPosition.StartPos, "StartPos wrong" );
+			Assert.AreEqual( endPos, actualPosition.EndPos, "EndPos wrong" );
+		}
+
+		public static void AssertStatementPosition( int startLine, int endLine, int startColumn, int endColumn, int startPos,
+		                                            int endPos, StatementPosition actualPosition )
+		{
+			Assert.AreEqual( startLine, actualPosition.StartLine, "StartLine wrong" );
+			Assert.AreEqual( endLine, actualPosition.EndLine, "EndLine wrong" );
+			Assert.AreEqual( startColumn, actualPosition.StartColumn, "StartColumn wrong" );
+			Assert.AreEqual( endColumn, actualPosition.EndColumn, "EndColumn wrong" );
+
+			AssertStatementPosition( startPos, endPos, actualPosition );
 		}
 	}
 }

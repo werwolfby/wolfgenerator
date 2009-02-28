@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using CustomToolGenerator;
@@ -64,7 +65,7 @@ namespace WolfGenerator.Core
 				parser.Parse();
 
 				if (parser.errors.count == 0)
-					programCode = new Generator().Generate( FileNameSpace, parser.ruleClassStatement, inputFileName ).ToString();
+					programCode = new Generator().Generate( FileNameSpace, parser.ruleClassStatement, Path.GetFileName( inputFileName ) ).ToString();
 				else
 					programCode = "parser errors: " + parser.errors.count;
 			}

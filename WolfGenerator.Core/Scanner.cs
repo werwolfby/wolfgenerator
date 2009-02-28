@@ -9,6 +9,7 @@
  * History:
  *   03.02.2009 23:43 - Create Wireframe
  *   14.02.2009 22:35 - Fix: GetTextToken() forget to check if find end of file.
+ *   28.02.2009 13:27 - Fix: pos of Text token.
  *
  *******************************************************/
 
@@ -360,10 +361,9 @@ public class UTF8Buffer: Buffer {
 			if (this.ch == '<' && this.buffer.Peek() == '%') return null;
 
 			this.tlen = 0;
+			this.t = new Token { pos = this.pos, col = (this.pos - this.lineStart + 1), line = this.line };
 			this.AddCh();
 			var end = false;
-
-			this.t = new Token { pos = this.pos, col = (this.pos - this.lineStart + 1), line = this.line };
 
 			while (!end)
 			{

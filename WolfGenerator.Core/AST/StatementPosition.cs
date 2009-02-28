@@ -8,6 +8,9 @@
  * 
  * History:
  *   28.02.2009 09:06 - Create Wireframe
+ *   28.02.2009 13:27 - Add Constructor with only start and end position.
+ *                      line & column will be -1.
+ *                      FIX: Determine right end and start position.
  *
  *******************************************************/
 
@@ -15,6 +18,10 @@ namespace WolfGenerator.Core.AST
 {
 	public struct StatementPosition
 	{
+		public StatementPosition( int startPos, int endPos ) : this( -1, -1, -1, -1, startPos, endPos )
+		{
+		}
+
 		public StatementPosition( int startLine, int endLine, int startColumn, int endColumn, int startPos, int endPos ) : this()
 		{
 			this.StartLine = startLine;
@@ -30,9 +37,9 @@ namespace WolfGenerator.Core.AST
 			this.StartLine = startToken.line;
 			this.EndLine = endToken.line;
 			this.StartColumn = startToken.col;
-			this.EndColumn = endToken.col;
+			this.EndColumn = endToken.col + endToken.val.Length - 1;
 			this.StartPos = startToken.pos;
-			this.EndPos = endToken.pos;
+			this.EndPos = endToken.pos + endToken.val.Length - 1;
 		}
 
 		public int StartLine { get; private set; }

@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Unit.WolfGenerator.vsmdi = Unit.WolfGenerator.vsmdi
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Tools", ".Tools", "{380752BA-7A73-4E0B-B48C-24E4DB7DCE89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASTTree", "ASTTree\ASTTree.csproj", "{93992E8C-F3C0-42A1-8377-210E5B3BA223}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Unit.WolfGenerator.vsmdi
@@ -34,9 +38,16 @@ Global
 		{3B5A8BC8-762D-4060-A269-1FB8734AA48F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B5A8BC8-762D-4060-A269-1FB8734AA48F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B5A8BC8-762D-4060-A269-1FB8734AA48F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93992E8C-F3C0-42A1-8377-210E5B3BA223}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93992E8C-F3C0-42A1-8377-210E5B3BA223}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93992E8C-F3C0-42A1-8377-210E5B3BA223}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93992E8C-F3C0-42A1-8377-210E5B3BA223}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{93992E8C-F3C0-42A1-8377-210E5B3BA223} = {380752BA-7A73-4E0B-B48C-24E4DB7DCE89}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		VisualSVNWorkingCopyRoot = 

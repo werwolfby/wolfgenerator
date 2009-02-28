@@ -1,0 +1,80 @@
+﻿<Window x:Class="ASTTree.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:AST="clr-namespace:WolfGenerator.Core.AST;assembly=WolfGenerator.Core"
+    Title="Wolf Generator AST Tree" Width="800" Height="600">
+    <Grid>
+		
+		<Grid.Resources>
+			<HierarchicalDataTemplate DataType="{x:Type AST:MethodStatement}">
+				<TextBlock>
+					<Run Text="Method "/>
+					<TextBlock Text="{Binding Path=Name}" FontWeight="Bold"/>
+				</TextBlock>
+			</HierarchicalDataTemplate>
+			
+			<HierarchicalDataTemplate DataType="{x:Type AST:RuleMethodStatement}" ItemsSource="{Binding Path=Statements}">
+				<TextBlock>
+					<Run Text="Rule "/>
+					<TextBlock Text="{Binding Path=Name}" FontWeight="Bold"/>
+				</TextBlock>
+			</HierarchicalDataTemplate>
+			
+			<HierarchicalDataTemplate DataType="{x:Type AST:TextStatement}">
+				<TextBlock Text="Text"/>
+			</HierarchicalDataTemplate>
+
+			<HierarchicalDataTemplate DataType="{x:Type AST:CodeStatement}">
+				<TextBlock Text="Code"/>
+			</HierarchicalDataTemplate>
+
+			<HierarchicalDataTemplate DataType="{x:Type AST:ValueStatement}">
+				<TextBlock Text="Value"/>
+			</HierarchicalDataTemplate>
+
+			<HierarchicalDataTemplate DataType="{x:Type AST:CallStatement}">
+				<TextBlock>
+					<Run Text="Call "/>
+					<TextBlock Text="{Binding Path=Name}" FontWeight="Bold"/>
+				</TextBlock>
+			</HierarchicalDataTemplate>
+
+			<HierarchicalDataTemplate DataType="{x:Type AST:JoinStatement}" ItemsSource="{Binding Path=Statements}">
+				<TextBlock Text="Join"/>
+			</HierarchicalDataTemplate>
+
+			<HierarchicalDataTemplate DataType="{x:Type AST:ApplyStatement}">
+				<TextBlock>
+					<Run Text="Apply "/>
+					<TextBlock Text="{Binding Path=ApplyMethod}" FontWeight="Bold"/>
+				</TextBlock>
+			</HierarchicalDataTemplate>
+		</Grid.Resources>
+		
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="3*"/>
+		</Grid.ColumnDefinitions>
+		
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		
+		<TreeView Grid.Column="0" Grid.Row="1" SelectedItemChanged="TreeView_SelectedItemChanged">
+			<TreeViewItem Name="Usings" Header="Usings" ItemsSource="{Binding Path=UsingStatements}" DisplayMemberPath="Namespace"/>
+			<TreeViewItem Name="Statements" Header="Statements" ItemsSource="{Binding Path=RuleMethodStatements}"/>
+		</TreeView>
+		
+		<TextBox  Grid.Column="1" Grid.Row="1" Name="TextBox" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SelectionChanged="TextBox_SelectionChanged"/>
+		
+		<TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+			<Run Text="Selection Start = " FontWeight="Bold"/>
+			<TextBlock Name="SelectionStartTextBlock" Text="0"/>
+			<Run Text="Selection Length = " FontWeight="Bold"/>
+			<TextBlock Name="SelectionLengthTextBlock" Text="0"/>
+		</TextBlock>
+        
+    </Grid>
+</Window>

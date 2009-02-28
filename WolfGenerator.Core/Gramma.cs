@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 28.02.2009 11:46:18
+// Compiled by vsCoco on 28.02.2009 13:28:31
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -133,10 +133,13 @@ public RuleClassStatement ruleClassStatement;
 		return "";
 	}
 	
-	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, string text )
+	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, Token t )
 	{
-		text = ExtractString( isStart, ifEnd, text );
-		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( new StatementPosition( t.line, t.col, t.pos, la.line, la.col, la.pos ), text ) );
+		int startIndex = 0;
+		int endIndex = 0;
+		var text = ExtractString( isStart, ifEnd, t.val, ref startIndex, ref endIndex );
+		
+		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( new StatementPosition( t.pos + startIndex, t.pos + text.Length - 1 + startIndex ), text ) );
 		return la.pos;
 	}
 
@@ -273,7 +276,7 @@ public RuleClassStatement ruleClassStatement;
 		CodeStatement codeStatement;
 		CallStatement callStatement;
 		MatchMethodStatement matchStatement = null; 
-		Token start = t; 
+		Token start = la; 
 		if (la.kind == 8) {
 			MatchMethod(out matchStatement);
 		}
@@ -282,7 +285,7 @@ public RuleClassStatement ruleClassStatement;
 		while (StartOf(1)) {
 			if (la.kind == 32) {
 				Get();
-				AddStatement( isStart, statements, la.kind == _end, t.val ); 
+				AddStatement( isStart, statements, la.kind == _end, t ); 
 			} else if (la.kind == 12) {
 				Value(out valueStatement);
 				statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; 

@@ -12,8 +12,11 @@
  *   04.02.2009 01:10 - Use `Invoke` method of `GeneratorBase` base class.
  *   26.02.2009 23:10 - Remove Generate & GenerateJoin methods.
  *   28.02.2009 10:26 - Add support inheritance from Statement class.
+ *   28.02.2009 12:12 - Override ToString method.
  *   
  *******************************************************/
+
+using System.Text;
 
 namespace WolfGenerator.Core.AST
 {
@@ -39,6 +42,24 @@ namespace WolfGenerator.Core.AST
 		public string Parameters
 		{
 			get { return this.parameters; }
+		}
+
+		public override string ToString()
+		{
+			var builder = new StringBuilder();
+
+			builder.Append( "<%call " );
+			builder.Append( Name );
+			builder.Append( "(" );
+			if (!string.IsNullOrEmpty( Parameters ))
+			{
+				builder.Append( " " );
+				builder.Append( Parameters );
+				builder.Append( " " );
+			}
+			builder.Append( ")" );
+
+			return builder.ToString();
 		}
 	}
 }

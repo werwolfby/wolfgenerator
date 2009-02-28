@@ -46,10 +46,13 @@ COMPILER WolfGenerator
 		return "";
 	}
 	
-	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, string text )
+	int AddStatement( bool isStart, List<RuleStatement> statements, bool ifEnd, Token t )
 	{
-		text = ExtractString( isStart, ifEnd, text );
-		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( new StatementPosition( t.line, t.col, t.pos, la.line, la.col, la.pos ), text ) );
+		int startIndex = 0;
+		int endIndex = 0;
+		var text = ExtractString( isStart, ifEnd, t.val, ref startIndex, ref endIndex );
+		
+		if (!string.IsNullOrEmpty( text )) statements.Add( new TextStatement( new StatementPosition( t.pos + startIndex, t.pos + text.Length - 1 + startIndex ), text ) );
 		return la.pos;
 	}
 
@@ -160,11 +163,11 @@ RuleMethod<out RuleMethodStatement statement>                                   
                                                                                       CodeStatement codeStatement;
                                                                                       CallStatement callStatement;
                                                                                       MatchMethodStatement matchStatement = null; .)
-                    = 	                                                           (. Token start = t; .)
+                    = 	                                                           (. Token start = la; .)
                      [ MatchMethod<out matchStatement> ]
                      RuleMethodStart<out methodName, out variables>                (. int startPos = t.pos + t.val.Length; .)
                      { 
-                      text                                                         (. AddStatement( isStart, statements, la.kind == _end, t.val ); .)
+                      text                                                         (. AddStatement( isStart, statements, la.kind == _end, t ); .)
                       |
                       Value<out valueStatement>                                    (. statements.Add( valueStatement ); isStart = false; startPos = t.pos + t.val.Length; .)
                       

@@ -349,11 +349,11 @@ public class UTF8Buffer: Buffer {
 		{
 			if (this.ch == '<' && this.buffer.Peek() == '%') return null;
 
+			this.t = new Token { pos = this.pos, col = (this.pos - this.lineStart + 1), line = this.line };
+
 			this.tlen = 0;
 			this.AddCh();
 			var end = false;
-
-			this.t = new Token { pos = this.pos, col = (this.pos - this.lineStart + 1), line = this.line };
 
 			while (!end)
 			{

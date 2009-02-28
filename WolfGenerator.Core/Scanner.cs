@@ -10,6 +10,7 @@
  *   03.02.2009 23:43 - Create Wireframe
  *   14.02.2009 22:35 - Fix: GetTextToken() forget to check if find end of file.
  *   28.02.2009 13:27 - Fix: pos of Text token.
+ *   28.02.2009 16:01 - Fix: GetTextToken(): don't call buffer.Peek() if already we reach last symbol.
  *
  *******************************************************/
 
@@ -358,6 +359,7 @@ public class UTF8Buffer: Buffer {
 
 		private Token GetTextToken()
 		{
+			if (this.ch == Buffer.EOF) return null;
 			if (this.ch == '<' && this.buffer.Peek() == '%') return null;
 
 			this.tlen = 0;

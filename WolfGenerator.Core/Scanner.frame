@@ -347,6 +347,7 @@ public class UTF8Buffer: Buffer {
 
 		private Token GetTextToken()
 		{
+			if (this.ch == Buffer.EOF) return null;
 			if (this.ch == '<' && this.buffer.Peek() == '%') return null;
 
 			this.t = new Token { pos = this.pos, col = (this.pos - this.lineStart + 1), line = this.line };

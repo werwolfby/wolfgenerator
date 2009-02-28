@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssertHelper.cs" />
+    <Compile Include="ParserErrorTest\EndStatementUnitTest.cs" />
     <Compile Include="ParserHelper.cs" />
     <Compile Include="ParserTest\ApplyUnitTest.cs" />
     <Compile Include="ParserTest\CodeUnitTest.cs" />

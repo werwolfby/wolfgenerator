@@ -19,10 +19,14 @@
  *   15.02.2009 16:28 - Add ParseUsing method.
  *   15.02.2009 16:33 - Change parse methods from anonymous method to delegate.
  *   18.02.2009 00:10 - Add ParseClass method.
+ *   28.02.2009 15:16 - Add to Parse method out parser parameter.
+ *   28.02.2009 15:22 - Add overloaded methods Parse* that can return created Parser_Accessor class.
+ *   28.02.2009 15:30 - Add asserErrorCount to check if errors after parse.
+ *   28.02.2009 16:09 - Add ParseCode with same signature as others with ignore isStartParameter.
  *
  *******************************************************/
 
-using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core;
 using WolfGenerator.Core.AST;
 
@@ -34,67 +38,136 @@ namespace UnitTest.WolfGenerator
 
 		public static Type ParseType( string statement )
 		{
-			return Parse( statement, ( Parser_Accessor p, out Type t ) => p.Type( out t ) );
+			Parser_Accessor parser;
+			return ParseType( statement, out parser, true );
+		}
+
+		public static Type ParseType( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			return Parse( statement, ( Parser_Accessor p, out Type t ) => p.Type( out t ), out parser, asserErrorCount );
 		}
 
 		public static Variable ParseVariable( string statement )
 		{
-			return Parse( statement, ( Parser_Accessor p, out Variable t ) => p.Var( out t ) );
+			Parser_Accessor parser;
+			return ParseVariable( statement, out parser, true );
+		}
+
+		public static Variable ParseVariable( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			return Parse( statement, ( Parser_Accessor p, out Variable t ) => p.Var( out t ), out parser, asserErrorCount );
 		}
 
 		public static ValueStatement ParseValue( string statement )
 		{
-			return Parse( statement, ( Parser_Accessor p, out ValueStatement t ) => p.Value( out t ) );
+			Parser_Accessor parser;
+			return ParseValue( statement, out parser, true );
+		}
+
+		public static ValueStatement ParseValue( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			return Parse( statement, ( Parser_Accessor p, out ValueStatement t ) => p.Value( out t ), out parser, asserErrorCount );
 		}
 
 		public static ApplyStatement ParseApply( string statement )
 		{
-			return Parse( statement, ( Parser_Accessor p, out ApplyStatement t ) => p.Apply( out t ) );
+			Parser_Accessor parser;
+			return ParseApply( statement, out parser, true );
+		}
+
+		public static ApplyStatement ParseApply( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			return Parse( statement, ( Parser_Accessor p, out ApplyStatement t ) => p.Apply( out t ), out parser, asserErrorCount );
 		}
 
 		public static CodeStatement ParseCode( string statement, out bool isStart )
 		{
+			Parser_Accessor parser;
+			return ParseCode( statement, out isStart, out parser, true );
+		}
+
+		public static CodeStatement ParseCode( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			bool isStart;
+			return ParseCode( statement, out isStart, out parser, asserErrorCount );
+		}
+
+		public static CodeStatement ParseCode( string statement, out bool isStart, out Parser_Accessor parser, bool asserErrorCount )
+		{
 			var tempIsStart = false;
-			var codeStatement = Parse( statement, ( Parser_Accessor p, out CodeStatement t ) => p.Code( out t, ref tempIsStart ) );
+			var codeStatement = Parse( statement, ( Parser_Accessor p, out CodeStatement t ) => p.Code( out t, ref tempIsStart ), out parser, asserErrorCount );
 			isStart = tempIsStart;
 			return codeStatement;
 		}
 
 		public static MatchMethodStatement ParseMatch( string statement )
 		{
-			return Parse( statement, ( Parser_Accessor p, out MatchMethodStatement t ) => p.MatchMethod( out t ) );
+			Parser_Accessor parser;
+			return ParseMatch( statement, out parser, true );
 		}
 
-		public static JoinStatement ParseJoin( string statementText )
+		public static MatchMethodStatement ParseMatch( string statement, out Parser_Accessor parser, bool asserErrorCount )
 		{
-			return Parse( statementText, ( Parser_Accessor p, out JoinStatement t ) => p.Join( out t ) );
+			return Parse( statement, ( Parser_Accessor p, out MatchMethodStatement t ) => p.MatchMethod( out t ), out parser, asserErrorCount );
+		}
+
+		public static JoinStatement ParseJoin( string statement )
+		{
+			Parser_Accessor parser;
+			return ParseJoin( statement, out parser, true );
+		}
+
+		public static JoinStatement ParseJoin( string statementText, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			return Parse( statementText, ( Parser_Accessor p, out JoinStatement t ) => p.Join( out t ), out parser, asserErrorCount );
 		}
 
 		public static RuleMethodStatement ParseRuleMethod( string statement )
 		{
-			return Parse( statement, ( Parser_Accessor p, out RuleMethodStatement t ) => p.RuleMethod( out t ) );
+			Parser_Accessor parser;
+			return ParseRuleMethod( statement, out parser, true );
+		}
+
+		public static RuleMethodStatement ParseRuleMethod( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			return Parse( statement, ( Parser_Accessor p, out RuleMethodStatement t ) => p.RuleMethod( out t ), out parser, asserErrorCount );
 		}
 
 		public static UsingStatement ParseUsing( string statement )
 		{
-			return Parse( statement, ( Parser_Accessor p, out UsingStatement t ) => p.Using( out t ) );
+			Parser_Accessor parser;
+			return ParseUsing( statement, out parser, true );
+		}
+
+		public static UsingStatement ParseUsing( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			return Parse( statement, ( Parser_Accessor p, out UsingStatement t ) => p.Using( out t ), out parser, asserErrorCount );
 		}
 
 		public static RuleClassStatement ParseClass( string statement )
 		{
-			var parser = new Parser( statement );
+			Parser_Accessor parser;
+			return ParseClass( statement, out parser, true );
+		}
+
+		public static RuleClassStatement ParseClass( string statement, out Parser_Accessor parser, bool asserErrorCount )
+		{
+			parser = new Parser_Accessor( statement );
+			if (asserErrorCount) Assert.AreEqual( 0, parser.errors.count, "Parser has errors: " + parser.errors.count );
 			parser.Parse();
 			return parser.ruleClassStatement;
 		}
 
-		private static T Parse<T>( string statement, ParseDelegate<T> parseMethod )
+		private static T Parse<T>( string statement, ParseDelegate<T> parseMethod, out Parser_Accessor parser, bool asserErrorCount )
 		{
 			T t;
 
-			var parser = new Parser_Accessor( statement );
+			parser = new Parser_Accessor( statement );
 
 			parser.InitParse();
 			parseMethod( parser, out t );
+
+			if (asserErrorCount) Assert.AreEqual( 0, parser.errors.count, "Parser has errors: " + parser.errors.count );
 
 			return t;
 		}

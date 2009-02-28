@@ -59,7 +59,7 @@ namespace UnitTest.WolfGenerator.Scanner
 				Assert.AreEqual( expectedTokenValue.value, actualTokenValue.val );
 				if (expectedTokenValue.type.HasValue)
 					Assert.AreEqual( expectedTokenValue.type.Value, actualTokenValue.kind,
-					                 "Wrong kind of parsing token: " + expectedTokenValue.value );
+					                 "Wrong kind of parsing token" );
 			}
 		}
 	}

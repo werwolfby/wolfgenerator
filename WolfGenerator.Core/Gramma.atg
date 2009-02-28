@@ -131,7 +131,7 @@ WolfGenerator =                                                                 
                                                                                           ruleMethodStatementList = new List<RuleClassMethodStatement>();
                                                                                       ruleMethodStatementList.Add( method ); .)
                 } 
-                "<%end%>"                                                          (. ruleClassStatement = new RuleClassStatement( new StatementPosition( start, t ), name, usingStatementList, ruleMethodStatementList ); .)
+                SYNC WEAK "<%end%>"                                                (. ruleClassStatement = new RuleClassStatement( new StatementPosition( start, t ), name, usingStatementList, ruleMethodStatementList ); .)
                 .
 
 Using<out UsingStatement usingStatement>                                           (. List<string> namespaceList = new List<string>(); .) 
@@ -268,8 +268,8 @@ Code<out CodeStatement codeStatement, ref bool isStart>
                 =
                   SYNC "<%$"                                                       (. Token start = t; int startPos = t.pos + t.val.Length; .)
                    {ANY}                                                           (. string value = scanner.buffer.GetString( startPos, la.pos ); .) 
-                  ("$%>"
-                   | "$-%>"                                                        (. isStart = true; .)
+                  ( WEAK "$%>"
+                   | WEAK "$-%>"                                                        (. isStart = true; .)
                   )
                                                                                    (. codeStatement = new CodeStatement( new StatementPosition( start, t ), value.Trim() ); .)
                   .

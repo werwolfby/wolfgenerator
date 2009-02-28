@@ -1,4 +1,4 @@
-// Compiled by vsCoco on 28.02.2009 15:06:54
+// Compiled by vsCoco on 28.02.2009 16:11:17
 /*----------------------------------------------------------------------
 Compiler Generator Coco/R,
 Copyright (c) 1990, 2004 Hanspeter Moessenboeck, University of Linz
@@ -243,7 +243,8 @@ public RuleClassStatement ruleClassStatement;
 				ruleMethodStatementList.Add( method ); 
 			}
 		}
-		Expect(11);
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(34); Get();}
+		ExpectWeak(11, 1);
 		ruleClassStatement = new RuleClassStatement( new StatementPosition( start, t ), name, usingStatementList, ruleMethodStatementList ); 
 	}
 
@@ -277,14 +278,14 @@ public RuleClassStatement ruleClassStatement;
 		if (la.kind == 8) {
 			MatchMethod(out matchStatement);
 		}
-		while (!(la.kind == 0 || la.kind == 3)) {SynErr(34); Get();}
+		while (!(la.kind == 0 || la.kind == 3)) {SynErr(35); Get();}
 		Expect(3);
 		Expect(1);
 		methodName = t.val; 
 		Expect(22);
 		Variables(out variableList);
 		ExpectWeak(23, 1);
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(35); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(36); Get();}
 		Expect(10);
 		variables = variableList == null ? null : variableList.AsReadOnly(); 
 		while (StartOf(2)) {
@@ -306,7 +307,7 @@ public RuleClassStatement ruleClassStatement;
 				statements.Add( callStatement ); isStart = false; 
 			}
 		}
-		while (!(la.kind == 0 || la.kind == 11)) {SynErr(36); Get();}
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(37); Get();}
 		Expect(11);
 		statement = new RuleMethodStatement( new StatementPosition( start, t ), matchStatement, methodName, variables, statements ); 
 	}
@@ -315,7 +316,7 @@ public RuleClassStatement ruleClassStatement;
 		WolfGenerator.Core.AST.Type returnType;
 		List<Variable> variables = null;
 		int startPos = -1; string name; 
-		while (!(la.kind == 0 || la.kind == 7)) {SynErr(37); Get();}
+		while (!(la.kind == 0 || la.kind == 7)) {SynErr(38); Get();}
 		Expect(7);
 		Token start = t; 
 		Type(out returnType);
@@ -324,13 +325,13 @@ public RuleClassStatement ruleClassStatement;
 		Expect(22);
 		Variables(out variables);
 		ExpectWeak(23, 1);
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(38); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(39); Get();}
 		Expect(10);
 		startPos = t.pos + t.val.Length; 
 		while (StartOf(3)) {
 			Get();
 		}
-		while (!(la.kind == 0 || la.kind == 11)) {SynErr(39); Get();}
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(40); Get();}
 		Expect(11);
 		methodStatement = new MethodStatement( new StatementPosition( start, t ), returnType, name, variables, ExtractString( true, false, startPos, t.pos ) ); 
 	}
@@ -365,13 +366,13 @@ public RuleClassStatement ruleClassStatement;
 	}
 
 	void Value(out ValueStatement valueStatement) {
-		while (!(la.kind == 0 || la.kind == 12)) {SynErr(40); Get();}
+		while (!(la.kind == 0 || la.kind == 12)) {SynErr(41); Get();}
 		Expect(12);
 		Token start = t; int pos = t.pos + t.val.Length; 
 		while (StartOf(6)) {
 			Get();
 		}
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(41); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(42); Get();}
 		Expect(10);
 		int endPos = t.pos;
 		string value = scanner.buffer.GetString( pos, endPos );
@@ -385,7 +386,7 @@ public RuleClassStatement ruleClassStatement;
 		ApplyStatement applyStatement;
 		CallStatement callStatement; 
 		AppendType appendType = AppendType.EmptyLastLine; 
-		while (!(la.kind == 0 || la.kind == 4)) {SynErr(42); Get();}
+		while (!(la.kind == 0 || la.kind == 4)) {SynErr(43); Get();}
 		Expect(4);
 		Token start = t; 
 		Expect(29);
@@ -403,9 +404,9 @@ public RuleClassStatement ruleClassStatement;
 					Get();
 				}
 				
-			} else SynErr(43);
+			} else SynErr(44);
 		}
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(44); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(45); Get();}
 		Expect(10);
 		while (la.kind == 5 || la.kind == 6 || la.kind == 12) {
 			if (la.kind == 12) {
@@ -422,13 +423,13 @@ public RuleClassStatement ruleClassStatement;
 				statements.Add( callStatement ); 
 			}
 		}
-		while (!(la.kind == 0 || la.kind == 11)) {SynErr(45); Get();}
+		while (!(la.kind == 0 || la.kind == 11)) {SynErr(46); Get();}
 		Expect(11);
 		joinStatement = new JoinStatement( new StatementPosition( start, t ), @string, appendType, statements ); 
 	}
 
 	void Code(out CodeStatement codeStatement, ref bool isStart) {
-		while (!(la.kind == 0 || la.kind == 13)) {SynErr(46); Get();}
+		while (!(la.kind == 0 || la.kind == 13)) {SynErr(47); Get();}
 		Expect(13);
 		Token start = t; int startPos = t.pos + t.val.Length; 
 		while (StartOf(9)) {
@@ -436,17 +437,17 @@ public RuleClassStatement ruleClassStatement;
 		}
 		string value = scanner.buffer.GetString( startPos, la.pos ); 
 		if (la.kind == 14) {
-			Get();
+			ExpectWeak(14, 10);
 		} else if (la.kind == 15) {
-			Get();
+			ExpectWeak(15, 10);
 			isStart = true; 
-		} else SynErr(47);
+		} else SynErr(48);
 		codeStatement = new CodeStatement( new StatementPosition( start, t ), value.Trim() ); 
 	}
 
 	void Call(out CallStatement callStatement) {
 		string methodName; string parameters = null; 
-		while (!(la.kind == 0 || la.kind == 6)) {SynErr(48); Get();}
+		while (!(la.kind == 0 || la.kind == 6)) {SynErr(49); Get();}
 		Expect(6);
 		Token start = t; 
 		Expect(1);
@@ -455,7 +456,7 @@ public RuleClassStatement ruleClassStatement;
 		if (la.kind == 24) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(10)) {
+			while (StartOf(11)) {
 				Get();
 			}
 			endPos = la.pos; 
@@ -463,15 +464,15 @@ public RuleClassStatement ruleClassStatement;
 		} else if (la.kind == 22) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(11)) {
+			while (StartOf(12)) {
 				Get();
 			}
 			endPos = la.pos; 
 			Expect(23);
-		} else SynErr(49);
+		} else SynErr(50);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(50); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(51); Get();}
 		Expect(10);
 		callStatement = new CallStatement( new StatementPosition( start, t ), methodName, parameters ); 
 	}
@@ -492,7 +493,7 @@ public RuleClassStatement ruleClassStatement;
 			Get();
 			Type(out generic);
 			genericParameters.Add( generic ); 
-			while (WeakSeparator(21,4,12) ) {
+			while (WeakSeparator(21,4,13) ) {
 				Type(out generic);
 				genericParameters.Add( generic ); 
 			}
@@ -510,7 +511,7 @@ public RuleClassStatement ruleClassStatement;
 
 	void Apply(out ApplyStatement applyStatement) {
 		string methodName; string parameters = null; string from; 
-		while (!(la.kind == 0 || la.kind == 5)) {SynErr(51); Get();}
+		while (!(la.kind == 0 || la.kind == 5)) {SynErr(52); Get();}
 		Expect(5);
 		Token start = t; 
 		Expect(1);
@@ -519,7 +520,7 @@ public RuleClassStatement ruleClassStatement;
 		if (la.kind == 24) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(10)) {
+			while (StartOf(11)) {
 				Get();
 			}
 			endPos = la.pos; 
@@ -527,22 +528,22 @@ public RuleClassStatement ruleClassStatement;
 		} else if (la.kind == 22) {
 			Get();
 			startPos = t.pos + t.val.Length; 
-			while (StartOf(11)) {
+			while (StartOf(12)) {
 				Get();
 			}
 			endPos = la.pos; 
 			Expect(23);
-		} else SynErr(52);
+		} else SynErr(53);
 		if (startPos > 0 && endPos > 0)
 		   parameters = scanner.buffer.GetString( startPos, endPos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 16)) {SynErr(53); Get();}
+		while (!(la.kind == 0 || la.kind == 16)) {SynErr(54); Get();}
 		Expect(16);
 		int startFrom = la.pos; 
 		while (StartOf(6)) {
 			Get();
 		}
 		from = scanner.buffer.GetString( startFrom, la.pos ).Trim(); 
-		while (!(la.kind == 0 || la.kind == 10)) {SynErr(54); Get();}
+		while (!(la.kind == 0 || la.kind == 10)) {SynErr(55); Get();}
 		Expect(10);
 		applyStatement = new ApplyStatement( new StatementPosition( start, t ), methodName, parameters, from ); 
 	}
@@ -574,6 +575,7 @@ public RuleClassStatement ruleClassStatement;
 		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
 		{x,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
 		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
+		{T,x,x,T, T,T,T,T, x,x,T,T, T,T,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x},
 		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,T,T, T,T,T,T, T,T,x},
 		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x}
@@ -582,15 +584,27 @@ public RuleClassStatement ruleClassStatement;
 	} // end Parser
 
 
+	public class ErrorData
+	{
+		public string message;
+		public int line;
+		public int column;
+	}
+
 	public class Errors {
 		public int count = 0;                                    // number of errors detected
 		public string errMsgFormat = "-- line {0} col {1}: {2}"; // 0=line, 1=column, 2=text
 		private Scanner scanner;
+		private List<ErrorData> errorDatas = new List<ErrorData>();
 
 		public Errors(Scanner scanner)
 		{
 			this.scanner=scanner;
+			
+			this.ErrorDatas = errorDatas.AsReadOnly();
 		}
+		
+		public IList<ErrorData> ErrorDatas { get; private set; }
 		
 		public void SynErr (int line, int col, int n) {
 			string s;
@@ -629,34 +643,38 @@ public RuleClassStatement ruleClassStatement;
 			case 31: s = "char expected"; break;
 			case 32: s = "text expected"; break;
 			case 33: s = "??? expected"; break;
-			case 34: s = "this symbol not expected in RuleMethod"; break;
+			case 34: s = "this symbol not expected in WolfGenerator"; break;
 			case 35: s = "this symbol not expected in RuleMethod"; break;
 			case 36: s = "this symbol not expected in RuleMethod"; break;
-			case 37: s = "this symbol not expected in Method"; break;
+			case 37: s = "this symbol not expected in RuleMethod"; break;
 			case 38: s = "this symbol not expected in Method"; break;
 			case 39: s = "this symbol not expected in Method"; break;
-			case 40: s = "this symbol not expected in Value"; break;
+			case 40: s = "this symbol not expected in Method"; break;
 			case 41: s = "this symbol not expected in Value"; break;
-			case 42: s = "this symbol not expected in Join"; break;
-			case 43: s = "invalid Join"; break;
-			case 44: s = "this symbol not expected in Join"; break;
+			case 42: s = "this symbol not expected in Value"; break;
+			case 43: s = "this symbol not expected in Join"; break;
+			case 44: s = "invalid Join"; break;
 			case 45: s = "this symbol not expected in Join"; break;
-			case 46: s = "this symbol not expected in Code"; break;
-			case 47: s = "invalid Code"; break;
-			case 48: s = "this symbol not expected in Call"; break;
-			case 49: s = "invalid Call"; break;
-			case 50: s = "this symbol not expected in Call"; break;
-			case 51: s = "this symbol not expected in Apply"; break;
-			case 52: s = "invalid Apply"; break;
-			case 53: s = "this symbol not expected in Apply"; break;
+			case 46: s = "this symbol not expected in Join"; break;
+			case 47: s = "this symbol not expected in Code"; break;
+			case 48: s = "invalid Code"; break;
+			case 49: s = "this symbol not expected in Call"; break;
+			case 50: s = "invalid Call"; break;
+			case 51: s = "this symbol not expected in Call"; break;
+			case 52: s = "this symbol not expected in Apply"; break;
+			case 53: s = "invalid Apply"; break;
 			case 54: s = "this symbol not expected in Apply"; break;
+			case 55: s = "this symbol not expected in Apply"; break;
 
 				default: s = "error " + n; break;
 			}
 			Error(line, col, s);
 		}
 
-		public virtual void Error (int lin, int col, string err) {
+		public virtual void Error (int lin, int col, string err) 
+		{
+			errorDatas.Add( new ErrorData { message = err, line = lin, column = col } );
+		
 			scanner.WriteError(errMsgFormat,scanner.srcFile,lin,col,err);
 			count++;
 		}

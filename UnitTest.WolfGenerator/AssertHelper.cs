@@ -17,12 +17,14 @@
  *   15.02.2009 13:47 - Add AssertJoin method (I hope in functional style).
  *   15.02.2009 14:07 - Fix: again forget return type of AssertJoin method.
  *   15.02.2009 15:56 - Add AssertVariables.
+ *   28.02.2009 15:43 - Add AssertError.
  *
  *******************************************************/
 
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WolfGenerator.Core;
 using WolfGenerator.Core.AST;
 using Type=WolfGenerator.Core.AST.Type;
 
@@ -169,6 +171,13 @@ namespace UnitTest.WolfGenerator
 			Assert.IsInstanceOfType( actual, typeof(T) );
 			var actualValueStatement = (T)actual;
 			assertFunc( expectedValueStatement, actualValueStatement );
+		}
+
+		public static void AssertError( ErrorData errorData, int? line, int? column, string message )
+		{
+			if (line.HasValue) Assert.AreEqual( line.Value, errorData.line, "Error line wrong" );
+			if (column.HasValue) Assert.AreEqual( column.Value, errorData.column, "Error column wrong" );
+			if (!string.IsNullOrEmpty( message )) Assert.AreEqual( message, errorData.message, "Error message wrong" );
 		}
 	}
 }

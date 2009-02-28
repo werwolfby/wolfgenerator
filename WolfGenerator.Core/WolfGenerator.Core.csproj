@@ -118,6 +118,8 @@
     <Compile Include="Writer\Line.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AST\Statement.cs" />
+    <Compile Include="AST\StatementPosition.cs" />
     <Compile Include="CodeGenerator\Generator.ext.cs" />
     <Compile Include="CodeGenerator\Generator.JoinStatements1.cs">
       <AutoGen>True</AutoGen>
@@ -170,6 +172,8 @@
       <Generator>TemplateCodeGenerator2</Generator>
       <LastGenOutput>Generator.JoinStatements1.cs</LastGenOutput>
     </None>
+    <None Include="Diagrams\Statement Assosiations.cd" />
+    <None Include="Diagrams\Statement Inhiritances.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

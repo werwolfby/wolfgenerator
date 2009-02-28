@@ -15,6 +15,7 @@
  *   30.01.2009 20:10 - Add EBNF comment.
  *   24.02.2009 00:02 - Update EBNF comment.
  *   26.02.2009 23:15 - Remove Generate & GenerateJoin methods.
+ *   28.02.2009 10:24 - Add support inheritance from Statement class.
  *
  *******************************************************/
 
@@ -27,7 +28,7 @@ namespace WolfGenerator.Core.AST
 	{
 		private readonly string value;
 
-		public ValueStatement( string value )
+		public ValueStatement( StatementPosition position, string value ) : base( position )
 		{
 			this.value = value;
 		}

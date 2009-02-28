@@ -13,6 +13,7 @@
  *   10.02.2009 20:30 - Add support fileName of Generated method
  *   11.02.2009 21:54 - New MatchMethodAttribute code generating.
  *   26.02.2009 23:12 - Remove Generate methods.
+ *   28.02.2009 10:24 - Add support inheritance from Statement class.
  *
  *******************************************************/
 
@@ -23,7 +24,7 @@ namespace WolfGenerator.Core.AST
 		private readonly string name;
 		private readonly string code;
 
-		public MatchMethodStatement( string name, string code )
+		public MatchMethodStatement( StatementPosition position, string name, string code ) : base( position )
 		{
 			this.name = name;
 			this.code = code;

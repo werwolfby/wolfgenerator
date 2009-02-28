@@ -8,17 +8,15 @@
  * 
  * History:
  *   27.01.2009 01:50 - Create Wireframe
- *   27.01.2009 01:59 - Inhirit from RuleClassMethodStatement and implement method Generate.
+ *   27.01.2009 01:59 - Inherit from RuleClassMethodStatement and implement method Generate.
  *   27.01.2009 02:15 - Fix: Generate - add space between return type and name.
  *   30.01.2009 20:14 - Add EBNF comment.
  *   26.02.2009 23:12 - Remove Generate methods.
+ *   28.02.2009 10:25 - Add support inheritance from Statement class.
  *
  *******************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using WolfGenerator.Core.Writer;
 
 namespace WolfGenerator.Core.AST
 {
@@ -32,7 +30,8 @@ namespace WolfGenerator.Core.AST
 		private readonly IList<Variable> variables;
 		private readonly string code;
 
-		public MethodStatement( Type returnType, string name, IList<Variable> variables, string code )
+		public MethodStatement( StatementPosition position, Type returnType, string name, IList<Variable> variables,
+		                        string code ) : base( position )
 		{
 			this.returnType = returnType;
 			this.name = name;

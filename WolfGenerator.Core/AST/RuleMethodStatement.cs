@@ -26,6 +26,7 @@
  *   11.02.2009 22:12 - Add to generate method boolean parameter to generate RuleMethod Attribute.
  *   15.02.2009 16:16 - Now Variables & Statements properti instead null return empty collection.
  *   26.02.2009 23:14 - Remove Generate methods.
+ *   28.02.2009 10:25 - Add support inheritance from Statement class.
  *
  *******************************************************/
 
@@ -46,7 +47,8 @@ namespace WolfGenerator.Core.AST
 		private readonly IList<Variable> variables;
 		private readonly IList<RuleStatement> statements;
 
-		public RuleMethodStatement( MatchMethodStatement matchMethodStatement, string name, IList<Variable> variables, IList<RuleStatement> statements )
+		public RuleMethodStatement( StatementPosition position, MatchMethodStatement matchMethodStatement, string name,
+		                            IList<Variable> variables, IList<RuleStatement> statements ) : base( position )
 		{
 			this.matchMethodStatement = matchMethodStatement;
 			this.name = name;
@@ -82,18 +84,18 @@ namespace WolfGenerator.Core.AST
 			{
 				var builder = new StringBuilder();
 
-				builder.Append( name );
+				builder.Append( this.name );
 
-				if (variables != null)
+				if (this.variables != null)
 				{
 					builder.Append( "( " );
 
-					for (int i = 0; i < variables.Count; i++)
+					for (var i = 0; i < this.variables.Count; i++)
 					{
-						var variable = variables[i];
+						var variable = this.variables[i];
 
 						builder.Append( variable );
-						if (i < variables.Count - 1) builder.Append( ", " );
+						if (i < this.variables.Count - 1) builder.Append( ", " );
 					}
 
 					builder.Append( " )" );
@@ -110,13 +112,13 @@ namespace WolfGenerator.Core.AST
 
 			builder.Append( "<%rule " );
 
-			builder.Append( MethodHeader );
+			builder.Append( this.MethodHeader );
 
 			builder.AppendLine( "%>" );
 
-			if (statements != null && statements.Count > 0)
+			if (this.statements != null && this.statements.Count > 0)
 			{
-				foreach (var statement in statements)
+				foreach (var statement in this.statements)
 					builder.Append( statement );
 				builder.AppendLine();
 			}

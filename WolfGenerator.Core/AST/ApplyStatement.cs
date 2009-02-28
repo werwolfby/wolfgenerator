@@ -13,6 +13,7 @@
  *   26.01.2009 10:56 - Work on GeneateJoin method.
  *   04.02.2009 01:13 - Use `Invoke` method of `GeneratorBase` base class.
  *   26.02.2009 23:10 - Remove Generate & GenerateJoin methods.
+ *   28.02.2009 10:24 - Add support inheritance from Statement class.
  *
  *******************************************************/
 
@@ -29,7 +30,8 @@ namespace WolfGenerator.Core.AST
 		private readonly string parameters;
 		private readonly string from;
 
-		public ApplyStatement( string applyMethod, string parameters, string from )
+		public ApplyStatement( StatementPosition position, string applyMethod, string parameters, string from )
+			: base( position )
 		{
 			this.applyMethod = applyMethod;
 			this.parameters = parameters;
@@ -56,12 +58,12 @@ namespace WolfGenerator.Core.AST
 			var builder = new StringBuilder();
 
 			builder.Append( "<%apply " );
-			builder.Append( applyMethod ?? "[NULL-VALUE]" );
+			builder.Append( this.applyMethod ?? "[NULL-VALUE]" );
 			builder.Append( "( " );
-			builder.Append( parameters ?? "[NULL-VALUE]" );
+			builder.Append( this.parameters ?? "[NULL-VALUE]" );
 			builder.Append( " ) " );
 			builder.Append( "from " );
-			builder.Append( from ?? "[NULL-VALUE]" );
+			builder.Append( this.from ?? "[NULL-VALUE]" );
 
 			return builder.ToString();
 		}

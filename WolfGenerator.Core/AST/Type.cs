@@ -14,6 +14,7 @@
  *                      create empty array[Type].
  *   14.02.2009 13:16 - FIX: ToString, check if generic parameters is empty.
  *   14.02.2009 13:21 - Add Type constructor with `params` attribute argument list, to support hand initialize.
+ *   28.02.2009 10:11 - Add inheritance from Statement class.
  *
  *******************************************************/
 
@@ -25,14 +26,15 @@ namespace WolfGenerator.Core.AST
 	/// <summary>
 	/// EBNF: Type = ident { "." ident } [ "&lt;" Type { "," Type } "&gt;" ].
 	/// </summary>
-	public class Type
+	public class Type : Statement
 	{
 		private readonly string typeName;
 		private readonly IList<Type> genericParameters;
 
-		public Type( string typeName, params Type[] genericParameters ) : this( typeName, (IList<Type>)genericParameters ) {}
+		public Type( StatementPosition position, string typeName, params Type[] genericParameters )
+			: this( position, typeName, (IList<Type>)genericParameters ) {}
 
-		public Type( string typeName, IList<Type> genericParameters )
+		public Type( StatementPosition position, string typeName, IList<Type> genericParameters ) : base( position )
 		{
 			this.typeName = typeName;
 			this.genericParameters = genericParameters ?? new Type[0];

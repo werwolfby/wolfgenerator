@@ -17,6 +17,7 @@
  *   21.02.2009 18:17 - Forget add check for CallStatement.
  *   23.02.2009 23:56 - Update EBNF & Add AppendType implementation.
  *   26.02.2009 23:11 - Remove Generate & GenerateJoin methods.
+ *   28.02.2009 10:28 - Add support inheritance from Statement class.
  *
  *******************************************************/
 
@@ -36,7 +37,8 @@ namespace WolfGenerator.Core.AST
 		private readonly AppendType appendType;
 		private readonly IList<RuleStatement> statements;
 
-		public JoinStatement( string @string, AppendType appendType, IList<RuleStatement> statements )
+		public JoinStatement( StatementPosition position, string @string, AppendType appendType,
+		                      IList<RuleStatement> statements ) : base( position )
 		{
 			this.@string = @string;
 			this.appendType = appendType;
@@ -74,11 +76,11 @@ namespace WolfGenerator.Core.AST
 			builder.Append( this.@string );
 			builder.Append( "\"%>" );
 
-			if (statements != null && statements.Count > 0)
+			if (this.statements != null && this.statements.Count > 0)
 			{
 				builder.AppendLine();
 
-				foreach (var statement in statements)
+				foreach (var statement in this.statements)
 				{
 					builder.Append( '\t' );
 					builder.AppendLine( statement.ToString() );

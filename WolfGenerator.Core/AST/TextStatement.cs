@@ -18,6 +18,7 @@
  *   26.01.2009 10:30 - Extract method ExtractLines.
  *   27.01.2009 00:07 - ExtractLines: BugFix: now support empty line.
  *   26.02.2009 23:14 - Remove Generate & GenerateJoin methods.
+ *   28.02.2009 10:27 - Add support inheritance from Statement class.
  *
  *******************************************************/
 
@@ -32,7 +33,7 @@ namespace WolfGenerator.Core.AST
 		private readonly List<Line> lines;
 		private readonly bool cropLastLine;
 
-		public TextStatement( string text )
+		public TextStatement( StatementPosition position, string text ) : base( position )
 		{
 			this.text = text;
 			this.lines = ExtractLines( text, out this.cropLastLine );

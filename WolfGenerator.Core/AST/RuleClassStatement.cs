@@ -20,6 +20,7 @@
  *   25.01.2009 08:33 - Update EBNF.
  *   11.02.2009 20:25 - Add MatchMethodGroups property.
  *   18.02.2009 00:19 - RuleMethodStatements always return not null collection (instead null return empty array).
+ *   28.02.2009 10:00 - Add inheritance from Statement class.
  *
  *******************************************************/
 
@@ -34,14 +35,15 @@ namespace WolfGenerator.Core.AST
 	///       RuleClassStart = lt;%ruleclass ident %&gt;.
 	///       RuleClassEnd = &lt;%end%&gt;.
 	/// </summary>
-	public class RuleClassStatement
+	public class RuleClassStatement : Statement
 	{
 		private readonly string name;
 		private readonly IList<UsingStatement> usingStatements;
 		private readonly IList<RuleClassMethodStatement> ruleMethodStatements;
 		private readonly IList<RuleMethodGroup> matchMethodGroups;
 
-		public RuleClassStatement( string name, IList<UsingStatement> usingStatements, IList<RuleClassMethodStatement> ruleMethodStatements )
+		public RuleClassStatement( StatementPosition position, string name, IList<UsingStatement> usingStatements,
+		                           IList<RuleClassMethodStatement> ruleMethodStatements ) : base( position )
 		{
 			this.name = name;
 			this.usingStatements = usingStatements;
@@ -76,24 +78,20 @@ namespace WolfGenerator.Core.AST
 		{
 			var builder = new StringBuilder();
 
-			builder.AppendLine( "<%ruleclass " + name + "%>" );
-            
-			if (usingStatements != null && usingStatements.Count > 0)
+			builder.AppendLine( "<%ruleclass " + this.name + "%>" );
+
+			if (this.usingStatements != null && this.usingStatements.Count > 0)
 			{
 				builder.AppendLine();
-				foreach (var usingStatement in usingStatements)
-				{
+				foreach (var usingStatement in this.usingStatements)
 					builder.AppendLine( usingStatement.ToString() );
-				}
 			}
 
-			if (ruleMethodStatements != null && ruleMethodStatements.Count > 0)
+			if (this.ruleMethodStatements != null && this.ruleMethodStatements.Count > 0)
 			{
 				builder.AppendLine();
-				foreach (var ruleMethodStatement in ruleMethodStatements)
-				{
+				foreach (var ruleMethodStatement in this.ruleMethodStatements)
 					builder.AppendLine( ruleMethodStatement.ToString() );
-				}
 			}
 
 			builder.AppendLine();

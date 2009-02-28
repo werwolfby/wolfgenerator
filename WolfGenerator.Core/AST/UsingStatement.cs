@@ -11,6 +11,7 @@
  *   25.01.2009 08:39 - Add EBNF.
  *   25.01.2009 08:48 - Override ToString method.
  *   18.02.2009 00:13 - Override Equals method.
+ *   28.02.2009 10:02 - Add inheritance from Statement class.
  *
  *******************************************************/
 
@@ -19,11 +20,11 @@ namespace WolfGenerator.Core.AST
 	/// <summary>
 	/// EBNF: Using = &lt;%using ident { .  ident } %&gt;.
 	/// </summary>
-	public class UsingStatement
+	public class UsingStatement : Statement
 	{
 		private readonly string @namespace;
 
-		public UsingStatement( string @namespace )
+		public UsingStatement( StatementPosition position, string @namespace ) : base( position )
 		{
 			this.@namespace = @namespace;
 		}
@@ -35,7 +36,7 @@ namespace WolfGenerator.Core.AST
 
 		public override string ToString()
 		{
-			return "<%using " + @namespace + "%>";
+			return "<%using " + this.@namespace + "%>";
 		}
 
 		public bool Equals( UsingStatement obj )
@@ -50,7 +51,7 @@ namespace WolfGenerator.Core.AST
 			if (ReferenceEquals( null, obj )) return false;
 			if (ReferenceEquals( this, obj )) return true;
 			if (obj.GetType() != typeof(UsingStatement)) return false;
-			return Equals( (UsingStatement)obj );
+			return this.Equals( (UsingStatement)obj );
 		}
 
 		public override int GetHashCode()

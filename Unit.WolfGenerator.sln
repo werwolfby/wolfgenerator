@@ -17,6 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Tools", ".Tools", "{380752
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASTTree", "ASTTree\ASTTree.csproj", "{93992E8C-F3C0-42A1-8377-210E5B3BA223}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".GeneratorData", ".GeneratorData", "{F7B555B4-C222-40D4-8BDF-C708BFD568BA}"
+	ProjectSection(SolutionItems) = preProject
+		.GeneratorData\Generator.reg = .GeneratorData\Generator.reg
+		.GeneratorData\register.bat = .GeneratorData\register.bat
+		.GeneratorData\unregister.bat = .GeneratorData\unregister.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Unit.WolfGenerator.vsmdi

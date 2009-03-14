@@ -75,6 +75,11 @@ namespace WolfGenerator.Core.CodeGenerator
 				var list = new List<CodeWriter>();
 				CodeWriter temp;
 
+				foreach (var item in ruleClassStatement.RuleMethodStatements.OfType<MethodStatement>())
+				{
+					temp = this.Invoke( "Method", item, fileName );
+					list.Add( temp );
+				}
 				foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.RuleMethodStatements ).Select( ms => ms.MatchMethodStatement ))
 				{
 					temp = this.Invoke( "Match", item, fileName );
@@ -223,6 +228,31 @@ namespace WolfGenerator.Core.CodeGenerator
 			writer.Indent = 1;
 			writer.AppendLine( "return writer;" );
 			writer.Indent = 0;
+			writer.Append( "}" );
+
+			return writer;
+		}
+
+		public CodeWriter Method( MethodStatement method )
+		{
+			var writer = new CodeWriter();
+
+			writer.Indent = 0;
+			writer.Append( "public " );
+			writer.AppendText( method.ReturnType.ToString() );
+			writer.Indent = 0;
+			writer.Append( " " );
+			writer.AppendText( method.Name );
+			writer.Indent = 0;
+			writer.Append( "(" );
+			writer.Append( this.Invoke( "MethodParamenters", method.Variables ) );
+			writer.Indent = 0;
+			writer.AppendLine( ")" );
+			writer.AppendLine( "{" );
+			writer.Indent = 1;
+			writer.AppendText( method.Code );
+			writer.Indent = 0;
+			writer.AppendLine();
 			writer.Append( "}" );
 
 			return writer;

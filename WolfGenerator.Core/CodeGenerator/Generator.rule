@@ -30,6 +30,8 @@ $-%>
 public partial class <%= ruleClassStatement.Name %> : GeneratorBase
 {
 	<%join "\r\n\r\n"%>
+		<%apply Method( item, fileName ) from ruleClassStatement.RuleMethodStatements.OfType<MethodStatement>()%>
+		
 		<%apply Match( item, fileName ) from ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.RuleMethodStatements ).Select( ms => ms.MatchMethodStatement )%>
 
 		<%apply Rule( item, fileName, false, true ) from ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.RuleMethodStatements )%>
@@ -66,6 +68,13 @@ public CodeWriter <%= ruleMethodStatement.Name %><%$if (ruleMethodStatement.Matc
 	<%end%>
 
 	return writer;
+}
+<%end%>
+
+<%rule Method( MethodStatement method )%>
+public <%= method.ReturnType.ToString() %> <%= method.Name %>(<%call MethodParamenters( method.Variables ) %>)
+{
+	<%= method.Code %>
 }
 <%end%>
 

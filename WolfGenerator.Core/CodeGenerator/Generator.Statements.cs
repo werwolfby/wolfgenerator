@@ -13,6 +13,7 @@ namespace WolfGenerator.Core.CodeGenerator
 		{
 			var writer = new CodeWriter();
 
+			if (!string.IsNullOrEmpty( call.Parameters )){
 			writer.AppendText( writerName );
 			writer.Indent = 0;
 			writer.Append( ".Append( this.Invoke( \"" );
@@ -21,7 +22,15 @@ namespace WolfGenerator.Core.CodeGenerator
 			writer.Append( "\", " );
 			writer.AppendText( call.Parameters );
 			writer.Indent = 0;
-			writer.Append( " ) );" );
+			writer.AppendLine( " ) );" );
+			} else {
+			writer.AppendText( writerName );
+			writer.Indent = 0;
+			writer.Append( ".Append( this.Invoke( \"" );
+			writer.AppendText( call.Name );
+			writer.Indent = 0;
+			writer.AppendLine( "\" ) );" );
+			}
 
 			return writer;
 		}

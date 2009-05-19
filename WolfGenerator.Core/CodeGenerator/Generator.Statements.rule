@@ -3,7 +3,11 @@
 <%using WolfGenerator.Core.AST%>
 
 <%rule Statement( CallStatement call, string writerName )%>
+<%$if (!string.IsNullOrEmpty( call.Parameters )){ $-%>
 <%= writerName %>.Append( this.Invoke( "<%= call.Name %>", <%= call.Parameters %> ) );
+<%$} else {$-%>
+<%= writerName %>.Append( this.Invoke( "<%= call.Name %>" ) );
+<%$}$%>
 <%end%>
 
 <%rule Statement( CodeStatement code, string writerName )%>

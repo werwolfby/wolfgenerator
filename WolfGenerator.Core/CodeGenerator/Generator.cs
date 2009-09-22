@@ -186,7 +186,7 @@ namespace WolfGenerator.Core.CodeGenerator
 			if (ruleMethodStatement.MatchMethodStatement != null){
 			writer.Indent = 0;
 			writer.Append( "_" );
-			writer.AppendText( ruleMethodStatement.Name );
+			writer.AppendText( ruleMethodStatement.MatchMethodStatement.Name );
 			}else if (isDefault){
 			writer.Indent = 0;
 			writer.Append( "_Default" );
@@ -233,7 +233,7 @@ namespace WolfGenerator.Core.CodeGenerator
 			return writer;
 		}
 
-		public CodeWriter Method( MethodStatement method )
+		public CodeWriter Method( MethodStatement method, string fileName )
 		{
 			var writer = new CodeWriter();
 

@@ -59,7 +59,7 @@ $-%>
 <%$
 }
 $-%>
-public CodeWriter <%= ruleMethodStatement.Name %><%$if (ruleMethodStatement.MatchMethodStatement != null){$%>_<%= ruleMethodStatement.Name %><%$}else if (isDefault){$%>_Default<%$}$%>(<%call MethodParamenters( ruleMethodStatement.Variables ) %>)
+public CodeWriter <%= ruleMethodStatement.Name %><%$if (ruleMethodStatement.MatchMethodStatement != null){$%>_<%= ruleMethodStatement.MatchMethodStatement.Name %><%$}else if (isDefault){$%>_Default<%$}$%>(<%call MethodParamenters( ruleMethodStatement.Variables ) %>)
 {
 	var writer = new CodeWriter();
 
@@ -71,7 +71,7 @@ public CodeWriter <%= ruleMethodStatement.Name %><%$if (ruleMethodStatement.Matc
 }
 <%end%>
 
-<%rule Method( MethodStatement method )%>
+<%rule Method( MethodStatement method, string fileName )%>
 public <%= method.ReturnType.ToString() %> <%= method.Name %>(<%call MethodParamenters( method.Variables ) %>)
 {
 	<%= method.Code %>

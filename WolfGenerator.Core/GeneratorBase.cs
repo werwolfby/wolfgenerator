@@ -77,26 +77,28 @@ namespace WolfGenerator.Core
 			                           	MatchMethodAttribute = m.GetAttribute<MatchMethodAttribute>()
 			                           }).ToArray();
 
-			var matchData = (from methodName in ruleMethodNames
-			                 select new MatchMethodDataCollection
-			                        {
-			                        	methodName = methodName,
-			                        	methodDatas = (from rm in ruleMethods
-			                        	               from mm in matchMethods
-			                        	               where
-			                        	               	rm.RuleMethodAttribute.Name == mm.MatchMethodAttribute.RuleMethodName &&
-			                        	               	rm.RuleMethodAttribute.MatchName ==
-			                        	               	mm.MatchMethodAttribute.MathcMethodName
-			                        	               select new MatchMethodData
-			                        	                      {
-			                        	                      	ruleMethodName = rm.MethodName,
-			                        	                      	matchMethodName = mm.MethodName
-			                        	                      }).ToArray(),
-			                        	defaultMethodName =
-			                        		ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
-			                        		                                  p.RuleMethodAttribute.Name == methodName ).MethodName
+		    var matchData = (from methodName in ruleMethodNames
+		                     select new MatchMethodDataCollection
+		                            {
+		                                methodName = methodName,
+		                                methodDatas = (from rm in ruleMethods
+		                                               from mm in matchMethods
+		                                               where
+		                                                   rm.RuleMethodAttribute.Name ==
+		                                                   mm.MatchMethodAttribute.RuleMethodName &&
+		                                                   rm.RuleMethodAttribute.MatchName ==
+		                                                   mm.MatchMethodAttribute.MathcMethodName
+		                                               select new MatchMethodData
+		                                                      {
+		                                                          ruleMethodName = rm.MethodName,
+		                                                          matchMethodName = mm.MethodName
+		                                                      }).ToArray(),
+		                                defaultMethodName =
+		                                    ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
+		                                                                      p.RuleMethodAttribute.Name == methodName )
+		                                    .NullOrProperty( e => e.MethodName )
 
-			                        }).ToArray();
+		                            }).ToArray();
 
 			this.matchMethodCollection = new MatchMethodCollection
 			                             {
@@ -159,5 +161,12 @@ namespace WolfGenerator.Core
 		{
 			return null;
 		}
+
+        public static TItem NullOrProperty<T, TItem>( this T item, Func<T, TItem> func )
+            where T : class 
+            where TItem : class
+        {
+            return item == null ? null : func( item );
+        }
 	}
 }

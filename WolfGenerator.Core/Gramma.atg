@@ -218,6 +218,7 @@ Join<out JoinStatement joinStatement>                                           
                                                                                       ValueStatement valueStatement;
                                                                                       ApplyStatement applyStatement;
                                                                                       CallStatement callStatement; 
+                                                                                      JoinStatement joinStatement; 
                                                                                       AppendType appendType = AppendType.EmptyLastLine; .)
                 = 
                   SYNC "<%join"                                                    (. Token start = t; .)
@@ -240,6 +241,9 @@ Join<out JoinStatement joinStatement>                                           
                     |
                     Call<out callStatement>                                        (. if (statements == null) statements = new List<RuleStatement>();
                                                                                    	  statements.Add( callStatement ); .)
+                    |
+                    Join<out joinStatement>                                        (. if (statements == null) statements = new List<RuleStatement>();
+                                                                                   	  statements.Add( joinStatement ); .)
                   }
                   SYNC "<%end%>"                                                   (. joinStatement = new JoinStatement( new StatementPosition( start, t ), @string, appendType, statements ); .)
                   .

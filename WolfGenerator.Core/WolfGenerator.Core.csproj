@@ -137,7 +137,7 @@
     </None>
     <None Include="Generator.reg" />
     <None Include="Gramma.atg">
-      <Generator>Coco</Generator>
+      <Generator>CocoR</Generator>
       <LastGenOutput>Gramma.cs</LastGenOutput>
     </None>
     <None Include="Parser.frame" />

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using Microsoft.CSharp;
 using WolfGenerator.Core.CodeGenerator;
 
@@ -27,7 +29,7 @@ namespace WolfGenerator.Core.Compiler
 			_compilerParams.ReferencedAssemblies.Add(assemblyName);
 		}
 
-		public Assembly Compile()
+		public Assembly Compile(string generatedCodeFileName = null)
 		{
 			var options = new Dictionary<string, string>
 			              {
@@ -42,6 +44,14 @@ namespace WolfGenerator.Core.Compiler
 
 			var generatator = new Generator();
 			var generatedCode = generatator.Generate(null, parser.ruleClassStatement, "");
+
+			if (generatedCodeFileName != null)
+			{
+				using (var stream = new StreamWriter(generatedCodeFileName, false, Encoding.UTF8))
+				{
+					stream.Write(generatedCode);
+				}
+			}
 
 			var result = codeProvider.CompileAssemblyFromSource(this._compilerParams, generatedCode.ToString());
 

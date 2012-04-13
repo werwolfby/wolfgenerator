@@ -92,6 +92,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Generator.rule</DependentUpon>
     </Compile>
+    <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
     <Compile Include="MatchMethodAttribute.cs" />

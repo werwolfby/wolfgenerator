@@ -22,6 +22,7 @@ namespace WolfGenerator.Core.Compiler
 		public Compiler(string fileName)
 		{
 			this.fileName = fileName;
+			this.AddReference("WolfGenerator.Core.dll");
 		}
 
 		public void AddReference(string assemblyName)

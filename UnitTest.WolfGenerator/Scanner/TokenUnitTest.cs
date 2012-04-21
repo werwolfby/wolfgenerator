@@ -8,19 +8,19 @@
  * 
  * History:
  *   25.02.2009 21:38 - Create Wireframe
+ *   21.04.2012 23:06 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System.IO;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WolfGenerator.Core;
+using NUnit.Framework;
 using WolfGenerator.Core.Parsing;
 using System.Linq;
 
 namespace UnitTest.WolfGenerator.Scanner
 {
-	[TestClass]
+	[TestFixture]
 	public class TokenUnitTest
 	{
 		private class Token
@@ -40,16 +40,16 @@ namespace UnitTest.WolfGenerator.Scanner
 			}
 		}
 
-		[TestMethod]
+		[Test]
 		public void TextTokenTest()
 		{
 			var tokens = new[]
 			             {
-			             	new Token( Parser_Accessor._rule, "<%rule" ), 
-							null, 
-							new Token( Parser_Accessor._ident, "Test" ),
-			             	new Token( Parser_Accessor._endStatement, "%>" ), 
-							new Token( Parser_Accessor._end, "<%end%>" )
+			             	new Token( Parser_Accessor._rule, "<%rule" ),
+			             	null,
+			             	new Token( Parser_Accessor._ident, "Test" ),
+			             	new Token( Parser_Accessor._endStatement, "%>" ),
+			             	new Token( Parser_Accessor._end, "<%end%>" )
 			             };
 			var text = string.Join( "", tokens.Select( t => t != null ? t.value : " " ).ToArray() );
 			var scanner = new Scanner_Accessor( new MemoryStream( Encoding.UTF8.GetBytes( text ) ) );
@@ -57,10 +57,10 @@ namespace UnitTest.WolfGenerator.Scanner
 			foreach (var expectedTokenValue in tokens.Where( s => s != null ))
 			{
 				var actualTokenValue = scanner.NextToken();
-				Assert.AreEqual( expectedTokenValue.value, actualTokenValue.val );
+				Assert.That( actualTokenValue.val, Is.EqualTo( expectedTokenValue.value ) );
 				if (expectedTokenValue.type.HasValue)
-					Assert.AreEqual( expectedTokenValue.type.Value, actualTokenValue.kind,
-					                 "Wrong kind of parsing token" );
+					Assert.That( actualTokenValue.kind, Is.EqualTo( expectedTokenValue.type.Value ),
+					             "Wrong kind of parsing token" );
 			}
 		}
 	}

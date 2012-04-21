@@ -15,7 +15,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core.Invoker;
 
-namespace UnitTest.WolfGenerator.GeneratorTest
+namespace UnitTest.WolfGenerator.InvokerTests
 {
 	[TestClass]
 	public class InvokeTests

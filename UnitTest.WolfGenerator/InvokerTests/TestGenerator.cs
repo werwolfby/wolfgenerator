@@ -15,7 +15,7 @@
 using System;
 using WolfGenerator.Core;
 
-namespace UnitTest.WolfGenerator.GeneratorTest
+namespace UnitTest.WolfGenerator.InvokerTests
 {
 	public abstract class Property
 	{

@@ -13,6 +13,7 @@
  *   21.04.2012 20:41 - [*] Remove direct use of [RuleMethodAttribute] attribute in [RuleMethodWithAttribute] class.
  *   21.04.2012 20:46 - [*] Remove direct use of [MatchMethodAttribute] attribute in [MatchMethodWithAttribute] class.
  *   21.04.2012 20:54 - [+] Add [instanceType] field.
+ *   21.04.2012 20:56 - [*] Rename [RuleMethodWithAttribute] and [MatchMethodWithAttribute] to [RuleMethodDescription] and [MatchMethodDescription].
  *
  *******************************************************/
 
@@ -52,7 +53,7 @@ namespace WolfGenerator.Core.Invoker
 			}
 		}
 
-		private class RuleMethodWithAttribute
+		private class RuleMethodDescription
 		{
 			public string MethodName { get; set; }
 
@@ -61,7 +62,7 @@ namespace WolfGenerator.Core.Invoker
 			public string MatchName { get; set; }
 		}
 
-		private class MatchMethodWithAttribute
+		private class MatchMethodDescription
 		{
 			public string MethodName { get; set; }
 
@@ -93,15 +94,13 @@ namespace WolfGenerator.Core.Invoker
 				              	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>(),
 				              } )
 				.Where( e => e.RuleMethodAttribute != null )
-				.Select( m => new RuleMethodWithAttribute
+				.Select( m => new RuleMethodDescription
 				              {
 				              	MethodName = m.Method.Name,
 				              	RuleName = m.RuleMethodAttribute.Name,
 				              	MatchName = m.RuleMethodAttribute.MatchName,
 				              } )
 				.ToArray();
-
-			var ruleMethodNames = (ruleMethods.Select( p => p.RuleName ).Distinct()).ToArray();
 
 			var matchMethods = instanceType
 				.GetMethods( matchMethodBindingFlags )
@@ -111,13 +110,15 @@ namespace WolfGenerator.Core.Invoker
 				              	MatchMethodAttribute = m.GetAttribute<MatchMethodAttribute>(),
 				              } )
 				.Where( e => e.MatchMethodAttribute != null )
-				.Select( m => new MatchMethodWithAttribute
+				.Select( m => new MatchMethodDescription
 				              {
 				              	MethodName = m.Method.Name,
 				              	RuleName = m.MatchMethodAttribute.RuleMethodName,
 				              	MatchName = m.MatchMethodAttribute.MathcMethodName,
 				              } )
 				.ToArray();
+
+			var ruleMethodNames = (ruleMethods.Select( p => p.RuleName ).Distinct()).ToList();
 
 			var matchData = (from methodName in ruleMethodNames
 			                 select new MatchMethodDataCollection
@@ -132,7 +133,7 @@ namespace WolfGenerator.Core.Invoker
 			                             };
 		}
 
-		private static MatchMethodData[] GetMethodDatas( IEnumerable<RuleMethodWithAttribute> ruleMethods, IEnumerable<MatchMethodWithAttribute> matchMethods, string methodName )
+		private static MatchMethodData[] GetMethodDatas( IEnumerable<RuleMethodDescription> ruleMethods, IEnumerable<MatchMethodDescription> matchMethods, string methodName )
 		{
 			return (from rm in ruleMethods
 			        from mm in matchMethods

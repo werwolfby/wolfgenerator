@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssertHelper.cs" />
+    <Compile Include="CompilerTests\CompilerTest.cs" />
     <Compile Include="InvokerTests\InvokeTests.cs" />
     <Compile Include="InvokerTests\TestGenerator.cs" />
     <Compile Include="ParserErrorTest\EndStatementUnitTest.cs" />
@@ -125,6 +126,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CompilerTests\Test1.rule">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

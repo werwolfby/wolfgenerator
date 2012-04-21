@@ -10,15 +10,16 @@
  *   14.02.2009 21:52 - Create Wireframe
  *   14.02.2009 22:09 - Finish first implementation.
  *   25.02.2009 20:14 - Finish ReserveVariableTest test and fix for it success.
+ *   21.04.2012 23:37 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class VariableUnitTest
 	{
 		public static readonly Variable simpleVariable     = new Variable( Helper.EmptyPosition, "simple", TypeUnitTest.simpleType );
@@ -27,31 +28,31 @@ namespace UnitTest.WolfGenerator.ParserTest
 		public static readonly Variable funcVariable       = new Variable( Helper.EmptyPosition, "simple", TypeUnitTest.funcType );
 		public static readonly Variable reservedVariable   = new Variable( Helper.EmptyPosition, "@class", TypeUnitTest.funcType );
 
-		[TestMethod]
+		[Test]
 		public void SimpleVariableTest()
 		{
 			MainParseTest( simpleVariable );
 		}
 
-		[TestMethod]
+		[Test]
 		public void ListVariableTest()
 		{
 			MainParseTest( listVariable );
 		}
 
-		[TestMethod]
+		[Test]
 		public void DictionaryVariableTest()
 		{
 			MainParseTest( dictionaryVariable );
 		}
 
-		[TestMethod]
+		[Test]
 		public void FuncVariableTest()
 		{
 			MainParseTest( funcVariable );
 		}
 
-		[TestMethod]
+		[Test]
 		public void ReserveVariableTest()
 		{
 			MainParseTest( reservedVariable );

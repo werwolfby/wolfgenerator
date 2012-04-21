@@ -9,6 +9,7 @@
  * History:
  *   21.04.2012 20:25 - Create Wireframe
  *   21.04.2012 20:30 - [*] Move code from [GeneratorBase].
+ *   21.04.2012 20:32 - [!] Use [instance] field for invoking.
  *
  *******************************************************/
 
@@ -75,7 +76,7 @@ namespace WolfGenerator.Core.Invoker
 			const BindingFlags ruleMethodBindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 			const BindingFlags matchMethodBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-			var ruleMethods = (from m in this.GetType().GetMethods( ruleMethodBindingFlags )
+			var ruleMethods = (from m in instance.GetType().GetMethods( ruleMethodBindingFlags )
 			                   where m.GetAttribute<RuleMethodAttribute>() != null
 			                   select new RuleMethodWithAttribute
 			                          {
@@ -85,7 +86,7 @@ namespace WolfGenerator.Core.Invoker
 
 			var ruleMethodNames = (ruleMethods.Select( p => p.RuleMethodAttribute.Name ).Distinct()).ToArray();
 
-			var matchMethods = (from m in this.GetType().GetMethods( matchMethodBindingFlags )
+			var matchMethods = (from m in instance.GetType().GetMethods( matchMethodBindingFlags )
 			                    where m.GetAttribute<MatchMethodAttribute>() != null
 			                    select new MatchMethodWithAttribute
 			                           {
@@ -142,7 +143,7 @@ namespace WolfGenerator.Core.Invoker
 
 		private bool CheckParams( string name, object[] parameters )
 		{
-			var method = this.GetType().GetMethod( name, INVOKE_MEMBER_BINDING_FLAGS );
+			var method = instance.GetType().GetMethod( name, INVOKE_MEMBER_BINDING_FLAGS );
 			if (method == null) throw new Exception( "Can't find method: " + name );
 			var methodParameters = method.GetParameters();
 			// TODO: Check parameters count depends on default parameters of method
@@ -168,8 +169,8 @@ namespace WolfGenerator.Core.Invoker
 
 		private T InnerInvoke<T>( string name, params object[] parameters )
 		{
-			return (T)this.GetType().InvokeMember( name, INVOKE_MEMBER_BINDING_FLAGS,
-			                                       Type.DefaultBinder, this, parameters );
+			return (T)instance.GetType().InvokeMember( name, INVOKE_MEMBER_BINDING_FLAGS,
+			                                           Type.DefaultBinder, instance, parameters );
 		}
 	}
 }

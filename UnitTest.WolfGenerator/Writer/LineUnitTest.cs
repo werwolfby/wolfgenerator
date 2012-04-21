@@ -8,45 +8,46 @@
  * 
  * History:
  *   18.02.2009 00:35 - Create Wireframe
+ *   21.04.2012 23:18 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.Writer;
 
 namespace UnitTest.WolfGenerator.Writer
 {
-	[TestClass]
+	[TestFixture]
 	public class LineUnitTest
 	{
-		[TestMethod]
+		[Test]
 		public void IndentLineTest()
 		{
-			var n = 3;
-			var expectedEnd = "Test";
-            var indent = '\t';
+			const int n = 3;
+			const string expectedEnd = "Test";
+			const char indent = '\t';
 
 			var expected = new string( indent, n ) + expectedEnd;
-            
+
 			var line = new Line( n, expectedEnd );
 
-			Assert.AreEqual( expected, line.ToString( indent.ToString() ) );
+			Assert.That( line.ToString( indent.ToString() ), Is.EqualTo( expected ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void AppendTextTest()
 		{
-			var n = 3;
-			var expectedEnd1 = "Test";
-			var expectedEnd2 = "Simple";
-            var indent = '\t';
+			const int n = 3;
+			const string expectedEnd1 = "Test";
+			const string expectedEnd2 = "Simple";
+			const char indent = '\t';
 
 			var expected = new string( indent, n ) + expectedEnd1 + expectedEnd2;
-            
+
 			var line = new Line( n, expectedEnd1 );
 			line.Append( expectedEnd2 );
 
-			Assert.AreEqual( expected, line.ToString( indent.ToString() ) );
+			Assert.That( line.ToString( indent.ToString() ), Is.EqualTo( expected ) );
 		}
 	}
 }

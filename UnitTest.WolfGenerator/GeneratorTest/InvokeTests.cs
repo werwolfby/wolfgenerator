@@ -32,12 +32,12 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 
 			testGenerator.TypeDefinePropertyCalls = 0;
 
-			var navigationProperty = new NavigationProperty { Name = "Property2", Property = typeProperty, IsCollection = true };
+			var navigationProperty = new ComplexProperty { Name = "Property2", Type = typeof(string) };
 
 			testGenerator.CallDefineProperty( navigationProperty );
 
 			Assert.AreEqual( 0, testGenerator.TypeDefinePropertyCalls );
-			Assert.AreEqual( 1, testGenerator.NavigationDefinePropertyCalls );
+			Assert.AreEqual( 1, testGenerator.ComplexDefinePropertyCalls );
 		}
 
 		[TestMethod]

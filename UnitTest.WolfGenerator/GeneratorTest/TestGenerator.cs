@@ -26,6 +26,11 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 		public Type Type { get; set; }
 	}
 
+	public class ComplexProperty : Property
+	{
+		public Type Type { get; set; }
+	}
+
 	public class NavigationProperty : Property
 	{
 		public Property Property { get; set; }
@@ -36,6 +41,8 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 	public class TestGenerator : GeneratorBase
 	{
 		public int TypeDefinePropertyCalls { get; set; }
+		
+		public int ComplexDefinePropertyCalls { get; set; }
 		
 		public int NavigationDefinePropertyCalls { get; set; }
 		
@@ -72,6 +79,11 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 		{
 			this.NavigationDefinePropertyCalls++;
 			this.NavigationNotListDefinePropertyCalls++;
+		}
+
+		public void DefineProperty( ComplexProperty navigationProperty )
+		{
+			this.ComplexDefinePropertyCalls++;
 		}
 
 		public void CallDefineProperty( Property property )

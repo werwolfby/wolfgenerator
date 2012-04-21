@@ -16,6 +16,7 @@
  *   21.04.2012 20:56 - [*] Rename [RuleMethodWithAttribute] and [MatchMethodWithAttribute] to [RuleMethodDescription] and [MatchMethodDescription].
  *   21.04.2012 21:09 - [*] Encapsulate field of nested classes.
  *   21.04.2012 21:22 - [-] Remove [MatchMethodDescription] and use common [MethodDescription] class.
+ *   21.04.2012 21:28 - [*] Extract [GetRuleMethodDescriptions] and [GetMatchMethodDescriptions] methods.
  *
  *******************************************************/
 
@@ -81,10 +82,26 @@ namespace WolfGenerator.Core.Invoker
 			this.instance = instance;
 			this.instanceType = this.instance.GetType();
 
-			const BindingFlags ruleMethodBindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-			const BindingFlags matchMethodBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+			var ruleMethods = this.GetRuleMethodDescriptions();
+			var matchMethods = this.GetMatchMethodDescriptions();
 
-			var ruleMethods = instanceType
+			var ruleMethodNames = ruleMethods.Select( p => p.RuleName ).Distinct().ToList();
+
+			var matchData = (from methodName in ruleMethodNames
+			                 select new MatchMethodDataCollection
+			                        {
+			                        	MethodName = methodName,
+			                        	MethodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
+			                        }).ToArray();
+
+			this.matchMethodCollection = new MatchMethodCollection( matchData.ToDictionary( collection => collection.MethodName ) );
+		}
+
+		private IList<MethodDescription> GetRuleMethodDescriptions()
+		{
+			const BindingFlags ruleMethodBindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+			return this.instanceType
 				.GetMethods( ruleMethodBindingFlags )
 				.Select( m => new
 				              {
@@ -98,9 +115,14 @@ namespace WolfGenerator.Core.Invoker
 				              	RuleName = m.RuleMethodAttribute.Name,
 				              	MatchName = m.RuleMethodAttribute.MatchName,
 				              } )
-				.ToArray();
+				.ToList();
+		}
 
-			var matchMethods = instanceType
+		private IList<MethodDescription> GetMatchMethodDescriptions()
+		{
+			const BindingFlags matchMethodBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+			return this.instanceType
 				.GetMethods( matchMethodBindingFlags )
 				.Select( m => new
 				              {
@@ -114,18 +136,7 @@ namespace WolfGenerator.Core.Invoker
 				              	RuleName = m.MatchMethodAttribute.RuleMethodName,
 				              	MatchName = m.MatchMethodAttribute.MathcMethodName,
 				              } )
-				.ToArray();
-
-			var ruleMethodNames = (ruleMethods.Select( p => p.RuleName ).Distinct()).ToList();
-
-			var matchData = (from methodName in ruleMethodNames
-			                 select new MatchMethodDataCollection
-			                        {
-			                        	MethodName = methodName,
-			                        	MethodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
-			                        }).ToArray();
-
-			this.matchMethodCollection = new MatchMethodCollection( matchData.ToDictionary( collection => collection.MethodName ) );
+				.ToList();
 		}
 
 		private static IEnumerable<MatchMethodData> GetMethodDatas( IEnumerable<MethodDescription> ruleMethods, IEnumerable<MethodDescription> matchMethods, string methodName )

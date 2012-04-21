@@ -95,6 +95,8 @@
     <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
+    <Compile Include="Invoker\DynamicInvoker.cs" />
+    <Compile Include="Invoker\MethodInfoExtender.cs" />
     <Compile Include="MatchMethodAttribute.cs" />
     <Compile Include="Parsing\Parser.cs">
       <DependentUpon>Gramma.atg</DependentUpon>

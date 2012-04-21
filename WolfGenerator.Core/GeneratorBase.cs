@@ -54,14 +54,14 @@ namespace WolfGenerator.Core
 			}
 		}
 
-		public class RuleMethodWithAttribute
+		private class RuleMethodWithAttribute
 		{
 			public string MethodName { get; set; }
 
 			public RuleMethodAttribute RuleMethodAttribute { get; set; }
 		}
 
-		public class MatchMethodWithAttribute
+		private class MatchMethodWithAttribute
 		{
 			public string MethodName { get; set; }
 

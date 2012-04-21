@@ -101,8 +101,8 @@ namespace WolfGenerator.Core
 			                 select new MatchMethodDataCollection
 			                        {
 			                        	methodName = methodName,
-			                        	methodDatas = GetMethodDatas( ruleMethods, matchMethods ),
-			                        	defaultMethodName = GetDefaultMethod( methodName, ruleMethods )
+			                        	methodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
+			                        	defaultMethodName = GetDefaultMethod( ruleMethods, methodName )
 			                        }).ToArray();
 
 			this.matchMethodCollection = new MatchMethodCollection
@@ -111,11 +111,12 @@ namespace WolfGenerator.Core
 			                             };
 		}
 
-		private static MatchMethodData[] GetMethodDatas( IEnumerable<RuleMethodWithAttribute> ruleMethods, IEnumerable<MatchMethodWithAttribute> matchMethods )
+		private static MatchMethodData[] GetMethodDatas( IEnumerable<RuleMethodWithAttribute> ruleMethods, IEnumerable<MatchMethodWithAttribute> matchMethods, string methodName )
 		{
 			return (from rm in ruleMethods
 			        from mm in matchMethods
 			        where
+			        	rm.MethodName == methodName &&
 			        	rm.RuleMethodAttribute.Name == mm.MatchMethodAttribute.RuleMethodName &&
 			        	rm.RuleMethodAttribute.MatchName == mm.MatchMethodAttribute.MathcMethodName
 			        select new MatchMethodData
@@ -125,7 +126,7 @@ namespace WolfGenerator.Core
 			               }).ToArray();
 		}
 
-		private static string GetDefaultMethod( string methodName, IEnumerable<RuleMethodWithAttribute> ruleMethods )
+		private static string GetDefaultMethod( IEnumerable<RuleMethodWithAttribute> ruleMethods, string methodName )
 		{
 			return ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
 			                                         p.RuleMethodAttribute.Name == methodName )

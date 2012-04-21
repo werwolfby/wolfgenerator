@@ -8,16 +8,17 @@
  * 
  * History:
  *   15.02.2009 14:02 - Create Wireframe
+ *   21.04.2012 23:35 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class MatchUnitTest
 	{
 		public static readonly MatchMethodStatement[] statements = new[]
@@ -25,7 +26,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 		                                                           	new MatchMethodStatement( Helper.EmptyPosition, "IsId", "return field == \"Id\"" )
 		                                                           };
 
-		[TestMethod]
+		[Test]
 		public void MatchTest()
 		{
 			MainTest2( statements[0] );
@@ -62,6 +63,5 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 			AssertHelper.AssertMatch( code, actualCodeStatement );
 		}
-
 	}
 }

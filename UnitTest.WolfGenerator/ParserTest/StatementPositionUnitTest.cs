@@ -8,34 +8,35 @@
  * 
  * History:
  *   28.02.2009 16:17 - Create Wireframe
+ *   21.04.2012 23:31 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class StatementPositionUnitTest
 	{
-		[TestMethod]
+		[Test]
 		public void StatementPositionTest()
 		{
-			var temp = "Test 123123123 ";
+			const string temp = "Test 123123123 ";
 			var strings = new[]
 			              {
 			              	"<%ruleclass Test%>",   // 0
 			              	"<%rule Temp()%>",      // 1
 			              	temp + "<%= value %>",  // 2 0, 1
 			              	"Pre End Text",         // 3 2
-                            "<%= value %>",         // 4 3
+			              	"<%= value %>",         // 4 3
 			              	"End Text",             // 5 4
 			              	"<%end%>",              // 6
 			              };
 
-			var endLine = "\r\n";
+			const string endLine = "\r\n";
 			var statementText = string.Join( endLine, strings );
 
 			var ruleClassStatement = ParserHelper.ParseClass( statementText );

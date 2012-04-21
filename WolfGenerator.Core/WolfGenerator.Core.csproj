@@ -96,9 +96,13 @@
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
     <Compile Include="MatchMethodAttribute.cs" />
+    <Compile Include="Parser.cs">
+      <DependentUpon>Gramma.atg</DependentUpon>
+    </Compile>
     <Compile Include="RuleMethodAttribute.cs" />
     <Compile Include="Scanner.cs">
       <SubType>Code</SubType>
+      <DependentUpon>Gramma.atg</DependentUpon>
     </Compile>
     <Compile Include="WolfGeneratorCustomToolGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGenerator.cs" />
@@ -106,11 +110,6 @@
     <Compile Include="CustomToolGenerator\IObjectWithSite.cs" />
     <Compile Include="CustomToolGenerator\IOleServiceProvider.cs" />
     <Compile Include="CustomToolGenerator\ServiceProvider.cs" />
-    <Compile Include="Gramma.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Gramma.atg</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Writer\AppendType.cs" />
     <Compile Include="Writer\CodeWriter.cs" />
@@ -141,8 +140,12 @@
     </None>
     <None Include="Generator.reg" />
     <None Include="Gramma.atg">
-      <Generator>CocoR</Generator>
-      <LastGenOutput>Gramma.cs</LastGenOutput>
+      <Generator>CocoFileGenerator</Generator>
+      <LastGenOutput>Gramma.log</LastGenOutput>
+    </None>
+    <None Include="Gramma.log">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Gramma.atg</DependentUpon>
     </None>
     <None Include="Parser.frame" />
     <None Include="Scanner.frame" />

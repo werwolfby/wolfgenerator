@@ -22,5 +22,20 @@ namespace WolfGenerator.Core.CodeGenerator
 		                                                     	"WolfGenerator.Core.Writer",
 		                                                     	"WolfGenerator.Core",
 		                                                     };
+
+		/// <summary>
+		/// Exported from .NET Framework 4.0 sources
+		/// </summary>
+		/// <param name="value">string</param>
+		/// <returns>true is string is null or whitespace</returns>
+		public static bool IsNullOrWhiteSpace( string value )
+		{
+			if (value == null) return true;
+
+			for (var i = 0; i < value.Length; i++) 
+				if (!char.IsWhiteSpace( value[i] )) return false;
+
+			return true;
+		}
 	}
 }

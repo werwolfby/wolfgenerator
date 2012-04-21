@@ -12,13 +12,13 @@ namespace WolfGenerator.Core.CodeGenerator
 		[MatchMethod( "GenerateInvoke", "IsEmpty", "Generator.rule" )]
 		private bool Match_GenerateInvoke_IsEmpty( CallStatement call )
 		{
-			return string.IsNullOrEmpty( call.Parameters );
+			return IsNullOrWhiteSpace( call.Parameters );
 		}
 
 		[MatchMethod( "GenerateInvoke", "IsNotEmpty", "Generator.rule" )]
 		private bool Match_GenerateInvoke_IsNotEmpty( CallStatement call )
 		{
-			return !string.IsNullOrEmpty( call.Parameters );
+			return !IsNullOrWhiteSpace( call.Parameters );
 		}
 
 		[RuleMethod( "GenerateInvoke", "IsEmpty", "Generator.rule" )]

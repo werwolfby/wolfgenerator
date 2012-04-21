@@ -39,8 +39,6 @@ namespace WolfGenerator.Core
 			public string methodName;
 
 			public MatchMethodData[] methodDatas;
-
-			public string defaultMethodName;
 		}
 
 		private class MatchMethodCollection
@@ -102,7 +100,6 @@ namespace WolfGenerator.Core
 			                        {
 			                        	methodName = methodName,
 			                        	methodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
-			                        	defaultMethodName = GetDefaultMethod( ruleMethods, methodName )
 			                        }).ToArray();
 
 			this.matchMethodCollection = new MatchMethodCollection
@@ -126,13 +123,6 @@ namespace WolfGenerator.Core
 			               }).ToArray();
 		}
 
-		private static string GetDefaultMethod( IEnumerable<RuleMethodWithAttribute> ruleMethods, string methodName )
-		{
-			return ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
-			                                         p.RuleMethodAttribute.Name == methodName )
-				.NullOrProperty( e => e.MethodName );
-		}
-
 		public CodeWriter Invoke( string name, params object[] parameters )
 		{
 			if (matchMethodCollection[name] != null)
@@ -140,24 +130,13 @@ namespace WolfGenerator.Core
 				var methodCollection = this.matchMethodCollection[name];
 				var matches = methodCollection.methodDatas;
 
-				var isFinded = false;
-
 				foreach (var data in matches)
 				{
 					if (!CheckParams(data.matchMethodName, parameters) || !this.InnerInvoke<bool>( data.matchMethodName, parameters )) continue;
 
 					name = data.ruleMethodName;
-					isFinded = true;
 					break;
 				}
-
-                if (!isFinded)
-                {
-                	if (methodCollection.defaultMethodName == null)
-                		throw new Exception( "Can't find right method " + name );
-
-                	name = methodCollection.defaultMethodName;
-                }
 			}
 
 			return InnerInvoke<CodeWriter>( name, parameters );

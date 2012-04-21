@@ -5,6 +5,7 @@ using System.Text;
 using CustomToolGenerator;
 using EnvDTE;
 using WolfGenerator.Core.CodeGenerator;
+using WolfGenerator.Core.Parsing;
 
 namespace WolfGenerator.Core
 {

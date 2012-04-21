@@ -15,6 +15,7 @@ using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core;
+using WolfGenerator.Core.Parsing;
 using System.Linq;
 
 namespace UnitTest.WolfGenerator.Scanner

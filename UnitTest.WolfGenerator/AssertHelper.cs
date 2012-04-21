@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core;
 using WolfGenerator.Core.AST;
+using WolfGenerator.Core.Parsing;
 using Type=WolfGenerator.Core.AST.Type;
 
 namespace UnitTest.WolfGenerator

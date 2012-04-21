@@ -14,6 +14,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WolfGenerator.Core;
+using WolfGenerator.Core.Parsing;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserErrorTest

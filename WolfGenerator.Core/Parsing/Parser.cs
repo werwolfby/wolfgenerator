@@ -18,7 +18,7 @@ using System;
 using System.IO;
 using System.Collections;
 
-namespace WolfGenerator.Core {
+namespace WolfGenerator.Core.Parsing {
 
 
 	public class Parser {

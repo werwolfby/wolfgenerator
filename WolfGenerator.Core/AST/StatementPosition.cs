@@ -14,6 +14,8 @@
  *
  *******************************************************/
 
+using WolfGenerator.Core.Parsing;
+
 namespace WolfGenerator.Core.AST
 {
 	public struct StatementPosition

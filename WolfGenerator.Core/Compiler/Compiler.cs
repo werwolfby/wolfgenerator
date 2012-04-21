@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.CSharp;
 using WolfGenerator.Core.CodeGenerator;
+using WolfGenerator.Core.Parsing;
 
 namespace WolfGenerator.Core.Compiler
 {

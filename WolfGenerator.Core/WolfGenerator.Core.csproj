@@ -96,14 +96,13 @@
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
     <Compile Include="MatchMethodAttribute.cs" />
-    <Compile Include="Parser.cs">
+    <Compile Include="Parsing\Parser.cs">
+      <DependentUpon>Gramma.atg</DependentUpon>
+    </Compile>
+    <Compile Include="Parsing\Scanner.cs">
       <DependentUpon>Gramma.atg</DependentUpon>
     </Compile>
     <Compile Include="RuleMethodAttribute.cs" />
-    <Compile Include="Scanner.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Gramma.atg</DependentUpon>
-    </Compile>
     <Compile Include="WolfGeneratorCustomToolGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGeneratorWithSite.cs" />
@@ -139,16 +138,16 @@
       <LastGenOutput>Generator.cs</LastGenOutput>
     </None>
     <None Include="Generator.reg" />
-    <None Include="Gramma.atg">
+    <None Include="Parsing\Gramma.atg">
       <Generator>CocoFileGenerator</Generator>
       <LastGenOutput>Gramma.log</LastGenOutput>
     </None>
-    <None Include="Gramma.log">
+    <None Include="Parsing\Gramma.log">
       <AutoGen>True</AutoGen>
       <DependentUpon>Gramma.atg</DependentUpon>
     </None>
-    <None Include="Parser.frame" />
-    <None Include="Scanner.frame" />
+    <None Include="Parsing\Parser.frame" />
+    <None Include="Parsing\Scanner.frame" />
     <None Include="test.snk" />
   </ItemGroup>
   <ItemGroup>

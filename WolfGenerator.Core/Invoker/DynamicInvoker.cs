@@ -12,6 +12,7 @@
  *   21.04.2012 20:32 - [!] Use [instance] field for invoking.
  *   21.04.2012 20:41 - [*] Remove direct use of [RuleMethodAttribute] attribute in [RuleMethodWithAttribute] class.
  *   21.04.2012 20:46 - [*] Remove direct use of [MatchMethodAttribute] attribute in [MatchMethodWithAttribute] class.
+ *   21.04.2012 20:54 - [+] Add [instanceType] field.
  *
  *******************************************************/
 
@@ -74,15 +75,17 @@ namespace WolfGenerator.Core.Invoker
 		private const BindingFlags INVOKE_MEMBER_BINDING_FLAGS = BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.NonPublic;
 
 		private readonly object instance;
+		private readonly Type instanceType;
 
 		public DynamicInvoker( object instance )
 		{
 			this.instance = instance;
+			this.instanceType = this.instance.GetType();
 
 			const BindingFlags ruleMethodBindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 			const BindingFlags matchMethodBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-			var ruleMethods = instance.GetType()
+			var ruleMethods = instanceType
 				.GetMethods( ruleMethodBindingFlags )
 				.Select( m => new
 				              {
@@ -100,7 +103,7 @@ namespace WolfGenerator.Core.Invoker
 
 			var ruleMethodNames = (ruleMethods.Select( p => p.RuleName ).Distinct()).ToArray();
 
-			var matchMethods = instance.GetType()
+			var matchMethods = instanceType
 				.GetMethods( matchMethodBindingFlags )
 				.Select( m => new
 				              {
@@ -165,7 +168,7 @@ namespace WolfGenerator.Core.Invoker
 
 		private bool CheckParams( string name, object[] parameters )
 		{
-			var method = instance.GetType().GetMethod( name, INVOKE_MEMBER_BINDING_FLAGS );
+			var method = this.instanceType.GetMethod( name, INVOKE_MEMBER_BINDING_FLAGS );
 			if (method == null) throw new Exception( "Can't find method: " + name );
 			var methodParameters = method.GetParameters();
 			// TODO: Check parameters count depends on default parameters of method
@@ -191,7 +194,7 @@ namespace WolfGenerator.Core.Invoker
 
 		private T InnerInvoke<T>( string name, params object[] parameters )
 		{
-			return (T)instance.GetType().InvokeMember( name, INVOKE_MEMBER_BINDING_FLAGS,
+			return (T)this.instanceType.InvokeMember( name, INVOKE_MEMBER_BINDING_FLAGS,
 			                                           Type.DefaultBinder, instance, parameters );
 		}
 	}

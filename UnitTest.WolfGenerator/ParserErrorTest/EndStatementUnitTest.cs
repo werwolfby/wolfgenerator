@@ -8,23 +8,23 @@
  * 
  * History:
  *   28.02.2009 15:12 - Create Wireframe
+ *   21.04.2012 23:05 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WolfGenerator.Core;
+using NUnit.Framework;
 using WolfGenerator.Core.Parsing;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserErrorTest
 {
-	[TestClass]
+	[TestFixture]
 	public class EndStatementUnitTest
 	{
 		private delegate T ParseDelegate<T>( string statement, out Parser_Accessor parser, bool assertErrorsCount );
 
-		[TestMethod]
+		[Test]
 		public void RuleClassEndTest()
 		{
 			var text = "<%ruleclass Test%>";
@@ -32,7 +32,7 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 			                              ( accessor, statement ) => Assert.AreEqual( "Test", statement.Name ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void RuleMethodEndTest()
 		{
 			var text = "<%rule Test()%>";
@@ -40,7 +40,7 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 			                               ( accessor, statement ) => Assert.AreEqual( "Test", statement.Name ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void JoinEndTest()
 		{
 			var text = "<%join \"\\r\\n\"%><%= value %><%apply Test( item ) from from %>";
@@ -61,8 +61,8 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 			{
 				someOtherTest( parser, statement );
 			}
-			
-			Assert.AreEqual( 1, parser.errors.count, "Expected one error" );	
+
+			Assert.That( parser.errors.count, Is.EqualTo( 1 ), "Expected one error" );
 			AssertHelper.AssertError( parser.errors.ErrorDatas[0], 1, column, "end expected" );
 		}
 	}

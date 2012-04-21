@@ -96,4 +96,18 @@ using <%= @namespace %>;
 <%= var.ToString() %>
 <%end%>
 
+<%match IsEmpty%>
+return IsNullOrWhiteSpace( call.Parameters );
+<%end%>
+<%rule GenerateInvoke( CallStatement call )%>
+this.Invoke( "<%= call.Name %>" )
+<%end%>
+
+<%match IsNotEmpty%>
+return !IsNullOrWhiteSpace( call.Parameters );
+<%end%>
+<%rule GenerateInvoke( CallStatement call )%>
+this.Invoke( "<%= call.Name %>", <%= call.Parameters %> )
+<%end%>
+
 <%end%>

@@ -10,16 +10,17 @@
  *   15.02.2009 11:19 - Create Wireframe
  *   15.02.2009 11:32 - Finish first implementation.
  *   15.02.2009 11:38 - Make statements field public.
+ *   21.04.2012 23:21 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class CodeUnitTest
 	{
 		public static readonly CodeStatement[] statements = new[]
@@ -27,7 +28,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 		                                                     	new CodeStatement( Helper.EmptyPosition, "if (true) return;" ),
 		                                                     };
 
-		[TestMethod]
+		[Test]
 		public void CodeTest()
 		{
 			MainTest2( statements[0] );

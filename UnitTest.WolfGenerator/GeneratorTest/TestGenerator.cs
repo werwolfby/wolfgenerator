@@ -8,6 +8,7 @@
  * 
  * History:
  *   21.04.2012 08:29 - Create Wireframe
+ *   21.04.2012 21:34 - [-] Remove inheritance from [GeneratorBase].
  *
  *******************************************************/
 
@@ -38,7 +39,7 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 		public bool IsCollection { get; set; }
 	}
 
-	public class TestGenerator : GeneratorBase
+	public class TestGenerator
 	{
 		public int TypeDefinePropertyCalls { get; set; }
 		
@@ -84,11 +85,6 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 		public void DefineProperty( ComplexProperty navigationProperty )
 		{
 			this.ComplexDefinePropertyCalls++;
-		}
-
-		public void CallDefineProperty( Property property )
-		{
-			this.Invoke( "DefineProperty", property );
 		}
 	}
 }

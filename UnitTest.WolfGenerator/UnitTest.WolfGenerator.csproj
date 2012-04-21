@@ -70,8 +70,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssertHelper.cs" />
-    <Compile Include="GeneratorTest\InvokeTests.cs" />
-    <Compile Include="GeneratorTest\TestGenerator.cs" />
+    <Compile Include="InvokerTests\InvokeTests.cs" />
+    <Compile Include="InvokerTests\TestGenerator.cs" />
     <Compile Include="ParserErrorTest\EndStatementUnitTest.cs" />
     <Compile Include="ParserHelper.cs" />
     <Compile Include="ParserTest\ApplyUnitTest.cs" />

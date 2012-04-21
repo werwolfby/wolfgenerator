@@ -14,6 +14,7 @@
  *   21.04.2012 20:46 - [*] Remove direct use of [MatchMethodAttribute] attribute in [MatchMethodWithAttribute] class.
  *   21.04.2012 20:54 - [+] Add [instanceType] field.
  *   21.04.2012 20:56 - [*] Rename [RuleMethodWithAttribute] and [MatchMethodWithAttribute] to [RuleMethodDescription] and [MatchMethodDescription].
+ *   21.04.2012 21:09 - [*] Encapsulate field of nested classes.
  *
  *******************************************************/
 
@@ -28,21 +29,26 @@ namespace WolfGenerator.Core.Invoker
 	{
 		private class MatchMethodData
 		{
-			public string matchMethodName;
+			public string MatchMethodName { get; set; }
 
-			public string ruleMethodName;
+			public string RuleMethodName { get; set; }
 		}
 
 		private class MatchMethodDataCollection
 		{
-			public string methodName;
+			public string MethodName { get; set; }
 
-			public MatchMethodData[] methodDatas;
+			public IEnumerable<MatchMethodData> MethodDatas { get; set; }
 		}
 
 		private class MatchMethodCollection
 		{
-			public Dictionary<string, MatchMethodDataCollection> matchMethods;
+			private readonly IDictionary<string, MatchMethodDataCollection> matchMethods;
+
+			public MatchMethodCollection( IDictionary<string, MatchMethodDataCollection> matchMethods )
+			{
+				this.matchMethods = matchMethods;
+			}
 
 			public MatchMethodDataCollection this[string methodName]
 			{
@@ -123,17 +129,14 @@ namespace WolfGenerator.Core.Invoker
 			var matchData = (from methodName in ruleMethodNames
 			                 select new MatchMethodDataCollection
 			                        {
-			                        	methodName = methodName,
-			                        	methodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
+			                        	MethodName = methodName,
+			                        	MethodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
 			                        }).ToArray();
 
-			this.matchMethodCollection = new MatchMethodCollection
-			                             {
-			                             	matchMethods = matchData.ToDictionary( collection => collection.methodName )
-			                             };
+			this.matchMethodCollection = new MatchMethodCollection( matchData.ToDictionary( collection => collection.MethodName ) );
 		}
 
-		private static MatchMethodData[] GetMethodDatas( IEnumerable<RuleMethodDescription> ruleMethods, IEnumerable<MatchMethodDescription> matchMethods, string methodName )
+		private static IEnumerable<MatchMethodData> GetMethodDatas( IEnumerable<RuleMethodDescription> ruleMethods, IEnumerable<MatchMethodDescription> matchMethods, string methodName )
 		{
 			return (from rm in ruleMethods
 			        from mm in matchMethods
@@ -143,9 +146,9 @@ namespace WolfGenerator.Core.Invoker
 			        	rm.MatchName == mm.MatchName
 			        select new MatchMethodData
 			               {
-			               	ruleMethodName = rm.MethodName,
-			               	matchMethodName = mm.MethodName
-			               }).ToArray();
+			               	RuleMethodName = rm.MethodName,
+			               	MatchMethodName = mm.MethodName
+			               }).ToList();
 		}
 
 		public T Invoke<T>( string name, params object[] parameters )
@@ -153,13 +156,13 @@ namespace WolfGenerator.Core.Invoker
 			if (matchMethodCollection[name] != null)
 			{
 				var methodCollection = this.matchMethodCollection[name];
-				var matches = methodCollection.methodDatas;
+				var matches = methodCollection.MethodDatas;
 
 				foreach (var data in matches)
 				{
-					if (!CheckParams(data.matchMethodName, parameters) || !this.InnerInvoke<bool>( data.matchMethodName, parameters )) continue;
+					if (!CheckParams(data.MatchMethodName, parameters) || !this.InnerInvoke<bool>( data.MatchMethodName, parameters )) continue;
 
-					name = data.ruleMethodName;
+					name = data.RuleMethodName;
 					break;
 				}
 			}

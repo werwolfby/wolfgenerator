@@ -13,6 +13,7 @@
  *   11.02.2009 21:41 - Finish first implementation of match methods.
  *   12.02.2009 20:55 - Change field type of some inner classes from MethodInfo to string, 
  *                      because we use only name of method.
+ *   21.04.2021 08:26 - [+] Add [CheckParams] method, for check [MatchMethod] parameters before call the match method.
  *
  *******************************************************/
 
@@ -56,6 +57,9 @@ namespace WolfGenerator.Core
 		}
 
 		private readonly MatchMethodCollection matchMethodCollection;
+
+		private static readonly BindingFlags invokeMemberBindingFlags = BindingFlags.Instance | BindingFlags.InvokeMethod |
+		                                                                BindingFlags.Public | BindingFlags.NonPublic;
 
 		protected GeneratorBase()
 		{
@@ -117,7 +121,7 @@ namespace WolfGenerator.Core
 
 				foreach (var data in matches)
 				{
-					if (!this.InnerInvoke<bool>( data.matchMethodName, parameters )) continue;
+					if (!CheckParams(data.matchMethodName, parameters) || !this.InnerInvoke<bool>( data.matchMethodName, parameters )) continue;
 
 					name = data.ruleMethodName;
 					isFinded = true;
@@ -136,10 +140,35 @@ namespace WolfGenerator.Core
 			return InnerInvoke<CodeWriter>( name, parameters );
 		}
 
+		private bool CheckParams( string name, object[] parameters )
+		{
+			var method = this.GetType().GetMethod( name, invokeMemberBindingFlags );
+			if (method == null) throw new Exception( "Can't find method: " + name );
+			var methodParameters = method.GetParameters();
+			// TODO: Check parameters count depends on default parameters of method
+			if (methodParameters.Length != parameters.Length) return false;
+			for (var i = 0; i < methodParameters.Length; i++)
+			{
+				var parameterValue = parameters[i];
+				var parameter = methodParameters[i];
+				if (parameterValue == null)
+				{
+					// Null can be assigned to value type
+					if (parameter.ParameterType.IsValueType) return false;
+				}
+				else
+				{
+					var parameterType = parameterValue.GetType();
+					if (!(parameter.ParameterType.IsAssignableFrom(parameterType) ||
+						parameter.ParameterType == parameterType)) return false;
+				}
+			}
+			return true;
+		}
+
 		private T InnerInvoke<T>( string name, params object[] parameters )
 		{
-            return (T)this.GetType().InvokeMember( name, BindingFlags.Instance | BindingFlags.InvokeMethod |
-			                                             BindingFlags.Public | BindingFlags.NonPublic,
+            return (T)this.GetType().InvokeMember( name, invokeMemberBindingFlags,
 			                                       Type.DefaultBinder, this, parameters );
 		}
 	}

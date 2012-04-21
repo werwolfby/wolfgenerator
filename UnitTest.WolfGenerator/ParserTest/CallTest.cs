@@ -8,6 +8,7 @@
  * 
  * History:
  *   21.04.2012 21:52 - Create Wireframe
+ *   21.04.2012 22:14 - [*] Rename [EmptyAndNullParametersTest] to [NullOrWhitespaceParametersTest] and add testing for whitespace.
  *
  *******************************************************/
 
@@ -40,13 +41,16 @@ namespace UnitTest.WolfGenerator.ParserTest
 		}
 
 		[TestMethod]
-		public void EmptyAndNullParametersTest()
+		public void NullOrWhitespaceParametersTest()
 		{
 			var generator = new Generator();
 			var dynamicInvoker = new DynamicInvoker( generator );
 
 			EmptyAndNullParametersTestHelper( dynamicInvoker, "" );
 			EmptyAndNullParametersTestHelper( dynamicInvoker, null );
+			EmptyAndNullParametersTestHelper( dynamicInvoker, "    " );
+			EmptyAndNullParametersTestHelper( dynamicInvoker, "\r\n" );
+			EmptyAndNullParametersTestHelper( dynamicInvoker, "\t\t\t" );
 		}
 
 		private static void EmptyAndNullParametersTestHelper( DynamicInvoker dynamicInvoker, string parameters )

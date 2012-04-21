@@ -1,8 +1,20 @@
-﻿using System;
+﻿/*******************************************************
+ *
+ * Created by: Alexander Puzynia aka WerWolf
+ * Created: 17.04.2012 00:09:31
+ *
+ * File: Compiler.cs
+ * Remarks:
+ * 
+ * History:
+ *   17.04.2012 00:09 - Create Wireframe
+ *   21.04.2012 22:18 - [*] Change return type of [Compile] method to [CompilerResults].
+ *
+ *******************************************************/
+
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using Microsoft.CSharp;
 using WolfGenerator.Core.CodeGenerator;
@@ -31,7 +43,7 @@ namespace WolfGenerator.Core.Compiler
 			_compilerParams.ReferencedAssemblies.Add(assemblyName);
 		}
 
-		public Assembly Compile(string generatedCodeFileName = null)
+		public CompilerResults Compile(string generatedCodeFileName = null)
 		{
 			var options = new Dictionary<string, string>
 			              {
@@ -55,9 +67,7 @@ namespace WolfGenerator.Core.Compiler
 				}
 			}
 
-			var result = codeProvider.CompileAssemblyFromSource(this._compilerParams, generatedCode.ToString());
-
-			return result.CompiledAssembly;
+			return codeProvider.CompileAssemblyFromSource(this._compilerParams, generatedCode.ToString());
 		}
 	}
 }

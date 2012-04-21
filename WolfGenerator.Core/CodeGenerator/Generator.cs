@@ -9,6 +9,49 @@ namespace WolfGenerator.Core.CodeGenerator
 {
 	public partial class Generator : GeneratorBase
 	{
+		[MatchMethod( "GenerateInvoke", "IsEmpty", "Generator.rule" )]
+		private bool Match_GenerateInvoke_IsEmpty( CallStatement call )
+		{
+			return string.IsNullOrEmpty( call.Parameters );
+		}
+
+		[MatchMethod( "GenerateInvoke", "IsNotEmpty", "Generator.rule" )]
+		private bool Match_GenerateInvoke_IsNotEmpty( CallStatement call )
+		{
+			return !string.IsNullOrEmpty( call.Parameters );
+		}
+
+		[RuleMethod( "GenerateInvoke", "IsEmpty", "Generator.rule" )]
+		public CodeWriter GenerateInvoke_IsEmpty( CallStatement call )
+		{
+			var writer = new CodeWriter();
+
+			writer.Indent = 0;
+			writer.Append( "this.Invoke( \"" );
+			writer.AppendText( call.Name );
+			writer.Indent = 0;
+			writer.Append( "\" )" );
+
+			return writer;
+		}
+
+		[RuleMethod( "GenerateInvoke", "IsNotEmpty", "Generator.rule" )]
+		public CodeWriter GenerateInvoke_IsNotEmpty( CallStatement call )
+		{
+			var writer = new CodeWriter();
+
+			writer.Indent = 0;
+			writer.Append( "this.Invoke( \"" );
+			writer.AppendText( call.Name );
+			writer.Indent = 0;
+			writer.Append( "\", " );
+			writer.AppendText( call.Parameters );
+			writer.Indent = 0;
+			writer.Append( " )" );
+
+			return writer;
+		}
+
 		public CodeWriter Generate( string @namespace, RuleClassStatement ruleClassStatement, string fileName )
 		{
 			var writer = new CodeWriter();
@@ -317,22 +360,6 @@ namespace WolfGenerator.Core.CodeGenerator
 			var writer = new CodeWriter();
 
 			writer.AppendText( var.ToString() );
-
-			return writer;
-		}
-
-		public CodeWriter GenerateInvoke( CallStatement call )
-		{
-			var writer = new CodeWriter();
-
-			writer.Indent = 0;
-			writer.Append( "this.Invoke( \"" );
-			writer.AppendText( call.Name );
-			writer.Indent = 0;
-			writer.Append( "\", " );
-			writer.AppendText( call.Parameters );
-			writer.Indent = 0;
-			writer.Append( " )" );
 
 			return writer;
 		}

@@ -10,6 +10,7 @@
  *   21.04.2012 20:25 - Create Wireframe
  *   21.04.2012 20:30 - [*] Move code from [GeneratorBase].
  *   21.04.2012 20:32 - [!] Use [instance] field for invoking.
+ *   21.04.2012 20:41 - [*] Remove direct use of [RuleMethodAttribute] attribute in [RuleMethodWithAttribute] class.
  *
  *******************************************************/
 
@@ -53,7 +54,9 @@ namespace WolfGenerator.Core.Invoker
 		{
 			public string MethodName { get; set; }
 
-			public RuleMethodAttribute RuleMethodAttribute { get; set; }
+			public string RuleName { get; set; }
+
+			public string MatchName { get; set; }
 		}
 
 		private class MatchMethodWithAttribute
@@ -76,15 +79,23 @@ namespace WolfGenerator.Core.Invoker
 			const BindingFlags ruleMethodBindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 			const BindingFlags matchMethodBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-			var ruleMethods = (from m in instance.GetType().GetMethods( ruleMethodBindingFlags )
-			                   where m.GetAttribute<RuleMethodAttribute>() != null
-			                   select new RuleMethodWithAttribute
-			                          {
-			                          	MethodName = m.Name,
-			                          	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>()
-			                          }).ToArray();
+			var ruleMethods = instance.GetType()
+				.GetMethods( ruleMethodBindingFlags )
+				.Select( m => new
+				              {
+				              	Method = m,
+				              	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>(),
+				              } )
+				.Where( e => e.RuleMethodAttribute != null )
+				.Select( m => new RuleMethodWithAttribute
+				              {
+				              	MethodName = m.Method.Name,
+				              	RuleName = m.RuleMethodAttribute.Name,
+				              	MatchName = m.RuleMethodAttribute.MatchName,
+				              } )
+				.ToArray();
 
-			var ruleMethodNames = (ruleMethods.Select( p => p.RuleMethodAttribute.Name ).Distinct()).ToArray();
+			var ruleMethodNames = (ruleMethods.Select( p => p.RuleName ).Distinct()).ToArray();
 
 			var matchMethods = (from m in instance.GetType().GetMethods( matchMethodBindingFlags )
 			                    where m.GetAttribute<MatchMethodAttribute>() != null
@@ -112,9 +123,9 @@ namespace WolfGenerator.Core.Invoker
 			return (from rm in ruleMethods
 			        from mm in matchMethods
 			        where
-			        	rm.RuleMethodAttribute.Name == methodName &&
-			        	rm.RuleMethodAttribute.Name == mm.MatchMethodAttribute.RuleMethodName &&
-			        	rm.RuleMethodAttribute.MatchName == mm.MatchMethodAttribute.MathcMethodName
+			        	rm.RuleName == methodName &&
+			        	rm.RuleName == mm.MatchMethodAttribute.RuleMethodName &&
+			        	rm.MatchName == mm.MatchMethodAttribute.MathcMethodName
 			        select new MatchMethodData
 			               {
 			               	ruleMethodName = rm.MethodName,

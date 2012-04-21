@@ -38,15 +38,40 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 		public int TypeDefinePropertyCalls { get; set; }
 		
 		public int NavigationDefinePropertyCalls { get; set; }
+		
+		public int NavigationListDefinePropertyCalls { get; set; }
+		
+		public int NavigationNotListDefinePropertyCalls { get; set; }
 
 		public void DefineProperty( TypeProperty typeProperty )
 		{
 			this.TypeDefinePropertyCalls++;
 		}
 
-		public void DefineProperty( NavigationProperty navigationProperty )
+		[MatchMethod("DefineProperty", "IsList", null)]
+		private bool MatchDefinePropertyIsList( NavigationProperty navigationProperty )
+		{
+			return navigationProperty.IsCollection;
+		}
+
+		[RuleMethod("DefineProperty", "IsList", null)]
+		public void DefinePropertyIsList( NavigationProperty navigationProperty )
 		{
 			this.NavigationDefinePropertyCalls++;
+			this.NavigationListDefinePropertyCalls++;
+		}
+
+		[MatchMethod("DefineProperty", "IsNotList", null)]
+		private bool MatchDefinePropertyIsNotList( NavigationProperty navigationProperty )
+		{
+			return !navigationProperty.IsCollection;
+		}
+
+		[RuleMethod("DefineProperty", "IsNotList", null)]
+		public void DefinePropertyIsNotList( NavigationProperty navigationProperty )
+		{
+			this.NavigationDefinePropertyCalls++;
+			this.NavigationNotListDefinePropertyCalls++;
 		}
 
 		public void CallDefineProperty( Property property )

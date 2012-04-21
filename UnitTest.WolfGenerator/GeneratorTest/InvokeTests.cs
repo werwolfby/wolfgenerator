@@ -39,5 +39,24 @@ namespace UnitTest.WolfGenerator.GeneratorTest
 			Assert.AreEqual( 0, testGenerator.TypeDefinePropertyCalls );
 			Assert.AreEqual( 1, testGenerator.NavigationDefinePropertyCalls );
 		}
+
+		[TestMethod]
+		public void MatchMethodTest()
+		{
+			var testGenerator = new TestGenerator();
+
+			var typeProperty = new TypeProperty { Name = "TypeProperty1", Type = typeof(int) };
+
+			var navigationProperty1 = new NavigationProperty { Name = "Property1", Property = typeProperty, IsCollection = true };
+			var navigationProperty2 = new NavigationProperty { Name = "Property2", Property = typeProperty, IsCollection = false };
+
+			testGenerator.CallDefineProperty( navigationProperty1 );
+			testGenerator.CallDefineProperty( navigationProperty2 );
+
+			Assert.AreEqual( 0, testGenerator.TypeDefinePropertyCalls );
+			Assert.AreEqual( 2, testGenerator.NavigationDefinePropertyCalls );
+			Assert.AreEqual( 1, testGenerator.NavigationListDefinePropertyCalls );
+			Assert.AreEqual( 1, testGenerator.NavigationNotListDefinePropertyCalls );
+		}
 	}
 }

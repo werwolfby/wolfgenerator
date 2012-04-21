@@ -39,8 +39,6 @@ namespace WolfGenerator.Core
 			public string methodName;
 
 			public MatchMethodData[] methodDatas;
-
-			public string defaultMethodName;
 		}
 
 		private class MatchMethodCollection
@@ -56,16 +54,32 @@ namespace WolfGenerator.Core
 			}
 		}
 
+		public class RuleMethodWithAttribute
+		{
+			public string MethodName { get; set; }
+
+			public RuleMethodAttribute RuleMethodAttribute { get; set; }
+		}
+
+		public class MatchMethodWithAttribute
+		{
+			public string MethodName { get; set; }
+
+			public MatchMethodAttribute MatchMethodAttribute { get; set; }
+		}
+
 		private readonly MatchMethodCollection matchMethodCollection;
 
-		private static readonly BindingFlags invokeMemberBindingFlags = BindingFlags.Instance | BindingFlags.InvokeMethod |
-		                                                                BindingFlags.Public | BindingFlags.NonPublic;
+		private const BindingFlags INVOKE_MEMBER_BINDING_FLAGS = BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.NonPublic;
 
 		protected GeneratorBase()
 		{
-			var ruleMethods = (from m in this.GetType().GetMethods( BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly )
+			const BindingFlags ruleMethodBindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+			const BindingFlags matchMethodBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+			var ruleMethods = (from m in this.GetType().GetMethods( ruleMethodBindingFlags )
 			                   where m.GetAttribute<RuleMethodAttribute>() != null
-			                   select new
+			                   select new RuleMethodWithAttribute
 			                          {
 			                          	MethodName = m.Name,
 			                          	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>()
@@ -73,41 +87,40 @@ namespace WolfGenerator.Core
 
 			var ruleMethodNames = (ruleMethods.Select( p => p.RuleMethodAttribute.Name ).Distinct()).ToArray();
 
-			var matchMethods = (from m in this.GetType().GetMethods( BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly )
+			var matchMethods = (from m in this.GetType().GetMethods( matchMethodBindingFlags )
 			                    where m.GetAttribute<MatchMethodAttribute>() != null
-			                    select new
+			                    select new MatchMethodWithAttribute
 			                           {
 			                           	MethodName = m.Name,
 			                           	MatchMethodAttribute = m.GetAttribute<MatchMethodAttribute>()
 			                           }).ToArray();
 
-		    var matchData = (from methodName in ruleMethodNames
-		                     select new MatchMethodDataCollection
-		                            {
-		                                methodName = methodName,
-		                                methodDatas = (from rm in ruleMethods
-		                                               from mm in matchMethods
-		                                               where
-		                                                   rm.RuleMethodAttribute.Name ==
-		                                                   mm.MatchMethodAttribute.RuleMethodName &&
-		                                                   rm.RuleMethodAttribute.MatchName ==
-		                                                   mm.MatchMethodAttribute.MathcMethodName
-		                                               select new MatchMethodData
-		                                                      {
-		                                                          ruleMethodName = rm.MethodName,
-		                                                          matchMethodName = mm.MethodName
-		                                                      }).ToArray(),
-		                                defaultMethodName =
-		                                    ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
-		                                                                      p.RuleMethodAttribute.Name == methodName )
-		                                    .NullOrProperty( e => e.MethodName )
-
-		                            }).ToArray();
+			var matchData = (from methodName in ruleMethodNames
+			                 select new MatchMethodDataCollection
+			                        {
+			                        	methodName = methodName,
+			                        	methodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
+			                        }).ToArray();
 
 			this.matchMethodCollection = new MatchMethodCollection
 			                             {
 			                             	matchMethods = matchData.ToDictionary( collection => collection.methodName )
 			                             };
+		}
+
+		private static MatchMethodData[] GetMethodDatas( IEnumerable<RuleMethodWithAttribute> ruleMethods, IEnumerable<MatchMethodWithAttribute> matchMethods, string methodName )
+		{
+			return (from rm in ruleMethods
+			        from mm in matchMethods
+			        where
+			        	rm.RuleMethodAttribute.Name == methodName &&
+			        	rm.RuleMethodAttribute.Name == mm.MatchMethodAttribute.RuleMethodName &&
+			        	rm.RuleMethodAttribute.MatchName == mm.MatchMethodAttribute.MathcMethodName
+			        select new MatchMethodData
+			               {
+			               	ruleMethodName = rm.MethodName,
+			               	matchMethodName = mm.MethodName
+			               }).ToArray();
 		}
 
 		public CodeWriter Invoke( string name, params object[] parameters )
@@ -117,24 +130,13 @@ namespace WolfGenerator.Core
 				var methodCollection = this.matchMethodCollection[name];
 				var matches = methodCollection.methodDatas;
 
-				var isFinded = false;
-
 				foreach (var data in matches)
 				{
 					if (!CheckParams(data.matchMethodName, parameters) || !this.InnerInvoke<bool>( data.matchMethodName, parameters )) continue;
 
 					name = data.ruleMethodName;
-					isFinded = true;
 					break;
 				}
-
-                if (!isFinded)
-                {
-                	if (methodCollection.defaultMethodName == null)
-                		throw new Exception( "Can't find right method " + name );
-
-                	name = methodCollection.defaultMethodName;
-                }
 			}
 
 			return InnerInvoke<CodeWriter>( name, parameters );
@@ -142,7 +144,7 @@ namespace WolfGenerator.Core
 
 		private bool CheckParams( string name, object[] parameters )
 		{
-			var method = this.GetType().GetMethod( name, invokeMemberBindingFlags );
+			var method = this.GetType().GetMethod( name, INVOKE_MEMBER_BINDING_FLAGS );
 			if (method == null) throw new Exception( "Can't find method: " + name );
 			var methodParameters = method.GetParameters();
 			// TODO: Check parameters count depends on default parameters of method
@@ -168,7 +170,7 @@ namespace WolfGenerator.Core
 
 		private T InnerInvoke<T>( string name, params object[] parameters )
 		{
-            return (T)this.GetType().InvokeMember( name, invokeMemberBindingFlags,
+			return (T)this.GetType().InvokeMember( name, INVOKE_MEMBER_BINDING_FLAGS,
 			                                       Type.DefaultBinder, this, parameters );
 		}
 	}

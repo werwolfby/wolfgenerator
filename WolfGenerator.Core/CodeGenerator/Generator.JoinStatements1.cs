@@ -47,13 +47,10 @@ namespace WolfGenerator.Core.CodeGenerator
 
 			writer.AppendText( list );
 			writer.Indent = 0;
-			writer.Append( ".Add( this.Invoke( \"" );
-			writer.AppendText( statement.Name );
+			writer.Append( ".Add( " );
+			writer.Append( this.Invoke( "GenerateInvoke", statement ) );
 			writer.Indent = 0;
-			writer.Append( "\", " );
-			writer.AppendText( statement.Parameters );
-			writer.Indent = 0;
-			writer.Append( " ) );" );
+			writer.Append( " );" );
 
 			return writer;
 		}

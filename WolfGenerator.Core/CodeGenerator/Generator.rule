@@ -96,4 +96,8 @@ using <%= @namespace %>;
 <%= var.ToString() %>
 <%end%>
 
+<%rule GenerateInvoke( CallStatement call )%>
+this.Invoke( "<%= call.Name %>", <%= call.Parameters %> )
+<%end%>
+
 <%end%>

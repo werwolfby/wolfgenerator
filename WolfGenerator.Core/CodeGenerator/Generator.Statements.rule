@@ -3,7 +3,7 @@
 <%using WolfGenerator.Core.AST%>
 
 <%rule Statement( CallStatement call, string writerName )%>
-<%= writerName %>.Append( this.Invoke( "<%= call.Name %>", <%= call.Parameters %> ) );
+<%= writerName %>.Append( <%call GenerateInvoke( call )%> );
 <%end%>
 
 <%rule Statement( CodeStatement code, string writerName )%>

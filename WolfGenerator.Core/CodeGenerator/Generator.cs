@@ -320,5 +320,21 @@ namespace WolfGenerator.Core.CodeGenerator
 
 			return writer;
 		}
+
+		public CodeWriter GenerateInvoke( CallStatement call )
+		{
+			var writer = new CodeWriter();
+
+			writer.Indent = 0;
+			writer.Append( "this.Invoke( \"" );
+			writer.AppendText( call.Name );
+			writer.Indent = 0;
+			writer.Append( "\", " );
+			writer.AppendText( call.Parameters );
+			writer.Indent = 0;
+			writer.Append( " )" );
+
+			return writer;
+		}
 	}
 }

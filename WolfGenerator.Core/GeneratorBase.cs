@@ -80,12 +80,12 @@ namespace WolfGenerator.Core
 			const BindingFlags matchMethodBindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			var ruleMethods = (from m in this.GetType().GetMethods( ruleMethodBindingFlags )
-				 where m.GetAttribute<RuleMethodAttribute>() != null
-				 select new RuleMethodWithAttribute
-				        {
-				        	MethodName = m.Name,
-				        	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>()
-				        }).ToArray();
+			                   where m.GetAttribute<RuleMethodAttribute>() != null
+			                   select new RuleMethodWithAttribute
+			                          {
+			                          	MethodName = m.Name,
+			                          	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>()
+			                          }).ToArray();
 
 			var ruleMethodNames = (ruleMethods.Select( p => p.RuleMethodAttribute.Name ).Distinct()).ToArray();
 
@@ -97,33 +97,39 @@ namespace WolfGenerator.Core
 			                           	MatchMethodAttribute = m.GetAttribute<MatchMethodAttribute>()
 			                           }).ToArray();
 
-		    var matchData = (from methodName in ruleMethodNames
-		                     select new MatchMethodDataCollection
-		                            {
-		                                methodName = methodName,
-		                                methodDatas = (from rm in ruleMethods
-		                                               from mm in matchMethods
-		                                               where
-		                                                   rm.RuleMethodAttribute.Name ==
-		                                                   mm.MatchMethodAttribute.RuleMethodName &&
-		                                                   rm.RuleMethodAttribute.MatchName ==
-		                                                   mm.MatchMethodAttribute.MathcMethodName
-		                                               select new MatchMethodData
-		                                                      {
-		                                                          ruleMethodName = rm.MethodName,
-		                                                          matchMethodName = mm.MethodName
-		                                                      }).ToArray(),
-		                                defaultMethodName =
-		                                    ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
-		                                                                      p.RuleMethodAttribute.Name == methodName )
-		                                    .NullOrProperty( e => e.MethodName )
-
-		                            }).ToArray();
+			var matchData = (from methodName in ruleMethodNames
+			                 select new MatchMethodDataCollection
+			                        {
+			                        	methodName = methodName,
+			                        	methodDatas = GetMethodDatas( ruleMethods, matchMethods ),
+			                        	defaultMethodName = GetDefaultMethod( methodName, ruleMethods )
+			                        }).ToArray();
 
 			this.matchMethodCollection = new MatchMethodCollection
 			                             {
 			                             	matchMethods = matchData.ToDictionary( collection => collection.methodName )
 			                             };
+		}
+
+		private static MatchMethodData[] GetMethodDatas( IEnumerable<RuleMethodWithAttribute> ruleMethods, IEnumerable<MatchMethodWithAttribute> matchMethods )
+		{
+			return (from rm in ruleMethods
+			        from mm in matchMethods
+			        where
+			        	rm.RuleMethodAttribute.Name == mm.MatchMethodAttribute.RuleMethodName &&
+			        	rm.RuleMethodAttribute.MatchName == mm.MatchMethodAttribute.MathcMethodName
+			        select new MatchMethodData
+			               {
+			               	ruleMethodName = rm.MethodName,
+			               	matchMethodName = mm.MethodName
+			               }).ToArray();
+		}
+
+		private static string GetDefaultMethod( string methodName, IEnumerable<RuleMethodWithAttribute> ruleMethods )
+		{
+			return ruleMethods.SingleOrDefault( p => p.RuleMethodAttribute.MatchName == null &&
+			                                         p.RuleMethodAttribute.Name == methodName )
+				.NullOrProperty( e => e.MethodName );
 		}
 
 		public CodeWriter Invoke( string name, params object[] parameters )

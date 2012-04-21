@@ -21,6 +21,7 @@
  *   11.02.2009 20:25 - Add MatchMethodGroups property.
  *   18.02.2009 00:19 - RuleMethodStatements always return not null collection (instead null return empty array).
  *   28.02.2009 10:00 - Add inheritance from Statement class.
+ *   21.04.2012 23:54 - [+] Add [emptyRuleMethodStatementList] field.
  *
  *******************************************************/
 
@@ -37,6 +38,9 @@ namespace WolfGenerator.Core.AST
 	/// </summary>
 	public class RuleClassStatement : Statement
 	{
+		private static readonly IList<RuleClassMethodStatement> emptyRuleMethodStatementList =
+			new List<RuleClassMethodStatement>( 0 ).AsReadOnly();
+
 		private readonly string name;
 		private readonly IList<UsingStatement> usingStatements;
 		private readonly IList<RuleClassMethodStatement> ruleMethodStatements;
@@ -47,7 +51,7 @@ namespace WolfGenerator.Core.AST
 		{
 			this.name = name;
 			this.usingStatements = usingStatements;
-			this.ruleMethodStatements = ruleMethodStatements ?? new RuleClassMethodStatement[0];
+			this.ruleMethodStatements = ruleMethodStatements ?? emptyRuleMethodStatementList;
 
 			this.matchMethodGroups = (from statement in this.ruleMethodStatements.OfType<RuleMethodStatement>()
 			                          group statement by statement.MethodHeader

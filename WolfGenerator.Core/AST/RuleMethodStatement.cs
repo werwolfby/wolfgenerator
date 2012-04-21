@@ -27,6 +27,7 @@
  *   15.02.2009 16:16 - Now Variables & Statements properti instead null return empty collection.
  *   26.02.2009 23:14 - Remove Generate methods.
  *   28.02.2009 10:25 - Add support inheritance from Statement class.
+ *   21.04.2012 23:55 - [+] Add [emptyVariableList] and [emptyRuleStatementList].
  *
  *******************************************************/
 
@@ -42,6 +43,9 @@ namespace WolfGenerator.Core.AST
 	/// </summary>
 	public class RuleMethodStatement : RuleClassMethodStatement
 	{
+		private static readonly IList<Variable> emptyVariableList = new List<Variable>( 0 ).AsReadOnly();
+		private static readonly IList<RuleStatement> emptyRuleStatementList = new List<RuleStatement>( 0 ).AsReadOnly();
+
 		private readonly MatchMethodStatement matchMethodStatement;
 		private readonly string name;
 		private readonly IList<Variable> variables;
@@ -52,8 +56,8 @@ namespace WolfGenerator.Core.AST
 		{
 			this.matchMethodStatement = matchMethodStatement;
 			this.name = name;
-			this.variables = variables ?? new Variable[0];
-			this.statements = statements ?? new RuleStatement[0];
+			this.variables = variables ?? emptyVariableList;
+			this.statements = statements ?? emptyRuleStatementList;
 
 			if (this.matchMethodStatement != null) this.matchMethodStatement.RuleMethod = this;
 		}

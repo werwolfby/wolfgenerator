@@ -113,7 +113,7 @@ namespace WolfGenerator.Core
 			return (from rm in ruleMethods
 			        from mm in matchMethods
 			        where
-			        	rm.MethodName == methodName &&
+			        	rm.RuleMethodAttribute.Name == methodName &&
 			        	rm.RuleMethodAttribute.Name == mm.MatchMethodAttribute.RuleMethodName &&
 			        	rm.RuleMethodAttribute.MatchName == mm.MatchMethodAttribute.MathcMethodName
 			        select new MatchMethodData
@@ -170,7 +170,7 @@ namespace WolfGenerator.Core
 
 		private T InnerInvoke<T>( string name, params object[] parameters )
 		{
-            return (T)this.GetType().InvokeMember( name, INVOKE_MEMBER_BINDING_FLAGS,
+			return (T)this.GetType().InvokeMember( name, INVOKE_MEMBER_BINDING_FLAGS,
 			                                       Type.DefaultBinder, this, parameters );
 		}
 	}

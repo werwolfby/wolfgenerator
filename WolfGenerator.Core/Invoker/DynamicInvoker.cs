@@ -15,6 +15,7 @@
  *   21.04.2012 20:54 - [+] Add [instanceType] field.
  *   21.04.2012 20:56 - [*] Rename [RuleMethodWithAttribute] and [MatchMethodWithAttribute] to [RuleMethodDescription] and [MatchMethodDescription].
  *   21.04.2012 21:09 - [*] Encapsulate field of nested classes.
+ *   21.04.2012 21:22 - [-] Remove [MatchMethodDescription] and use common [MethodDescription] class.
  *
  *******************************************************/
 
@@ -59,16 +60,7 @@ namespace WolfGenerator.Core.Invoker
 			}
 		}
 
-		private class RuleMethodDescription
-		{
-			public string MethodName { get; set; }
-
-			public string RuleName { get; set; }
-
-			public string MatchName { get; set; }
-		}
-
-		private class MatchMethodDescription
+		private class MethodDescription
 		{
 			public string MethodName { get; set; }
 
@@ -100,7 +92,7 @@ namespace WolfGenerator.Core.Invoker
 				              	RuleMethodAttribute = m.GetAttribute<RuleMethodAttribute>(),
 				              } )
 				.Where( e => e.RuleMethodAttribute != null )
-				.Select( m => new RuleMethodDescription
+				.Select( m => new MethodDescription
 				              {
 				              	MethodName = m.Method.Name,
 				              	RuleName = m.RuleMethodAttribute.Name,
@@ -116,7 +108,7 @@ namespace WolfGenerator.Core.Invoker
 				              	MatchMethodAttribute = m.GetAttribute<MatchMethodAttribute>(),
 				              } )
 				.Where( e => e.MatchMethodAttribute != null )
-				.Select( m => new MatchMethodDescription
+				.Select( m => new MethodDescription
 				              {
 				              	MethodName = m.Method.Name,
 				              	RuleName = m.MatchMethodAttribute.RuleMethodName,
@@ -136,7 +128,7 @@ namespace WolfGenerator.Core.Invoker
 			this.matchMethodCollection = new MatchMethodCollection( matchData.ToDictionary( collection => collection.MethodName ) );
 		}
 
-		private static IEnumerable<MatchMethodData> GetMethodDatas( IEnumerable<RuleMethodDescription> ruleMethods, IEnumerable<MatchMethodDescription> matchMethods, string methodName )
+		private static IEnumerable<MatchMethodData> GetMethodDatas( IEnumerable<MethodDescription> ruleMethods, IEnumerable<MethodDescription> matchMethods, string methodName )
 		{
 			return (from rm in ruleMethods
 			        from mm in matchMethods
@@ -183,7 +175,7 @@ namespace WolfGenerator.Core.Invoker
 				var parameter = methodParameters[i];
 				if (parameterValue == null)
 				{
-					// Null can be assigned to value type
+					// Null can't be assigned to value type
 					if (parameter.ParameterType.IsValueType) return false;
 				}
 				else

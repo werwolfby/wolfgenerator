@@ -8,23 +8,24 @@
  * 
  * History:
  *   28.02.2009 15:12 - Create Wireframe
+ *   21.04.2012 23:05 - [*] Migrate to [NUnit].
+ *   24.04.2012 17:16 - [*] Use [ParserAccessor] instead of generated [Parser_Accessor].
  *
  *******************************************************/
 
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WolfGenerator.Core;
-using WolfGenerator.Core.Parsing;
+using NUnit.Framework;
+using UnitTest.WolfGenerator.Accessors;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserErrorTest
 {
-	[TestClass]
+	[TestFixture]
 	public class EndStatementUnitTest
 	{
-		private delegate T ParseDelegate<T>( string statement, out Parser_Accessor parser, bool assertErrorsCount );
+		private delegate T ParseDelegate<T>( string statement, out ParserAccessor parser, bool assertErrorsCount );
 
-		[TestMethod]
+		[Test]
 		public void RuleClassEndTest()
 		{
 			var text = "<%ruleclass Test%>";
@@ -32,7 +33,7 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 			                              ( accessor, statement ) => Assert.AreEqual( "Test", statement.Name ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void RuleMethodEndTest()
 		{
 			var text = "<%rule Test()%>";
@@ -40,7 +41,7 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 			                               ( accessor, statement ) => Assert.AreEqual( "Test", statement.Name ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void JoinEndTest()
 		{
 			var text = "<%join \"\\r\\n\"%><%= value %><%apply Test( item ) from from %>";
@@ -52,18 +53,18 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 			                         } );
 		}
 
-		private static void MainTest<T>( string text, int column, ParseDelegate<T> parseDelegate, Action<Parser_Accessor, T> someOtherTest )
+		private static void MainTest<T>( string text, int column, ParseDelegate<T> parseDelegate, Action<ParserAccessor, T> someOtherTest )
 		{
-			Parser_Accessor parser;
+			ParserAccessor parser;
 			var statement = parseDelegate( text, out parser, false );
 
 			if (someOtherTest != null)
 			{
 				someOtherTest( parser, statement );
 			}
-			
-			Assert.AreEqual( 1, parser.errors.count, "Expected one error" );	
-			AssertHelper.AssertError( parser.errors.ErrorDatas[0], 1, column, "end expected" );
+
+			Assert.That( parser.Errors.count, Is.EqualTo( 1 ), "Expected one error" );
+			AssertHelper.AssertError( parser.Errors.ErrorDatas[0], 1, column, "end expected" );
 		}
 	}
 }

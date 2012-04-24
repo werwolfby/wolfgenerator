@@ -12,18 +12,19 @@
  *   14.02.2009 13:17 - Add ToString method test
  *   14.02.2009 21:57 - Made inner variable static and public.
  *   14.02.2009 22:01 - Made TypeToString, MainTestMethod, MainTestMethod2 static.
+ *   21.04.2012 23:34 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Type=WolfGenerator.Core.AST.Type;
 using System.Linq;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class TypeUnitTest
 	{
 		public static readonly Type dictionaryType;
@@ -39,56 +40,56 @@ namespace UnitTest.WolfGenerator.ParserTest
 			funcType       = new Type( Helper.EmptyPosition, "Func", listType, dictionaryType, listType, simpleType );
 		}
 
-		[TestMethod]
+		[Test]
 		public void SimpleTypeTest()
 		{
 			MainTestMethod2( simpleType );
 		}
 
-		[TestMethod]
+		[Test]
 		public void SimpleTypeToStringTest()
 		{
 			var str = TypeToString( simpleType, ",", "<", ">" );
-			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
+			Assert.That( ParserHelper.ParseType( str ).ToString(), Is.EqualTo( str ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void ListTypeTest()
 		{
 			MainTestMethod2( listType );
 		}
 
-		[TestMethod]
+		[Test]
 		public void ListTypeToStringTest()
 		{
 			var str = TypeToString( listType, ",", "<", ">" );
-			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
+			Assert.That( ParserHelper.ParseType( str ).ToString(), Is.EqualTo( str ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void DictionaryTypeTest()
 		{
 			MainTestMethod2( dictionaryType );
 		}
 
-		[TestMethod]
+		[Test]
 		public void DistionaryTypeToStringTest()
 		{
 			var str = TypeToString( dictionaryType, ",", "<", ">" );
-			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
+			Assert.That( ParserHelper.ParseType( str ).ToString(), Is.EqualTo( str ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void FuncTypeTest()
 		{
 			MainTestMethod2( funcType );
 		}
 
-		[TestMethod]
+		[Test]
 		public void FuncTypeToStringTest()
 		{
 			var str = TypeToString( funcType, ",", "<", ">" );
-			Assert.AreEqual( str, ParserHelper.ParseType( str ).ToString() );
+			Assert.That( ParserHelper.ParseType( str ).ToString(), Is.EqualTo( str ) );
 		}
 
 		public static string TypeToString( Type t, string ag, string sg, string eg )

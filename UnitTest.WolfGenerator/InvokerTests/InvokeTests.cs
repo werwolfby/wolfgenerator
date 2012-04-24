@@ -9,18 +9,19 @@
  * History:
  *   21.04.2012 08:28 - Create Wireframe
  *   21.04.2012 21:35 - [*] Test [DynamicInvoker] instead of [GeneratorBase].
+ *   21.04.2012 23:01 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.Invoker;
 
 namespace UnitTest.WolfGenerator.InvokerTests
 {
-	[TestClass]
+	[TestFixture]
 	public class InvokeTests
 	{
-		[TestMethod]
+		[Test]
 		public void SimpleInvokeTest()
 		{
 			var testGenerator = new TestGenerator();
@@ -30,8 +31,8 @@ namespace UnitTest.WolfGenerator.InvokerTests
 
 			invoker.Invoke<object>( "DefineProperty", typeProperty );
 
-			Assert.AreEqual( 1, testGenerator.TypeDefinePropertyCalls );
-			Assert.AreEqual( 0, testGenerator.NavigationDefinePropertyCalls );
+			Assert.That( testGenerator.TypeDefinePropertyCalls, Is.EqualTo( 1 ) );
+			Assert.That( testGenerator.NavigationDefinePropertyCalls, Is.EqualTo( 0 ) );
 
 			testGenerator.TypeDefinePropertyCalls = 0;
 
@@ -39,11 +40,11 @@ namespace UnitTest.WolfGenerator.InvokerTests
 
 			invoker.Invoke<object>( "DefineProperty", navigationProperty );
 
-			Assert.AreEqual( 0, testGenerator.TypeDefinePropertyCalls );
-			Assert.AreEqual( 1, testGenerator.ComplexDefinePropertyCalls );
+			Assert.That( testGenerator.TypeDefinePropertyCalls, Is.EqualTo( 0 ) );
+			Assert.That( testGenerator.ComplexDefinePropertyCalls, Is.EqualTo( 1 ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void MatchMethodTest()
 		{
 			var testGenerator = new TestGenerator();
@@ -57,10 +58,10 @@ namespace UnitTest.WolfGenerator.InvokerTests
 			invoker.Invoke<object>( "DefineProperty", navigationProperty1 );
 			invoker.Invoke<object>( "DefineProperty", navigationProperty2 );
 
-			Assert.AreEqual( 0, testGenerator.TypeDefinePropertyCalls );
-			Assert.AreEqual( 2, testGenerator.NavigationDefinePropertyCalls );
-			Assert.AreEqual( 1, testGenerator.NavigationListDefinePropertyCalls );
-			Assert.AreEqual( 1, testGenerator.NavigationNotListDefinePropertyCalls );
+			Assert.That( testGenerator.TypeDefinePropertyCalls, Is.EqualTo( 0 ) );
+			Assert.That( testGenerator.NavigationDefinePropertyCalls, Is.EqualTo( 2 ) );
+			Assert.That( testGenerator.NavigationListDefinePropertyCalls, Is.EqualTo( 1 ) );
+			Assert.That( testGenerator.NavigationNotListDefinePropertyCalls, Is.EqualTo( 1 ) );
 		}
 	}
 }

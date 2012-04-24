@@ -9,10 +9,11 @@
  * History:
  *   21.04.2012 21:52 - Create Wireframe
  *   21.04.2012 22:14 - [*] Rename [EmptyAndNullParametersTest] to [NullOrWhitespaceParametersTest] and add testing for whitespace.
+ *   21.04.2012 23:21 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 using WolfGenerator.Core.CodeGenerator;
 using WolfGenerator.Core.Invoker;
@@ -20,10 +21,10 @@ using WolfGenerator.Core.Writer;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class CallTest
 	{
-		[TestMethod]
+		[Test]
 		public void SimpleTest()
 		{
 			var generator = new Generator();
@@ -37,10 +38,10 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 			var invokeText = invokeCodeWriter.ToString().Replace( " ", "" );
 
-			Assert.AreEqual( "this.Invoke(\"Name\",param1,param2)", invokeText );
+			Assert.That( invokeText, Is.EqualTo( "this.Invoke(\"Name\",param1,param2)" ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void NullOrWhitespaceParametersTest()
 		{
 			var generator = new Generator();
@@ -63,7 +64,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 			var invokeText = invokeCodeWriter.ToString().Replace( " ", "" );
 
-			Assert.AreEqual( "this.Invoke(\"Name\")", invokeText );
+			Assert.That( invokeText, Is.EqualTo( "this.Invoke(\"Name\")" ) );
 		}
 	}
 }

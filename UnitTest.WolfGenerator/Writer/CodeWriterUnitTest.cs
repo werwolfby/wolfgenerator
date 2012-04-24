@@ -15,20 +15,21 @@
  *   23.02.2009 00:17 - Finish MultyLineTest
  *   23.02.2009 00:44 - Finish CodeWriterExceptionTest.
  *   23.02.2009 23:26 - Finish SpaceAppendTypeTest & CloneAppendTypeTest.
+ *   21.04.2012 23:16 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.Writer;
 using System.Linq;
 using WolfGenerator.Core.Writer.Exception;
 
 namespace UnitTest.WolfGenerator.Writer
 {
-	[TestClass]
+	[TestFixture]
 	public class CodeWriterUnitTest
 	{
 		private class CodeWriterHelper 
@@ -57,7 +58,7 @@ namespace UnitTest.WolfGenerator.Writer
 			}
 		}
 
-		[TestMethod]
+		[Test]
 		public void SimpleCodeWriterTest()
 		{
 			var lines = new[]
@@ -71,12 +72,12 @@ namespace UnitTest.WolfGenerator.Writer
 			            	new CodeWriterHelper( 1, "}" ),
 			            };
 			var expectedText = BuildText( lines );
-            var codeWriter = GetCodeWriter( lines );
+			var codeWriter = GetCodeWriter( lines );
 
 			Assert.AreEqual( expectedText, codeWriter.ToString() );
 		}
 
-		[TestMethod]
+		[Test]
 		public void ÑomplexCodeWriterTest()
 		{
 			var lines = new[]
@@ -93,10 +94,10 @@ namespace UnitTest.WolfGenerator.Writer
 			var expectedText = BuildText( lines );
 			var codeWriter = GetCodeWriter( lines );
 
-			Assert.AreEqual( expectedText, codeWriter.ToString() );
+			Assert.That( codeWriter.ToString(), Is.EqualTo( expectedText ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void InnerAppendCodeWriterTest()
 		{
 			var linesStart = new[]
@@ -130,17 +131,17 @@ namespace UnitTest.WolfGenerator.Writer
 			mainCodeWriter.AppendLine();
 			mainCodeWriter.Append( GetCodeWriter( lines2 ) );
 			mainCodeWriter.AppendLine();
-            AppendCodeWriter( mainCodeWriter, linesEnd );
+			AppendCodeWriter( mainCodeWriter, linesEnd );
 
 			var hierarchy = new CodeWriterHelperHierarchy( linesStart, linesEnd, new CodeWriterHelperHierarchy( lines1, lines2 ) );
 
 			var expectedText = BuildText( hierarchy );
-            var actualText = mainCodeWriter.ToString();
+			var actualText = mainCodeWriter.ToString();
 
-			Assert.AreEqual( expectedText, actualText );
+			Assert.That( actualText, Is.EqualTo( expectedText ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void MultyLineTest()
 		{
 			var lines = new[]
@@ -156,44 +157,47 @@ namespace UnitTest.WolfGenerator.Writer
 			var expectedText = BuildText( lines );
 			var actualText = codeWriter.ToString();
 
-			Assert.AreEqual( expectedText, actualText );
+			Assert.That( actualText, Is.EqualTo( expectedText ) );
 		}
 
-		[TestMethod]
+		[Test]
 		public void PrivateTest()
 		{
-			var codeWriter = new CodeWriter_Accessor();
+			var codeWriter = new CodeWriter();
+			dynamic codeWriterAccessor = new AccessPrivateWrapper( codeWriter );
 
-			Assert.IsNull( codeWriter.lastLine, "After initialize CodeWriter lastLine must be null" );
-			Assert.IsNotNull( codeWriter.Lines, "Lines must be not null" );
-			Assert.AreEqual( 0, codeWriter.Lines.Count, "Lines must be empty" );
+			Assert.IsNull( codeWriterAccessor.lastLine, "After initialize CodeWriter lastLine must be null" );
+			Assert.IsNotNull( codeWriterAccessor.Lines, "Lines must be not null" );
+			Assert.AreEqual( 0, codeWriterAccessor.Lines.Count, "Lines must be empty" );
 
 			codeWriter.Append( "Test" );
-            Assert.IsNotNull( codeWriter.lastLine, "After Append text lastLine must be not null" );
-			Assert.AreEqual( 1, codeWriter.Lines.Count, "After first Append text code write must consist from one line" );
+			Assert.That( codeWriterAccessor.lastLine, Is.Not.Null, "After Append text lastLine must be not null" );
+			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 1 ),
+			             "After first Append text code write must consist from one line" );
 
-            codeWriter.AppendLine( "Text" );
-			Assert.IsNull( codeWriter.lastLine, "After initialize CodeWriter lastLine must be null" );
-			Assert.AreEqual( 1, codeWriter.Lines.Count, "After first Append text code write must consist from one line" );
+			codeWriter.AppendLine( "Text" );
+			Assert.That( (object)codeWriterAccessor.lastLine, Is.Null, "After initialize CodeWriter lastLine must be null" );
+			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 1 ),
+			             "After first Append text code write must consist from one line" );
 
-			codeWriter.InnerAppend( "Text", false );
-            Assert.IsNotNull( codeWriter.lastLine, "After Append text lastLine must be not null" );
-			Assert.AreEqual( 2, codeWriter.Lines.Count, "CodeWrite must consist from two line" );
+			codeWriterAccessor.InnerAppend( "Text", false );
+			Assert.That( codeWriterAccessor.lastLine, Is.Not.Null, "After Append text lastLine must be not null" );
+			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 2 ), "CodeWrite must consist from two line" );
 
-			codeWriter.InnerAppend( "Text", true );
-            Assert.IsNull( codeWriter.lastLine, "After Append text lastLine must be not null" );
-			Assert.AreEqual( 2, codeWriter.Lines.Count, "CodeWrite must consist from two line" );
+			codeWriterAccessor.InnerAppend( "Text", true );
+			Assert.That( (object)codeWriterAccessor.lastLine, Is.Null, "After Append text lastLine must be null" );
+			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 2 ), "CodeWrite must consist from two line" );
 
 			codeWriter.AppendText( "new\r\nline" );
-			Assert.IsNotNull( codeWriter.lastLine, "Appended text not finish last line, but CodeWriter finish it" );
-			Assert.AreEqual( 4, codeWriter.Lines.Count, "CodeWrite must consist from four line" );
+			Assert.That( codeWriterAccessor.lastLine, Is.Not.Null, "Appended text not finish last line, but CodeWriter finish it" );
+			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 4 ), "CodeWrite must consist from four line" );
 
 			codeWriter.AppendText( "new\r\nlines\r\n" );
-			Assert.IsNull( codeWriter.lastLine, "Appended text finish last line, but CodeWriter doesn't" );
-			Assert.AreEqual( 5, codeWriter.Lines.Count, "CodeWrite must consist from five line" );
+			Assert.That( (object)codeWriterAccessor.lastLine, Is.Null, "Appended text finish last line, but CodeWriter doesn't" );
+			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 5 ), "CodeWrite must consist from five line" );
 		}
 
-		[TestMethod]
+		[Test]
 		[ExpectedException(typeof(MultyLineException))]
 		public void CodeWriterExceptionTest()
 		{
@@ -201,7 +205,7 @@ namespace UnitTest.WolfGenerator.Writer
 			codeWriter.Append( "new\r\nline" );
 		}
 
-		[TestMethod]
+		[Test]
 		public void CloneAppendTypeTest()
 		{
 			var codeWriter = new CodeWriter();
@@ -227,7 +231,7 @@ namespace UnitTest.WolfGenerator.Writer
 			Assert.AreEqual( expectedText, actualText );
 		}
 
-		[TestMethod]
+		[Test]
 		public void SpaceAppendTypeTest()
 		{
 			var codeWriter = new CodeWriter();
@@ -268,7 +272,7 @@ namespace UnitTest.WolfGenerator.Writer
 		private static string BuildText( IEnumerable<CodeWriterHelper> lines ) 
 		{
 			var builder = new StringBuilder();
-            var count = lines.Count();
+			var count = lines.Count();
 			var i = 0;
 
 			foreach (var line in lines)

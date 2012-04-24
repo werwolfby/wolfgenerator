@@ -8,24 +8,24 @@
  * 
  * History:
  *   21.04.2012 22:20 - Create Wireframe
+ *   21.04.2012 23:00 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.Compiler;
 
 namespace UnitTest.WolfGenerator.CompilerTests
 {
-	[TestClass]
+	[TestFixture]
 	public class CompilerTest
 	{
-		[TestMethod]
-		[DeploymentItem("CompilerTests\\Test1.rule", "CompilerTests")]
+		[Test]
 		public void SimpleTest()
 		{
 			var compiler = new Compiler( "CompilerTests\\Test1.rule" );
 
-			var result = compiler.Compile("2.cs");
+			var result = compiler.Compile();
 
 			Assert.AreEqual( 0, result.Errors.Count );
 		}

@@ -8,15 +8,16 @@
  * 
  * History:
  *   15.02.2009 16:25 - Create Wireframe
+ *   21.04.2012 23:37 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class UsingUnitTest
 	{
 		public static readonly UsingStatement[] statements = new[]
@@ -26,7 +27,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 		                                                     	new UsingStatement( Helper.EmptyPosition, "System.Collection.Generic" ),
 		                                                     };
 
-		[TestMethod]
+		[Test]
 		public void SystemTest()
 		{
 			foreach (var statement in statements)

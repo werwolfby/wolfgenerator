@@ -73,7 +73,11 @@ namespace UnitTest.WolfGenerator.Accessors
 
 		public void Code( out CodeStatement statement, ref bool isStart )
 		{
-			this.Call( "Code", out statement );
+			var method = this.parserType.GetMethod( "Code", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public );
+			var args = new object[2];
+			method.Invoke( this.parser, args );
+			statement = (CodeStatement)args[0];
+			isStart = (bool)args[1];
 		}
 
 		public void MatchMethod( out MatchMethodStatement statement )

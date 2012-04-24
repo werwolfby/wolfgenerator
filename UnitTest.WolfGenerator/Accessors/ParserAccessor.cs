@@ -11,6 +11,7 @@
  *   24.04.2012 16:43 - [*] Extract common [Call] method.
  *   24.04.2012 16:48 - [+] Add other methods.
  *   24.04.2012 17:13 - [+] Delegate some other methods.
+ *   24.04.2012 17:15 - [+] Add not working [Code] method.
  *
  *******************************************************/
 
@@ -68,6 +69,11 @@ namespace UnitTest.WolfGenerator.Accessors
 		public void Apply( out ApplyStatement statement )
 		{
 			this.Call( "Apply", out statement );
+		}
+
+		public void Code( out CodeStatement statement, ref bool isStart )
+		{
+			this.Call( "Code", out statement );
 		}
 
 		public void MatchMethod( out MatchMethodStatement statement )

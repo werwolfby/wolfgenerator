@@ -9,12 +9,13 @@
  * History:
  *   28.02.2009 15:12 - Create Wireframe
  *   21.04.2012 23:05 - [*] Migrate to [NUnit].
+ *   24.04.2012 17:16 - [*] Use [ParserAccessor] instead of generated [Parser_Accessor].
  *
  *******************************************************/
 
 using System;
 using NUnit.Framework;
-using WolfGenerator.Core.Parsing;
+using UnitTest.WolfGenerator.Accessors;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserErrorTest
@@ -22,7 +23,7 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 	[TestFixture]
 	public class EndStatementUnitTest
 	{
-		private delegate T ParseDelegate<T>( string statement, out Parser_Accessor parser, bool assertErrorsCount );
+		private delegate T ParseDelegate<T>( string statement, out ParserAccessor parser, bool assertErrorsCount );
 
 		[Test]
 		public void RuleClassEndTest()
@@ -52,9 +53,9 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 			                         } );
 		}
 
-		private static void MainTest<T>( string text, int column, ParseDelegate<T> parseDelegate, Action<Parser_Accessor, T> someOtherTest )
+		private static void MainTest<T>( string text, int column, ParseDelegate<T> parseDelegate, Action<ParserAccessor, T> someOtherTest )
 		{
-			Parser_Accessor parser;
+			ParserAccessor parser;
 			var statement = parseDelegate( text, out parser, false );
 
 			if (someOtherTest != null)
@@ -62,8 +63,8 @@ namespace UnitTest.WolfGenerator.ParserErrorTest
 				someOtherTest( parser, statement );
 			}
 
-			Assert.That( parser.errors.count, Is.EqualTo( 1 ), "Expected one error" );
-			AssertHelper.AssertError( parser.errors.ErrorDatas[0], 1, column, "end expected" );
+			Assert.That( parser.Errors.count, Is.EqualTo( 1 ), "Expected one error" );
+			AssertHelper.AssertError( parser.Errors.ErrorDatas[0], 1, column, "end expected" );
 		}
 	}
 }

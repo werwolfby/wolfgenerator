@@ -45,18 +45,18 @@ namespace UnitTest.WolfGenerator.Scanner
 		{
 			var tokens = new[]
 			             {
-			             	new Token( Parser_Accessor._rule, "<%rule" ),
+			             	new Token( Parser._rule, "<%rule" ),
 			             	null,
-			             	new Token( Parser_Accessor._ident, "Test" ),
-			             	new Token( Parser_Accessor._endStatement, "%>" ),
-			             	new Token( Parser_Accessor._end, "<%end%>" )
+			             	new Token( Parser._ident, "Test" ),
+			             	new Token( Parser._endStatement, "%>" ),
+			             	new Token( Parser._end, "<%end%>" )
 			             };
 			var text = string.Join( "", tokens.Select( t => t != null ? t.value : " " ).ToArray() );
-			var scanner = new Scanner_Accessor( new MemoryStream( Encoding.UTF8.GetBytes( text ) ) );
+			var scanner = new global::WolfGenerator.Core.Parsing.Scanner( new MemoryStream( Encoding.UTF8.GetBytes( text ) ) );
 
 			foreach (var expectedTokenValue in tokens.Where( s => s != null ))
 			{
-				var actualTokenValue = scanner.NextToken();
+				var actualTokenValue = scanner.Scan();
 				Assert.That( actualTokenValue.val, Is.EqualTo( expectedTokenValue.value ) );
 				if (expectedTokenValue.type.HasValue)
 					Assert.That( actualTokenValue.kind, Is.EqualTo( expectedTokenValue.type.Value ),

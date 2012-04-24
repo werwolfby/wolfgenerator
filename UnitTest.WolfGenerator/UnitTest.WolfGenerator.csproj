@@ -106,9 +106,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Shadow Include="Test References\WolfGenerator.Core.accessor" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="TestDocument.txt" />
   </ItemGroup>
   <ItemGroup>

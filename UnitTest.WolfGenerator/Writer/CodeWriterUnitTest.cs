@@ -163,36 +163,37 @@ namespace UnitTest.WolfGenerator.Writer
 		[Test]
 		public void PrivateTest()
 		{
-			var codeWriter = new CodeWriter_Accessor();
+			var codeWriter = new CodeWriter();
+			dynamic codeWriterAccessor = new AccessPrivateWrapper( codeWriter );
 
-			Assert.IsNull( codeWriter.lastLine, "After initialize CodeWriter lastLine must be null" );
-			Assert.IsNotNull( codeWriter.Lines, "Lines must be not null" );
-			Assert.AreEqual( 0, codeWriter.Lines.Count, "Lines must be empty" );
+			Assert.IsNull( codeWriterAccessor.lastLine, "After initialize CodeWriter lastLine must be null" );
+			Assert.IsNotNull( codeWriterAccessor.Lines, "Lines must be not null" );
+			Assert.AreEqual( 0, codeWriterAccessor.Lines.Count, "Lines must be empty" );
 
 			codeWriter.Append( "Test" );
-			Assert.That( codeWriter.lastLine, Is.Not.Null, "After Append text lastLine must be not null" );
+			Assert.That( codeWriterAccessor.lastLine, Is.Not.Null, "After Append text lastLine must be not null" );
 			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 1 ),
 			             "After first Append text code write must consist from one line" );
 
 			codeWriter.AppendLine( "Text" );
-			Assert.That( codeWriter.lastLine, Is.Null, "After initialize CodeWriter lastLine must be null" );
+			Assert.That( (object)codeWriterAccessor.lastLine, Is.Null, "After initialize CodeWriter lastLine must be null" );
 			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 1 ),
 			             "After first Append text code write must consist from one line" );
 
-			codeWriter.InnerAppend( "Text", false );
-			Assert.That( codeWriter.lastLine, Is.Not.Null, "After Append text lastLine must be not null" );
+			codeWriterAccessor.InnerAppend( "Text", false );
+			Assert.That( codeWriterAccessor.lastLine, Is.Not.Null, "After Append text lastLine must be not null" );
 			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 2 ), "CodeWrite must consist from two line" );
 
-			codeWriter.InnerAppend( "Text", true );
-			Assert.That( codeWriter.lastLine, Is.Null, "After Append text lastLine must be null" );
+			codeWriterAccessor.InnerAppend( "Text", true );
+			Assert.That( (object)codeWriterAccessor.lastLine, Is.Null, "After Append text lastLine must be null" );
 			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 2 ), "CodeWrite must consist from two line" );
 
 			codeWriter.AppendText( "new\r\nline" );
-			Assert.That( codeWriter.lastLine, Is.Not.Null, "Appended text not finish last line, but CodeWriter finish it" );
+			Assert.That( codeWriterAccessor.lastLine, Is.Not.Null, "Appended text not finish last line, but CodeWriter finish it" );
 			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 4 ), "CodeWrite must consist from four line" );
 
 			codeWriter.AppendText( "new\r\nlines\r\n" );
-			Assert.That( codeWriter.lastLine, Is.Null, "Appended text finish last line, but CodeWriter doesn't" );
+			Assert.That( (object)codeWriterAccessor.lastLine, Is.Null, "Appended text finish last line, but CodeWriter doesn't" );
 			Assert.That( codeWriter.Lines, Is.Not.Null.And.Count.EqualTo( 5 ), "CodeWrite must consist from five line" );
 		}
 

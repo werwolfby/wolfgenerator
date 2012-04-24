@@ -27,7 +27,7 @@
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using UnitTest.WolfGenerator.Accessors;
 using WolfGenerator.Core.AST;
 

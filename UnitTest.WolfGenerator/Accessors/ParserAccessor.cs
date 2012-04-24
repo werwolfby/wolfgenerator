@@ -10,6 +10,7 @@
  *   24.04.2012 15:50 - Create Wireframe
  *   24.04.2012 16:43 - [*] Extract common [Call] method.
  *   24.04.2012 16:48 - [+] Add other methods.
+ *   24.04.2012 17:13 - [+] Delegate some other methods.
  *
  *******************************************************/
 
@@ -32,6 +33,21 @@ namespace UnitTest.WolfGenerator.Accessors
 		public void InitParse()
 		{
 			this.parser.InitParse();
+		}
+
+		public void Parse()
+		{
+			this.parser.Parse();
+		}
+
+		public RuleClassStatement RuleClassStatement
+		{
+			get { return this.parser.ruleClassStatement; }
+		}
+
+		public Errors Errors
+		{
+			get { return this.parser.errors; }
 		}
 
 		public void Type( out Type statement )

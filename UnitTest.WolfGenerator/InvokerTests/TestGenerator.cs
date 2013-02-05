@@ -51,6 +51,7 @@ namespace UnitTest.WolfGenerator.InvokerTests
 		
 		public int NavigationNotListDefinePropertyCalls { get; set; }
 
+		[RuleMethod("DefineProperty", null, null)]
 		public void DefineProperty( TypeProperty typeProperty )
 		{
 			this.TypeDefinePropertyCalls++;
@@ -82,6 +83,7 @@ namespace UnitTest.WolfGenerator.InvokerTests
 			this.NavigationNotListDefinePropertyCalls++;
 		}
 
+		[RuleMethod("DefineProperty", null, null)]
 		public void DefineProperty( ComplexProperty navigationProperty )
 		{
 			this.ComplexDefinePropertyCalls++;

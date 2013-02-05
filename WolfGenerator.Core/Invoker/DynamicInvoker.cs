@@ -87,11 +87,11 @@ namespace WolfGenerator.Core.Invoker
 
 			var ruleMethodNames = ruleMethods.Select( p => p.RuleName ).Distinct().ToList();
 
-			var matchData = (from methodName in ruleMethodNames
+			var matchData = (from ruleName in ruleMethodNames
 			                 select new MatchMethodDataCollection
 			                        {
-			                        	MethodName = methodName,
-			                        	MethodDatas = GetMethodDatas( ruleMethods, matchMethods, methodName ),
+			                        	MethodName = ruleName,
+			                        	MethodDatas = GetMethodDatas( ruleMethods, matchMethods, ruleName ),
 			                        }).ToArray();
 
 			this.matchMethodCollection = new MatchMethodCollection( matchData.ToDictionary( collection => collection.MethodName ) );
@@ -139,38 +139,55 @@ namespace WolfGenerator.Core.Invoker
 				.ToList();
 		}
 
-		private static IEnumerable<MatchMethodData> GetMethodDatas( IEnumerable<MethodDescription> ruleMethods, IEnumerable<MethodDescription> matchMethods, string methodName )
+		private static IEnumerable<MatchMethodData> GetMethodDatas( IEnumerable<MethodDescription> ruleMethods, IEnumerable<MethodDescription> matchMethods, string ruleName )
 		{
-			return (from rm in ruleMethods
-			        from mm in matchMethods
-			        where
-			        	rm.RuleName == methodName &&
-			        	rm.RuleName == mm.RuleName &&
-			        	rm.MatchName == mm.MatchName
-			        select new MatchMethodData
-			               {
-			               	RuleMethodName = rm.MethodName,
-			               	MatchMethodName = mm.MethodName
-			               }).ToList();
+			var matchMethodsGroup = matchMethods.Where( e => e.RuleName == ruleName );
+			var ruleMethodsGroup = ruleMethods.Where( e => e.RuleName == ruleName ).ToList();
+
+			var rulesWithMatches = from rm in ruleMethodsGroup
+			                       join mm in matchMethodsGroup on rm.MatchName equals mm.MatchName
+			                       select new MatchMethodData
+			                              {
+				                              RuleMethodName = rm.MethodName,
+				                              MatchMethodName = mm.MethodName
+			                              };
+			var defaultRules = ruleMethodsGroup.Where( e => e.MatchName == null )
+			                                   .Select( e => e.MethodName ).Distinct()
+			                                   .Select( e => new MatchMethodData { RuleMethodName = e } );
+
+			return rulesWithMatches.Concat( defaultRules ).ToList();
 		}
 
 		public T Invoke<T>( string name, params object[] parameters )
 		{
+			string ruleName = null;
+
 			if (matchMethodCollection[name] != null)
 			{
 				var methodCollection = this.matchMethodCollection[name];
-				var matches = methodCollection.MethodDatas;
+				var matches = methodCollection.MethodDatas.ToList();
 
 				foreach (var data in matches)
 				{
-					if (!CheckParams(data.MatchMethodName, parameters) || !this.InnerInvoke<bool>( data.MatchMethodName, parameters )) continue;
+					if (data.MatchMethodName == null) continue;
+					if (!this.CheckParams( data.MatchMethodName, parameters ) ||
+					    !this.InnerInvoke<bool>( data.MatchMethodName, parameters )) continue;
 
-					name = data.RuleMethodName;
+					ruleName = data.RuleMethodName;
 					break;
 				}
+
+				if (ruleName == null)
+				{
+					ruleName = matches.Single( e => e.MatchMethodName == null ).RuleMethodName;
+				}
+			}
+			else
+			{
+				ruleName = name;
 			}
 
-			return InnerInvoke<T>( name, parameters );
+			return InnerInvoke<T>( ruleName, parameters );
 		}
 
 		private bool CheckParams( string name, object[] parameters )

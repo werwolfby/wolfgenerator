@@ -54,7 +54,12 @@ namespace WolfGenerator.Core.AST
 			this.ruleMethodStatements = ruleMethodStatements ?? emptyRuleMethodStatementList;
 
 			this.matchMethodGroups = (from statement in this.ruleMethodStatements.OfType<RuleMethodStatement>()
-			                          group statement by statement.MethodHeader
+			                          group statement by
+				                          new
+				                          {
+					                          statement.Name,
+					                          Count = statement.Variables != null ? statement.Variables.Count : 0
+				                          }
 			                          into g select new RuleMethodGroup( g )).ToList().AsReadOnly();
 		}
 

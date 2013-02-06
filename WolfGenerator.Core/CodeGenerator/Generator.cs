@@ -133,12 +133,12 @@ namespace WolfGenerator.Core.CodeGenerator
 					temp = this.Invoke( "Rule", item, fileName, false, true );
 					list.Add( temp );
 				}
-				foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched && mmg.DefaultStatement != null ).Select( mmg => mmg.DefaultStatement ))
+				foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.DefaultStatements ))
 				{
 					temp = this.Invoke( "Rule", item, fileName, true,  true );
 					list.Add( temp );
 				}
-				foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => !mmg.IsMatched ).Select( mmg => mmg.DefaultStatement ))
+				foreach (var item in ruleClassStatement.MatchMethodGroups.Where( mmg => !mmg.IsMatched ).SelectMany( mmg => mmg.DefaultStatements ))
 				{
 					temp = this.Invoke( "Rule", item, fileName, false, false );
 					list.Add( temp );

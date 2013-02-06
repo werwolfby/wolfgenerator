@@ -12,6 +12,7 @@
  *******************************************************/
 
 using System.IO;
+using WolfGenerator.Core.Parsing;
 
 namespace WolfGenerator.Core
 {

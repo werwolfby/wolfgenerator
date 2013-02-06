@@ -10,15 +10,16 @@
  *   14.02.2009 22:17 - Create Wireframe
  *   15.02.2009 11:41 - Make values field array of ValueStatement.
  *   15.02.2009 13:28 - Extract AssertValue and move it to AssertHelper.
+ *   21.04.2012 23:36 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class ValueUnitTest
 	{
 		public static ValueStatement[] values = new[]
@@ -28,7 +29,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 		                                        	new ValueStatement( Helper.EmptyPosition, "\"String\"" ),
 		                                        };
 
-		[TestMethod]
+		[Test]
 		public void ValueTest()
 		{
 			foreach (var value in values)

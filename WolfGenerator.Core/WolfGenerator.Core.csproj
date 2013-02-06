@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,7 +14,11 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>test.snk</AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>http://localhost/WolfGenerator.Core/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -26,12 +31,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>test.snk</AssemblyOriginatorKeyFile>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +43,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -89,24 +93,25 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Generator.rule</DependentUpon>
     </Compile>
+    <Compile Include="Compiler\Compiler.cs" />
     <Compile Include="GeneratorBase.cs" />
     <Compile Include="GeneratorScanner.cs" />
+    <Compile Include="Invoker\DynamicInvoker.cs" />
+    <Compile Include="Invoker\MethodInfoExtender.cs" />
     <Compile Include="MatchMethodAttribute.cs" />
-    <Compile Include="RuleMethodAttribute.cs" />
-    <Compile Include="Scanner.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Parsing\Parser.cs">
+      <DependentUpon>Gramma.atg</DependentUpon>
     </Compile>
+    <Compile Include="Parsing\Scanner.cs">
+      <DependentUpon>Gramma.atg</DependentUpon>
+    </Compile>
+    <Compile Include="RuleMethodAttribute.cs" />
     <Compile Include="WolfGeneratorCustomToolGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGenerator.cs" />
     <Compile Include="CustomToolGenerator\BaseCodeGeneratorWithSite.cs" />
     <Compile Include="CustomToolGenerator\IObjectWithSite.cs" />
     <Compile Include="CustomToolGenerator\IOleServiceProvider.cs" />
     <Compile Include="CustomToolGenerator\ServiceProvider.cs" />
-    <Compile Include="Gramma.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Gramma.atg</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Writer\AppendType.cs" />
     <Compile Include="Writer\CodeWriter.cs" />
@@ -136,15 +141,24 @@
       <LastGenOutput>Generator.cs</LastGenOutput>
     </None>
     <None Include="Generator.reg" />
-    <None Include="Gramma.atg">
-      <Generator>CocoR</Generator>
-      <LastGenOutput>Gramma.cs</LastGenOutput>
+    <None Include="Parsing\Gramma.atg">
+      <Generator>CocoFileGenerator</Generator>
+      <LastGenOutput>Gramma.log</LastGenOutput>
     </None>
-    <None Include="Parser.frame" />
-    <None Include="Scanner.frame" />
+    <None Include="Parsing\Gramma.log">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Gramma.atg</DependentUpon>
+    </None>
+    <None Include="Parsing\Parser.frame" />
+    <None Include="Parsing\Scanner.frame" />
     <None Include="test.snk" />
   </ItemGroup>
   <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
       <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
@@ -158,6 +172,11 @@
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>

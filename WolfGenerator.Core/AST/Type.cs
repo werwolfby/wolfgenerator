@@ -15,6 +15,7 @@
  *   14.02.2009 13:16 - FIX: ToString, check if generic parameters is empty.
  *   14.02.2009 13:21 - Add Type constructor with `params` attribute argument list, to support hand initialize.
  *   28.02.2009 10:11 - Add inheritance from Statement class.
+ *   24.04.2012 17:20 - [+] Add [emptyListGenericParameters] for empty generic list.
  *
  *******************************************************/
 
@@ -28,6 +29,8 @@ namespace WolfGenerator.Core.AST
 	/// </summary>
 	public class Type : Statement
 	{
+		private static readonly IList<Type> emptyListGenericParameters = new List<Type>( 0 );
+
 		private readonly string typeName;
 		private readonly IList<Type> genericParameters;
 
@@ -37,7 +40,7 @@ namespace WolfGenerator.Core.AST
 		public Type( StatementPosition position, string typeName, IList<Type> genericParameters ) : base( position )
 		{
 			this.typeName = typeName;
-			this.genericParameters = genericParameters ?? new Type[0];
+			this.genericParameters = genericParameters ?? emptyListGenericParameters;
 		}
 
 		public string TypeName

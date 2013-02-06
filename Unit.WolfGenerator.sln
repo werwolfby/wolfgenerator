@@ -1,12 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolfGenerator.Core", "WolfGenerator.Core\WolfGenerator.Core.csproj", "{154ACD0B-4A5E-48E7-B14C-40E252202844}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.WolfGenerator", "Example.WolfGenerator\Example.WolfGenerator.csproj", "{BEA7A427-C8D8-4DF5-B034-2588F0C2B66D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.WolfGenerator", "UnitTest.WolfGenerator\UnitTest.WolfGenerator.csproj", "{3B5A8BC8-762D-4060-A269-1FB8734AA48F}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B296064E-F16B-472D-9874-AA44D79C46B5}"
 	ProjectSection(SolutionItems) = preProject
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
@@ -15,14 +9,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Tools", ".Tools", "{380752BA-7A73-4E0B-B48C-24E4DB7DCE89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASTTree", "ASTTree\ASTTree.csproj", "{93992E8C-F3C0-42A1-8377-210E5B3BA223}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".GeneratorData", ".GeneratorData", "{F7B555B4-C222-40D4-8BDF-C708BFD568BA}"
 	ProjectSection(SolutionItems) = preProject
 		.GeneratorData\Generator.reg = .GeneratorData\Generator.reg
 		.GeneratorData\register.bat = .GeneratorData\register.bat
 		.GeneratorData\unregister.bat = .GeneratorData\unregister.bat
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WolfGenerator.Core", "WolfGenerator.Core\WolfGenerator.Core.csproj", "{154ACD0B-4A5E-48E7-B14C-40E252202844}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.WolfGenerator", "Example.WolfGenerator\Example.WolfGenerator.csproj", "{BEA7A427-C8D8-4DF5-B034-2588F0C2B66D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest.WolfGenerator", "UnitTest.WolfGenerator\UnitTest.WolfGenerator.csproj", "{3B5A8BC8-762D-4060-A269-1FB8734AA48F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASTTree", "ASTTree\ASTTree.csproj", "{93992E8C-F3C0-42A1-8377-210E5B3BA223}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

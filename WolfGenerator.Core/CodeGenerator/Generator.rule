@@ -35,9 +35,9 @@ public partial class <%= ruleClassStatement.Name %> : GeneratorBase
 		<%apply Match( item, fileName ) from ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.RuleMethodStatements ).Select( ms => ms.MatchMethodStatement )%>
 
 		<%apply Rule( item, fileName, false, true ) from ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.RuleMethodStatements )%>
-		<%apply Rule( item, fileName, true,  true ) from ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched && mmg.DefaultStatement != null ).Select( mmg => mmg.DefaultStatement )%>
+		<%apply Rule( item, fileName, true,  true ) from ruleClassStatement.MatchMethodGroups.Where( mmg => mmg.IsMatched ).SelectMany( mmg => mmg.DefaultStatements )%>
 		
-		<%apply Rule( item, fileName, false, false ) from ruleClassStatement.MatchMethodGroups.Where( mmg => !mmg.IsMatched ).Select( mmg => mmg.DefaultStatement )%>
+		<%apply Rule( item, fileName, false, false ) from ruleClassStatement.MatchMethodGroups.Where( mmg => !mmg.IsMatched ).SelectMany( mmg => mmg.DefaultStatements )%>
 	<%end%>
 }
 <%end%>
@@ -94,6 +94,20 @@ using <%= @namespace %>;
 
 <%rule Parameter( Variable var )%>
 <%= var.ToString() %>
+<%end%>
+
+<%match IsEmpty%>
+return IsNullOrWhiteSpace( call.Parameters );
+<%end%>
+<%rule GenerateInvoke( CallStatement call )%>
+this.Invoke( "<%= call.Name %>" )
+<%end%>
+
+<%match IsNotEmpty%>
+return !IsNullOrWhiteSpace( call.Parameters );
+<%end%>
+<%rule GenerateInvoke( CallStatement call )%>
+this.Invoke( "<%= call.Name %>", <%= call.Parameters %> )
 <%end%>
 
 <%end%>

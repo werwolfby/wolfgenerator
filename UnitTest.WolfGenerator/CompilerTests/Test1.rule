@@ -1,0 +1,8 @@
+﻿<%ruleclass Generator%>
+<%using System%>
+
+<%rule Test( int a )%>
+var value = <%= a.ToString() %>;
+<%end%>
+
+<%end%>

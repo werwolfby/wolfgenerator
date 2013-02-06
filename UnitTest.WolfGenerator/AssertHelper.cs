@@ -19,14 +19,15 @@
  *   15.02.2009 15:56 - Add AssertVariables.
  *   28.02.2009 15:43 - Add AssertError.
  *   28.02.2009 16:38 - Add AssertStatementPosition.
+ *   22.04.2012 00:05 - [*] Use [Assert] from [NUnit].
  *
  *******************************************************/
 
 using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WolfGenerator.Core;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
+using WolfGenerator.Core.Parsing;
 using Type=WolfGenerator.Core.AST.Type;
 
 namespace UnitTest.WolfGenerator
@@ -63,13 +64,11 @@ namespace UnitTest.WolfGenerator
 
 		public static int AssertType( Type expected, Type actual )
 		{
-			Assert.AreEqual( expected.TypeName, actual.TypeName, "Wrong name of types" );
-			Assert.IsNotNull( expected.GenericParameters, "GenericParameters can't be null" );
+			Assert.That( actual.TypeName, Is.EqualTo( expected.TypeName ), "Wrong name of types" );
+			Assert.That( expected.GenericParameters, Is.Not.Null, "GenericParameters can't be null" );
 			if (expected.GenericParameters.Count > 0)
 			{
-				Assert.IsNotNull( actual.GenericParameters, "GenericParameters can't be null" );
-				Assert.AreEqual( expected.GenericParameters.Count, actual.GenericParameters.Count,
-				                 "Wrong count of generic parameter" );
+				Assert.That( actual.GenericParameters, Is.Not.Null.And.Count.EqualTo( expected.GenericParameters.Count ), "GenericParameters is not equal" );
 				for (var i = 0; i < expected.GenericParameters.Count; i++)
 				{
 					var expectedGenericParameter = expected.GenericParameters[i];
@@ -79,14 +78,14 @@ namespace UnitTest.WolfGenerator
 				}
 			}
 			else
-				Assert.AreEqual( 0, expected.GenericParameters.Count, "Expected type contains generic parameters" );
+				Assert.That( expected.GenericParameters, Has.Count.EqualTo( 0 ), "Expected type contains generic parameters" );
 
 			return 0;
 		}
 
 		public static int AssertVariable( Variable expected, Variable actual )
 		{
-			Assert.AreEqual( expected.Name, actual.Name,
+			Assert.That( actual.Name, Is.EqualTo( expected.Name ),
 			                 String.Format( "expected name ('{0}') don't match actual name ('{1}')", expected.Name, actual.Name ) );
 			AssertType( expected.Type, actual.Type );
 
@@ -95,23 +94,23 @@ namespace UnitTest.WolfGenerator
 
 		public static int AssertValue( ValueStatement expected, ValueStatement actual )
 		{
-			Assert.IsNotNull( actual.Value, "Value can't be null" );
-			Assert.AreEqual( expected.Value.Trim(), actual.Value.Trim() );
+			Assert.That( actual.Value, Is.Not.Null, "Value can't be null" );
+			Assert.That( actual.Value.Trim(), Is.EqualTo( expected.Value.Trim() ) );
 			return 0;
 		}
 
 		public static int AssertApply( ApplyStatement expected, ApplyStatement actual )
 		{
-			Assert.AreEqual( expected.ApplyMethod, actual.ApplyMethod, "Apply Method are wrong" );
-			Assert.AreEqual( expected.Parameters, actual.Parameters, "Apply Parameters are different" );
-			Assert.AreEqual( expected.From, actual.From, "Apply from are different" );
+			Assert.That( actual.ApplyMethod, Is.EqualTo( expected.ApplyMethod ), "Apply Method are wrong" );
+			Assert.That( actual.Parameters, Is.EqualTo( expected.Parameters ), "Apply Parameters are different" );
+			Assert.That( actual.From, Is.EqualTo( expected.From ), "Apply from are different" );
 			return 0;
 		}
 
 		public static int AssertCode( CodeStatement expected, CodeStatement actual, bool expectedIsStart, bool actualIsStart )
 		{
-			Assert.AreEqual( expected.Value.Trim(), actual.Value.Trim(), "Code value are different" );
-			Assert.AreEqual( expectedIsStart, actualIsStart, "IsStart are different" );
+			Assert.That( actual.Value.Trim(), Is.EqualTo( expected.Value.Trim() ), "Code value are different" );
+			Assert.That( actualIsStart, Is.EqualTo( expectedIsStart ), "IsStart are different" );
 
 			return 0;
 		}
@@ -124,8 +123,8 @@ namespace UnitTest.WolfGenerator
 			                     	new JoinInnerStatementData<ApplyStatement>( AssertApply ),
 			                     };
 
-			Assert.AreEqual( expected.String, actual.String, "Join string are different" );
-			Assert.AreEqual( expected.Statements.Count, actual.Statements.Count, "Join statements are different" );
+			Assert.That( actual.String, Is.EqualTo( expected.String ), "Join string are different" );
+			Assert.That( actual.Statements, Has.Count.EqualTo( expected.Statements.Count ), "Join statements are different" );
 			for (var i = 0; i < expected.Statements.Count; i++)
 			{
 				var finded = false;
@@ -145,22 +144,22 @@ namespace UnitTest.WolfGenerator
 
 		public static int AssertMatch( MatchMethodStatement expected, MatchMethodStatement actual )
 		{
-			Assert.AreEqual( expected.Name, actual.Name, "Match method name" );
-			Assert.AreEqual( expected.Code.Trim(), actual.Code.Trim(), "Match code" );
+			Assert.That( actual.Name, Is.EqualTo( expected.Name ), "Match method name" );
+			Assert.That( actual.Code.Trim(), Is.EqualTo( expected.Code.Trim() ), "Match code" );
 
 			return 0;
 		}
 
 		public static void AssertVariables( Variable[] expectedVariables, IList<Variable> variables )
 		{
-			Assert.AreEqual( expectedVariables.Length, variables.Count, "Variables count dismatch" );
+			Assert.That( expectedVariables.Length, Is.EqualTo( variables.Count ), "Variables count dismatch" );
 			for (var i = 0; i < expectedVariables.Length; i++)
 				AssertVariable( expectedVariables[i], variables[i] );
 		}
 
 		public static void AssertUsing( UsingStatement expected, UsingStatement actual )
 		{
-			Assert.AreEqual( expected.Namespace, actual.Namespace );
+			Assert.That( actual.Namespace, Is.EqualTo( expected.Namespace ) );
 		}
 
 		private static void AssertJoinInnerStatementHelper<T>( RuleStatement expected, RuleStatement actual,
@@ -168,31 +167,31 @@ namespace UnitTest.WolfGenerator
 			where T : RuleStatement
 		{
 			var expectedValueStatement = (T)expected;
-			Assert.IsInstanceOfType( actual, typeof(T) );
+			Assert.That( actual, Is.TypeOf<T>() );
 			var actualValueStatement = (T)actual;
 			assertFunc( expectedValueStatement, actualValueStatement );
 		}
 
 		public static void AssertError( ErrorData errorData, int? line, int? column, string message )
 		{
-			if (line.HasValue) Assert.AreEqual( line.Value, errorData.line, "Error line wrong" );
-			if (column.HasValue) Assert.AreEqual( column.Value, errorData.column, "Error column wrong" );
-			if (!string.IsNullOrEmpty( message )) Assert.AreEqual( message, errorData.message, "Error message wrong" );
+			Assert.That( line, Is.Null.Or.EqualTo( errorData.line ), "Error line wrong" );
+			Assert.That( column, Is.Null.Or.EqualTo( errorData.column ), "Error column wrong" );
+			Assert.That( message, Is.Null.Or.Empty.Or.EqualTo( errorData.message ), "Error message wrong" );
 		}
 
 		public static void AssertStatementPosition( int startPos, int endPos, StatementPosition actualPosition )
 		{
-			Assert.AreEqual( startPos, actualPosition.StartPos, "StartPos wrong" );
-			Assert.AreEqual( endPos, actualPosition.EndPos, "EndPos wrong" );
+			Assert.That( actualPosition.StartPos, Is.EqualTo( startPos ), "StartPos wrong" );
+			Assert.That( actualPosition.EndPos, Is.EqualTo( endPos ), "EndPos wrong" );
 		}
 
 		public static void AssertStatementPosition( int startLine, int endLine, int startColumn, int endColumn, int startPos,
 		                                            int endPos, StatementPosition actualPosition )
 		{
-			Assert.AreEqual( startLine, actualPosition.StartLine, "StartLine wrong" );
-			Assert.AreEqual( endLine, actualPosition.EndLine, "EndLine wrong" );
-			Assert.AreEqual( startColumn, actualPosition.StartColumn, "StartColumn wrong" );
-			Assert.AreEqual( endColumn, actualPosition.EndColumn, "EndColumn wrong" );
+			Assert.That( actualPosition.StartLine, Is.EqualTo( startLine ), "StartLine wrong" );
+			Assert.That( actualPosition.EndLine, Is.EqualTo( endLine ), "EndLine wrong" );
+			Assert.That( actualPosition.StartColumn, Is.EqualTo( startColumn ), "StartColumn wrong" );
+			Assert.That( actualPosition.EndColumn, Is.EqualTo( endColumn ), "EndColumn wrong" );
 
 			AssertStatementPosition( startPos, endPos, actualPosition );
 		}

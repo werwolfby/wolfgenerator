@@ -10,16 +10,17 @@
  *   15.02.2009 10:30 - Create Wireframe
  *   15.02.2009 10:56 - Finish first implemetation.
  *   15.02.2009 10:56 - Create test ExtendedFromApplyTest and fix it.
+ *   21.04.2012 23:19 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class ApplyUnitTest
 	{
 		public static readonly ApplyStatement simpleApply       = new ApplyStatement( Helper.EmptyPosition, "SetField", "item.Value, \"Test\"", "items" );
@@ -27,25 +28,25 @@ namespace UnitTest.WolfGenerator.ParserTest
 		public static readonly ApplyStatement extendedApply     = new ApplyStatement( Helper.EmptyPosition, "SetField", "this.Method( item ), \"Test\"", "items" );
 		public static readonly ApplyStatement extendedFromApply = new ApplyStatement( Helper.EmptyPosition, "SetField", "this.Method( item ), \"Test\"", "item.Items" );
 
-		[TestMethod]
+		[Test]
 		public void SimpleApplyTest()
 		{
 			MainTestMethod2( simpleApply, false );
 		}
 
-		[TestMethod]
+		[Test]
 		public void FromApplyTest()
 		{
 			MainTestMethod2( fromApply, false );
 		}
 
-		[TestMethod]
+		[Test]
 		public void ExtendedApplyTest()
 		{
 			MainTestMethod2( extendedApply, true );
 		}
 
-		[TestMethod]
+		[Test]
 		public void ExtendedFromApplyTest()
 		{
 			MainTestMethod2( extendedFromApply, true );

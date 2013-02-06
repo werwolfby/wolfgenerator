@@ -8,17 +8,18 @@
  * 
  * History:
  *   15.02.2009 11:37 - Create Wireframe
+ *   21.04.2012 23:25 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 using WolfGenerator.Core.Writer;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class JoinUnitTest
 	{
 		private static readonly JoinStatement[] statements = new[]
@@ -34,7 +35,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 		                                                     	                   } ),
 		                                                     };
 
-		[TestMethod]
+		[Test]
 		public void JoinTest()
 		{
 			var joinStatementText = JoinToString( statements[0], " ", "\r\n\t" );

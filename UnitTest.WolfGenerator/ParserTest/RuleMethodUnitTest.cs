@@ -11,17 +11,17 @@
  *   15.02.2009 14:39 - Implement RuleMethodStart check
  *   15.02.2009 14:39 - Implement RuleMethod test
  *   15.02.2009 16:23 - Add StatelessRuleMethodTest - check that variables & statements is empty collection.
+ *   21.04.2012 23:30 - [*] Migrate to [NUnit].
  *
  *******************************************************/
 
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WolfGenerator.Core.AST;
 using System.Linq;
 
 namespace UnitTest.WolfGenerator.ParserTest
 {
-	[TestClass]
+	[TestFixture]
 	public class RuleMethodUnitTest
 	{
 		public abstract class RuleStatementChecker 
@@ -42,9 +42,9 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 			public override void CheckAssert( RuleStatement statement )
 			{
-				Assert.IsInstanceOfType( statement, typeof(TextStatement) );
+				Assert.That( statement, Is.TypeOf<TextStatement>() );
 				var textStatement = (TextStatement)statement;
-				Assert.AreEqual( this.Text, textStatement.Text );
+				Assert.That( textStatement.Text, Is.EqualTo( this.Text ) );
 			}
 		}
 
@@ -59,29 +59,26 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 			public override void CheckAssert( RuleStatement statement )
 			{
-				Assert.IsInstanceOfType( statement, typeof(ValueStatement) );
+				Assert.That( statement, Is.TypeOf<ValueStatement>() );
 				var valueStatement = (ValueStatement)statement;
-				Assert.AreEqual( this.value.Trim(), valueStatement.Value.Trim() );
+				Assert.That( valueStatement.Value.Trim(), Is.EqualTo( this.value.Trim() ) );
 			}
 		}
 
-		[TestMethod]
+		[Test]
 		public void StatelessRuleMethodTest()
 		{
 			var ruleMethodStatementText = RuleMethodStartToString( "Test", new Variable[0], ",", "<", ">" ) + "\r\n" + "<%end%>";
 			var ruleMethodStatement = ParserHelper.ParseRuleMethod( ruleMethodStatementText );
 
-			Assert.IsNotNull( ruleMethodStatement.Variables, "Variables must be not null" );
-			Assert.IsNotNull( ruleMethodStatement.Statements, "Statements must be not null" );
-
-			Assert.AreEqual( 0, ruleMethodStatement.Variables.Count, "Such rule method mustn't contains any variable" );
-			Assert.AreEqual( 0, ruleMethodStatement.Statements.Count, "Such rule method mustn't contains any statement" );
+			Assert.That( ruleMethodStatement.Variables, Is.Not.Null.And.Count.EqualTo( 0 ), "Variables must be not null" );
+			Assert.That( ruleMethodStatement.Statements, Is.Not.Null.And.Count.EqualTo( 0 ), "Statements must be not null" );
 		}
 
-		[TestMethod]
+		[Test]
 		public void RuleMethodTest()
 		{
-			var expectedName = "Test";
+			const string expectedName = "Test";
 			var expectedVariables = new[] { VariableUnitTest.simpleVariable, VariableUnitTest.listVariable };
 
 			var statements = new RuleStatementChecker[]
@@ -97,7 +94,7 @@ namespace UnitTest.WolfGenerator.ParserTest
 
 			var actualRuleMethod = ParserHelper.ParseRuleMethod( ruleMethodStatement );
 
-			Assert.AreEqual( expectedName, actualRuleMethod.Name );
+			Assert.That( actualRuleMethod.Name, Is.EqualTo( expectedName ) );
 			AssertHelper.AssertVariables( expectedVariables, actualRuleMethod.Variables );
 
 			for (var i = 0; i < statements.Length; i++)
